@@ -1,0 +1,95 @@
+{
+    "Default": {
+        "timestamp": 0,
+        "severity": 1,
+        "status": 2,
+        "description": 3,
+        "typeId": 4,
+        "userName": 5,
+        "domainName": 6,
+        "snmpId": 7,
+        "eventId": 8,
+        "parentId": 9
+    },
+    "RequestStart_t1": {
+        "requestId": 10,
+        "sqlQuery": 11,
+        "transactionId": 13,
+        "sessionId": 14,
+        "hostname": 15,
+        "sessionClientType": 16,
+        "requestUserName": 17,
+        "requestDomainName": 18,
+        "internal": 19
+    },
+    "RequestStart_t2": {
+        "requestId": 10,
+        "sqlQuery": 11,
+        "transactionId": 12,
+        "sessionId": 13,
+        "hostname": 14,
+        "sessionClientType": 15,
+        "requestUserName": 16,
+        "requestDomainName": 17,
+        "internal": 18
+    },
+    "RequestEnd": {
+    	"requestId": 10,
+        "transactionId": 11,
+        "sessionId": 12,
+        "hostname": 13,
+        "sessionClientType": 14,
+        "requestUserName": 15,
+        "requestDomainName": 16,
+        "internal": 17,
+        "bytesIn": 18,
+        "bytesOut": 19,
+        "rowsAffected": 20
+    },
+    "RequestCancel": {
+    	"requestId": 10,
+        "transactionId": 11,
+        "sessionId": 12,
+        "hostname": 13,
+        "sessionClientType": 14,
+        "requestUserName": 15,
+        "requestDomainName": 16,
+        "internal": 17,
+        "bytesIn": 18,
+        "bytesOut": 19,
+        "rowsAffected": 20
+    },
+    "RequestFail": {
+    	"requestId": 10,
+    	"errorMessage": 11,
+        "transactionId": 12,
+        "sessionId": 13,
+        "hostname": 14,
+        "sessionClientType": 15,
+        "requestUserName": 16,
+        "requestDomainName": 17,
+        "internal": 18,
+        "bytesIn": 19,
+        "bytesOut": 20,
+        "rowsAffected": 21
+    },
+    "SessionStart": {
+        "sessionId": 10,
+        "user": 11,
+        "domain": 12,
+        "hostname": 13,
+        "ipAddress": 14,
+        "clientType": 15
+    },
+    "SessionEnd": {
+        "sessionId": 10,
+        "user": 11,
+        "domain": 12,
+        "hostname": 13,
+        "ipAddress": 14,
+        "clientType": 15
+    },"TransactionRollback": {
+        "transactionId": 10,
+        "sessionId": 11,
+    },
+}
