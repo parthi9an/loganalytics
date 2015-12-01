@@ -156,6 +156,33 @@ To deploy to tomcat
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+			<version>4.1.7.RELEASE</version>
+		</dependency>
+
+ 		 
+ 		 <!-- Apache activemq messaging broker -->
+		 <dependency>
+		   <groupId>org.apache.activemq</groupId>
+		   <artifactId>activemq-all</artifactId>
+		   <version>5.4.2</version>
+		 </dependency>
+		 
+		 <dependency>
+		 	<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-core</artifactId>
+			<version>5.4.2</version>
+		 </dependency>
+		 
+		 <dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+			<version>5.12.1</version>
+		</dependency>
+		 
 
 		<!-- Apache Commons Upload -->
 		<dependency>
@@ -183,7 +210,14 @@ To deploy to tomcat
 			<artifactId>gson</artifactId>
 			<version>2.2.4</version>
 		</dependency>
-
+		
+		<!-- Github Java UnRar -->
+		<dependency>
+			<groupId>com.github.junrar</groupId>
+			<artifactId>junrar</artifactId>
+			<version>0.7</version>
+		</dependency>
+		
 	</dependencies>
 
 	<profiles>

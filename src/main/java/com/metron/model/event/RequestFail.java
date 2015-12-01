@@ -47,19 +47,19 @@ public class RequestFail extends RequestEvent {
 
         // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
 
         // FIVE MIN Window
         duration = DURATION.FIVEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
 
         // ONE HOUR Window
         duration = DURATION.ONEHOUR;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
 
         // ONEDAY Window
         duration = DURATION.ONEDAY;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
     }
 
     private void updateRequest() {
@@ -97,7 +97,7 @@ public class RequestFail extends RequestEvent {
 
         for (Error error : errors) {
             //request.addEdge(error, "Request_Error")
-            this.addEdge(error, "Request_Error");
+            request.addEdge(error, "Request_Error");
         }
 
     }

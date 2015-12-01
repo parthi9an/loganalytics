@@ -45,19 +45,19 @@ public class RequestCancel extends RequestEvent {
     private void associateTimeWindow() {
 
         DURATION duration = DURATION.ONEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
 
         // FIVE MIN Window
         duration = DURATION.FIVEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
         
         // ONE HOUR Window
         duration = DURATION.ONEHOUR;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
         
         // ONEDAY Window
         duration = DURATION.ONEDAY;
-        this.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
+        request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
         
     }
     private void updateRequest() {

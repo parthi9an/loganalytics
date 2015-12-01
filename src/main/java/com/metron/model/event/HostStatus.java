@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.metron.model.Host;
 import com.metron.orientdb.OrientUtils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
@@ -27,7 +28,7 @@ public class HostStatus extends Event {
 
     @Override
     public void process() {
-        
+        host = new Host(this.getAttribute("hostname").toString());
         this.saveRawEvent();
         this.associateRawEventToHost();
         this.saveHostStatus();
@@ -60,17 +61,30 @@ public class HostStatus extends Event {
     }
 
     private void associateHost() {
-        this.addEdge(this.getHost(), "HostStatus_Host");
+        this.addEdge(host, "HostStatus_Host");
     }
 
     private void associateRawEvent() {
-        this.addEdge(this.rawEvent, "HostStatus_Event");
+        this.addEdge(rawEvent, "HostStatus_Event");
     }
+    
+    private void updateHost() {
+        if (host != null) {
+            HashMap<String, Object> props = new HashMap<String, Object>();
+            props.put("OS", this.getAttribute("Operating_System"));
+            props.put("numOfProcessors", this.getAttribute("Number_of_processors"));
+            props.put("totalMemory", this.getAttribute("Total_Memory"));
+            host.setProperties(props);
+            host.save();
+        }
 
+    }
+    
     private void saveHostStatus() {
         OrientBaseGraph graph = this.getGraph();
         this.vertex = graph.addVertex("class:HostStatus");
         HashMap<String, Object> hostStatus = new HashMap<String, Object>();
+        System.out.println("InsideHostStatus attributes:" + this.getAttributes().toString());
         hostStatus.put("timestamp", this.getAttribute("timestamp"));
         hostStatus.put("hostname", this.getAttribute("hostname"));
         hostStatus.put("totalMemoryUsed", this.getAttribute("Total_Memory_Used"));
@@ -101,10 +115,11 @@ public class HostStatus extends Event {
     @Override
     public void parse() {
         // TBDHS : split the data by : and form the attributes
-        Pattern serverStatusPattern = Pattern.compile("(.*?--{4,}\\n)(.*?)(\\n\\n.*)",
+        Pattern serverStatusPattern = Pattern.compile("(.*?--{4,}\\n)(.*?)(\\n+--{4,}.*)",
                 Pattern.DOTALL);
         Matcher m = serverStatusPattern.matcher(this.logData.trim());
         if (m.matches()) {
+            System.out.println("HostStatusParseMatch");
             String[] statusElements = m.group(2).split("\\n");
             for (String element : statusElements) {
                 String[] detail = element.split(":\\s+");

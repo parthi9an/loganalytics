@@ -6,23 +6,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.metron.model.Domain;
 import com.metron.model.Host;
+import com.metron.model.User;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 
 public class TransactionRollback extends Event {
 
+    protected Transaction transaction;
+    protected Session session;
+    protected Domain domain;
+    protected User user;
+    
     public TransactionRollback(String[] eventData) {
         super(eventData);
     }
 
     @Override
     public void process() {
+
+        transaction = new Transaction(this.getAttribute("transactionId").toString());
+        session = new Session(this.getAttribute("sessionId").toString());
+        host = new Host(getHostName());
+        domain = new Domain(this.getAttribute("domainName").toString());
+        user = new User(this.getAttribute("userName").toString());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();
-        transaction = new Transaction(this.getAttribute("transactionId").toString(), this.getGraph());
-        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
         this.saveTransaction();
         this.setVertex(transaction.vertex);
         this.updateAssociations();
@@ -49,46 +60,46 @@ public class TransactionRollback extends Event {
 
     protected void associateSession() {
 
-        this.addEdge(session, "Transaction_session");
+        transaction.addEdge(session, "Transaction_session");
     }
 
     protected void associateRawEvent() {
 
-        this.addEdge(this.rawEvent, "Transaction_Event");
+        transaction.addEdge(rawEvent, "Transaction_Event");
     }
 
     protected void associateUser() {
 
-        this.addEdge(this.getUser(), "Transaction_User");
+        transaction.addEdge(user, "Transaction_User");
     }
 
     protected void associateDomain() {
 
-        this.addEdge(this.getDomain(), "Transaction_Domain");
+        transaction.addEdge(domain, "Transaction_Domain");
     }
 
     protected void associateHost() {
 
-        this.addEdge(this.getHost(), "Transaction_Host");
+        transaction.addEdge(host, "Transaction_Host");
     }
 
     private void associateTimeWindow() {
 
         // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
+        transaction.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
 
         // FIVE MIN Window
         duration = DURATION.FIVEMIN;
-        this.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
+        transaction.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
 
         // ONE HOUR Window
         duration = DURATION.ONEHOUR;
-        this.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
+        transaction.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
 
         // ONEDAY Window
         duration = DURATION.ONEDAY;
-        this.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
+        transaction.addEdge(this.getTimeWindow(duration), "Transaction_" + duration.getTable());
 
     }
 
@@ -105,7 +116,7 @@ public class TransactionRollback extends Event {
        // this.vertex = transaction.vertex;
     }
 
-    public Host getHost() {
+    private String getHostName() {
         // get the session for this transaction
         // get the host associted with this session and return the host
         String sql = "select OUT('Session_Host')[0].hostname as hostname from Session where sessionId='"
@@ -119,19 +130,7 @@ public class TransactionRollback extends Event {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-
-        if (host == null) {
-            host = new Host(hostName, this.getGraph());
-            HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("hostname", hostName);
-            host.setProperties(props);
-            host.save();
-        }
-        return host;
+        return hostName;
     }
 
-//    private Transaction getTransaction() {
-//        String transactionId = (String) this.getAttribute("transactionId");
-//        return new Transaction(transactionId, this.getGraph());
-//    }
 }

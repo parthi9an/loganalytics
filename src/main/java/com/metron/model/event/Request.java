@@ -6,7 +6,8 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Request extends BaseModel {
   
-    public Request(String requestId, OrientBaseGraph graph) {
+    public Request(String requestId) {
+        OrientBaseGraph graph = this.getGraph();
         this.vertex = find(graph, requestId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Request");
