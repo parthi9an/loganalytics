@@ -67,20 +67,18 @@ public class ServerExpection extends ServerEvent {
                 "timestamp",
                 OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
                         "timestamp").toString()))};
-        this.addEdge(this.getHost(), "Exception_Host", props);
+        this.addEdge(host, "Exception_Host", props);
     }
 
     private void associateRawEvent() {
-        this.addEdge(this.rawEvent, "Exception_Event");
+        this.addEdge(rawEvent, "Exception_Event");
     }
 
     private void saveExceptionElements() {
 
         HashMap<String, Object> propsExceptionElement = null;
-        OrientBaseGraph graph = this.getGraph();
         for (String elem : this.exceptionElems) {
-            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem),
-                    graph);
+            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem));
             propsExceptionElement = new HashMap<String, Object>();
             propsExceptionElement.put("value", elem);
             exceptionElement.setProperties(propsExceptionElement);

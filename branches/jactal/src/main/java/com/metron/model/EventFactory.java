@@ -3,6 +3,9 @@ package com.metron.model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.metron.model.event.Event;
 import com.metron.model.event.HostStatus;
 import com.metron.model.event.RequestCancel;
@@ -18,6 +21,8 @@ import com.metron.model.event.TransactionRollback;
 public class EventFactory {
 
     private static EventFactory instance;
+    
+    protected Logger log = LoggerFactory.getLogger(EventFactory.class);
 
     public static EventFactory getInstance() {
         if (instance == null) {
@@ -49,6 +54,7 @@ public class EventFactory {
             Matcher m = timestampPattern.matcher(line);
             if (m.matches()) {
                 ServerStatusTimestampManager.addTSInfo(ipAddress, m.group(2));
+                System.out.println("cs_server_status from host : " + ipAddress + " , TIMESTAMP : " + m.group(2));
             }
             return this.parseServerStatusLog(line, ipAddress);
 
@@ -59,6 +65,7 @@ public class EventFactory {
             Matcher m = hostNamePattern.matcher(line);
             if (m.matches()) {
                 LogHostManager.addHostInfo(ipAddress, m.group(2));
+                System.out.println("cs_server from host : " + ipAddress + " , hostName : " + m.group(2));
             }
             return this.parseServerLog(line, ipAddress);
         }
@@ -109,6 +116,7 @@ public class EventFactory {
         if (eventName.equals("HostStatus")) {
             event = new HostStatus(eventString).setTimeStamp(ServerStatusTimestampManager
                     .getTSInfo(ipAddress));;
+                    
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {

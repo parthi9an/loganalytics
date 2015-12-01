@@ -34,8 +34,8 @@ public class AppConfig {
                     "conf/application.properties");
             prop = new Properties();
             prop.load(stream);
-            log.info(prop.getProperty("db.host"));
-            log.info(prop.getProperty("db.userName"));
+            System.out.println(prop.getProperty("db.host"));
+            System.out.println(prop.getProperty("db.userName"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +50,7 @@ public class AppConfig {
     }
     
     public int getInt(String key) {
-        return this.prop.get(key) == null ? 0 : Integer.valueOf(this.prop.getProperty(key));
+        return _instance.get(key) == null ? 0 : Integer.valueOf(_instance.get(key).toString());
     }
     
 

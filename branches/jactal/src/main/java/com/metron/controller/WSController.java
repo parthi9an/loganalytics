@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.github.junrar.Archive;
+import com.github.junrar.rarfile.FileHeader;
 import com.metron.AppConfig;
 import com.metron.model.EventFactory;
 import com.metron.model.event.Event;
@@ -41,6 +45,7 @@ import com.metron.service.BaseService;
 import com.metron.service.DomainService;
 import com.metron.service.ExceptionService;
 import com.metron.service.HostService;
+import com.metron.service.JmsService;
 import com.metron.service.RequestService;
 import com.metron.service.SessionService;
 import com.metron.service.UserService;
@@ -55,10 +60,13 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 @RestController
 public class WSController {
+    
+    protected Logger log = LoggerFactory.getLogger(WSController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String printWelcome(ModelMap model) {
         model.addAttribute("message", "Spring 3 MVC Hello World");
+        System.out.println("Testing debug log");
         return "hello";
 
     }
@@ -505,24 +513,27 @@ public class WSController {
             throws IOException, JSONException, ParseException {
         
         JSONObject jo = new JSONObject();
-        JSONArray ja = new JSONArray();
         
         if(tagname.compareToIgnoreCase("undefined") == 0){
+            jo.put("token", "error");
             jo.put("response", "Tag Name is Required");
-            return _formJSONSuccessResponse(ja.put(jo).toString());
+            return _formJSONSuccessResponse(jo.toString());
         }
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = null;
         try{
         file = request.getFile(itr.next());
         }catch(NoSuchElementException e){
-            jo.put("response", "Browse the Zip File");
-            return _formJSONSuccessResponse(ja.put(jo).toString());
+            jo.put("token", "error");
+            jo.put("response", "Browse zip/rar File");
+            return _formJSONSuccessResponse(jo.toString());
         }
          
-        if(file.getContentType().compareToIgnoreCase("application/x-zip-compressed") != 0){
-            jo.put("response", "Only Zip Files are Accepted");
-            return _formJSONSuccessResponse(ja.put(jo).toString());
+        if(file.getContentType().compareToIgnoreCase("application/x-zip-compressed") != 0 &&
+                file.getContentType().compareToIgnoreCase("application/octet-stream") != 0){
+            jo.put("token", "error");
+            jo.put("response", "Only zip & rar Files are Accepted");
+            return _formJSONSuccessResponse(jo.toString());
         }
         
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
@@ -533,7 +544,45 @@ public class WSController {
         String destination = AppConfig.getInstance().getString("zip.target.location");
 
         String output_folder = destination + custname +File.separator+custcasenum +File.separator+formatedDate +File.separator+tagname;
-
+        
+        try {
+            File folder = new File(output_folder);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }}catch(Exception e){
+                jo.put("token", "error");
+                jo.put("response", "Target Directory Doesn't Exist");
+                return _formJSONSuccessResponse(jo.toString());
+        }
+        
+        /*Code to unrar*/
+        if(file.getContentType().compareToIgnoreCase("application/octet-stream") == 0){
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile(); 
+        FileOutputStream fos = new FileOutputStream(convFile); 
+        fos.write(file.getBytes());
+        fos.close(); 
+        
+        Archive rarFile=null;
+        try {
+            rarFile=new Archive(convFile);
+            FileHeader header=null;
+            for (FileHeader fh : rarFile.getFileHeaders()) {
+                header=fh;
+                if (header != null) {
+                  String fileName = header.getFileNameString();
+                  File rarfile = new File(output_folder + File.separator + fileName);
+                  rarFile.extractFile(header,new FileOutputStream(rarfile));
+                  rarFile.close();
+                }
+            } 
+          }catch(Exception e){
+              e.printStackTrace();
+          }
+        }
+        
+        /*Code to extract the zip file*/
+        if(file.getContentType().compareToIgnoreCase("application/x-zip-compressed") == 0){
         byte[] bytes = null;
 
         byte[] buffer = new byte[1024];
@@ -548,16 +597,11 @@ public class WSController {
         ZipEntry ze = zis.getNextEntry();
         
         if(ze.isDirectory()){
+            jo.put("token", "error");
             jo.put("response", "Zip File Contains Unwanted Data");
-            return _formJSONSuccessResponse(ja.put(jo).toString());
+            return _formJSONSuccessResponse(jo.toString());
         }
 
-        try {
-            File folder = new File(output_folder);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            
             while (ze != null) {
                 
                 String fileName = ze.getName();
@@ -582,13 +626,28 @@ public class WSController {
 
             zis.closeEntry();
             zis.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            jo.put("response", "Target Directory Doesn't Exist");
-            return _formJSONSuccessResponse(ja.put(jo).toString());
         }
-        jo.put("response", "Unzipped Successfully");
-        return _formJSONSuccessResponse(ja.put(jo).toString());
+        jo.put("token", "success");
+        jo.put("response", "Extracted Successfully");
+        return _formJSONSuccessResponse(jo.toString());
+    }
+    
+    @RequestMapping(value = "/receiveJMS")
+    public @ResponseBody ResponseEntity<String> receiveJMS(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
+        try {
+            JmsService service = new JmsService();
+            result = service.consumeMsg();
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                result.put("status", "Failed");
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return _formJSONSuccessResponse(result.toString());
     }
 
     private ResponseEntity<String> _formJSONSuccessResponse(String data) {

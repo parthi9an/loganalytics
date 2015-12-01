@@ -1,19 +1,32 @@
 package com.metron.model.event;
 
-public class RequestEvent extends Event {
+import com.metron.model.Domain;
+import com.metron.model.Host;
+import com.metron.model.User;
 
+public class RequestEvent extends Event {
+    
+    protected Session session;
+    protected Request request;
+    protected Domain domain;
+    protected User user;
+    
     public RequestEvent(String[] eventData) {
         super(eventData);
     }
 
     @Override
     public void process() {
+        
+        request = new Request(this.getAttribute("requestId").toString());
+        session = new Session(this.getAttribute("sessionId").toString());
+        host = new Host(this.getAttribute("hostname").toString());
+        domain = new Domain(this.getAttribute("domainName").toString());
+        user = new User(this.getAttribute("userName").toString());
+        
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();
-
-        request = new Request(this.getAttribute("requestId").toString(), this.getGraph());
-        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
     }
 
     @Override
@@ -26,25 +39,25 @@ public class RequestEvent extends Event {
     protected void associateSession() {
 //        this.addEdge(new Session(this.getAttribute("sessionId").toString(), this.getGraph()),
 //                "Request_Session");
-        this.addEdge(session, "Request_Session");
+        request.addEdge(session, "Request_Session");
     }
     protected void associateRawEvent() {
-        this.addEdge(this.rawEvent, "Request_Event");
+        request.addEdge(rawEvent, "Request_Event");
     }
 
     protected void associateUser() {
 
-        this.addEdge(this.getUser(), "Request_User");
+        request.addEdge(user, "Request_User");
     }
 
     protected void associateDomain() {
 
-        this.addEdge(this.getDomain(), "Request_Domain");
+        request.addEdge(domain, "Request_Domain");
     }
 
     protected void associateHost() {
 
-        this.addEdge(this.getHost(), "Request_Host");
+        request.addEdge(host, "Request_Host");
     }
 
     // public Request getRequest() {

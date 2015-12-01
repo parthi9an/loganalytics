@@ -6,7 +6,8 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class ExceptionElement extends BaseModel {
     
-    public ExceptionElement(String element, OrientBaseGraph graph) {
+    public ExceptionElement(String element) {
+        OrientBaseGraph graph = this.getGraph();
         this.vertex = find(graph, element);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:ExceptionElement");

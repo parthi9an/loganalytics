@@ -296,6 +296,12 @@ public class DatabaseService {
             if (!schema.existsClass("Exception_ExceptionElement")) {
                 eType = graph.createEdgeType("Exception_ExceptionElement");
             }
+            
+            if (!schema.existsClass("CisEvents")) {
+                vType = graph.createVertexType("CisEvents");
+                vType.createProperty("eventNumber", OType.LONG);
+                vType.createProperty("eventType", OType.STRING);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

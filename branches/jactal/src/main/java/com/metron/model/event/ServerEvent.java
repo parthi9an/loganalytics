@@ -3,13 +3,15 @@ package com.metron.model.event;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.metron.model.Host;
+
 /**
  * @author satheesh
  */
 
 public class ServerEvent extends Event {
 
-    protected String host = null;
+    protected String hostName = null;
     protected String data = null;
 
     public ServerEvent(String data) {
@@ -17,13 +19,14 @@ public class ServerEvent extends Event {
     }
 
     public void setHost(String host) {
-        this.host = host;
+        this.hostName = host;
         this.setAttribute("hostname", host);
     }
 
     @Override
     public void process() {
         // TBD-T1 : save rawEvent
+        host = new Host(this.getAttribute("hostname").toString());
         this.saveRawEvent();
         this.associateRawEventToHost();
     }

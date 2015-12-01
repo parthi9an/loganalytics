@@ -11,28 +11,16 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.metron.model.Domain;
 import com.metron.model.EventMappings;
 import com.metron.model.Host;
-import com.metron.model.User;
-import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
+import com.metron.util.Utils;
 
 public abstract class Event extends BaseModel {
 
     protected RawEvent rawEvent;
-
-    protected Session session;
-    
-    protected Request request;
-    
-    protected Transaction transaction;
     
     protected Host host;
-
-    private Domain domain;
-
-    private User user;
 
     protected Logger log = LoggerFactory.getLogger(Event.class);
 
@@ -97,12 +85,13 @@ public abstract class Event extends BaseModel {
     protected void saveRawEvent() {
         String eventId = (this.getAttribute("eventId") != null) ? this.getAttribute(
                 "eventId").toString() : null;
-        this.rawEvent = new RawEvent(eventId, this.getGraph());
-        this.rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
-        this.rawEvent.save();
+        rawEvent = new RawEvent(eventId);
+		System.out.println("Event attributes : " + this.attributes.toString());
+        rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
+        rawEvent.save();
     }
     protected void associateRawEventToHost() {
-        this.rawEvent.addEdge(getHost(), "Event_Host");
+        rawEvent.addEdge(host, "Event_Host");
     }
 
     public Map<String, Object> getAttributes() {
@@ -143,11 +132,11 @@ public abstract class Event extends BaseModel {
         return this.eventData.length > 9;
     }
 
-    public User getUser() {
+    /*public User getUser() {
 
         String userName = (String) this.getAttribute("userName");
         if (user == null) {
-            user = new User(userName, this.getGraph());
+            user = new User(userName);
             HashMap<String, Object> props = new HashMap<String, Object>();
             props.put("name", userName);
             user.setProperties(props);
@@ -160,7 +149,7 @@ public abstract class Event extends BaseModel {
 
         String domainName = (String) this.getAttribute("domainName");
         if (domain == null) {
-            domain = new Domain(domainName, this.getGraph());
+            domain = new Domain(domainName);
             HashMap<String, Object> props = new HashMap<String, Object>();
             props.put("name", domainName);
             domain.setProperties(props);
@@ -172,8 +161,9 @@ public abstract class Event extends BaseModel {
     public Host getHost() {
 
         String hostName = (String) this.getAttribute("hostname");
+		System.out.println("getHost function: hostName : " + hostName);
         if (host == null) {
-            host = new Host(hostName, this.getGraph());
+            host = new Host(hostName);
             HashMap<String, Object> props = new HashMap<String, Object>();
             props.put("hostname", hostName);
             host.setProperties(props);
@@ -182,22 +172,11 @@ public abstract class Event extends BaseModel {
         return host;
     }
 
-    public void updateHost() {
-        HashMap<String, Object> props = null;
-        if (host != null) {
-            props = new HashMap<String, Object>();
-            props.put("OS", this.getAttribute("Operating_System"));
-            props.put("numOfProcessors", this.getAttribute("Number_of_processors"));
-            props.put("totalMemory", this.getAttribute("Total_Memory"));
-            host.setProperties(props);
-            host.save();
-        }
-
-    }
+    */
 
     public TimeWindow getTimeWindow(DURATION duration) {
         Date date = Utils.parseEventDate((String) this.getAttribute("timestamp"));
-        return new TimeWindow(date, duration, this.getGraph());
+        return new TimeWindow(date, duration);
     }
 
     @Override
