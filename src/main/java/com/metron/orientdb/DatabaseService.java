@@ -235,6 +235,14 @@ public class DatabaseService {
             if (!schema.existsClass("Transaction_User")) {
                 eType = graph.createEdgeType("Transaction_User");
             }
+            
+            if (!schema.existsClass("Transaction_Host")) {
+                eType = graph.createEdgeType("Transaction_Host");
+            }
+            
+            if (!schema.existsClass("Transaction_Domain")) {
+                eType = graph.createEdgeType("Transaction_Domain");
+            }
 
             if (!schema.existsClass("Transaction_Event")) {
                 eType = graph.createEdgeType("Transaction_Event");

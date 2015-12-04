@@ -53,6 +53,8 @@ public class TransactionRollback extends Event {
         this.associateUser();
         // create association with domain
         this.associateDomain();
+        // create association with Host
+        this.associateHost();
         // create an association with timeWindow
         this.associateTimeWindow();
 
