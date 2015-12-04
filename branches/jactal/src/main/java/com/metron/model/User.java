@@ -19,7 +19,7 @@ public class User extends BaseModel{
         if (vertex == null) {
             this.vertex = graph.addVertex("class:User");
             HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("userName", userName);
+            props.put("name", userName);
             this.setProperties(props);
             this.save();
         }

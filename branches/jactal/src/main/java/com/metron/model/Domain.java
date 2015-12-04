@@ -19,7 +19,7 @@ public class Domain extends BaseModel{
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Domain");
             HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("domainName", domainName);
+            props.put("name", domainName);
             this.setProperties(props);
             this.save();
         }
