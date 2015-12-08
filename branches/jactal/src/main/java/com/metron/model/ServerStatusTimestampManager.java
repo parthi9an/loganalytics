@@ -10,8 +10,8 @@ public class ServerStatusTimestampManager {
 
     private static HashMap<String, String> timeInfo = new HashMap<String, String>();
 
-    public static void addTSInfo(String logstashHost, String host) {
-        timeInfo.put(logstashHost, host);
+    public static void addTSInfo(String logstashHost, String timestamp) {
+        timeInfo.put(logstashHost, timestamp);
     }
 
     public static String getTSInfo(String logstashHost) {

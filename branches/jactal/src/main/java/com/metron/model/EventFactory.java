@@ -32,6 +32,16 @@ public class EventFactory {
     }
 
     public Event parseLine(String line, String fileName, String ipAddress) {
+        
+        String hostKeyInfo = null;
+        Pattern hostInfoPattern = Pattern.compile("([^/]*/.*?/.*?/.*?/)(.*)(/.*?.log.*)",
+                Pattern.DOTALL);
+        Matcher hostMatch = hostInfoPattern.matcher(fileName);
+        if (hostMatch.matches()) {
+            hostKeyInfo = ipAddress + "_" + hostMatch.group(2).replaceAll("/", "_");
+        } else {
+            hostKeyInfo = ipAddress;
+        }
 
         line = line.trim();
         if (line.matches("^\\W*$")) {
@@ -51,29 +61,26 @@ public class EventFactory {
             Pattern timestampPattern = Pattern.compile(
                     "(.*)(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} -\\d{4})\\s(.*)",
                     Pattern.DOTALL);
-            Matcher m = timestampPattern.matcher(line);
-            if (m.matches()) {
-                ServerStatusTimestampManager.addTSInfo(ipAddress, m.group(2));
-                System.out.println("cs_server_status from host : " + ipAddress + " , TIMESTAMP : " + m.group(2));
+            Matcher timeMatch = timestampPattern.matcher(line);
+            if (timeMatch.matches()) {
+                ServerStatusTimestampManager.addTSInfo(hostKeyInfo, timeMatch.group(2));
+               // System.out.println("cs_server_status from host : " + ipAddress + " , TIMESTAMP : " + m.group(2));
             }
-            return this.parseServerStatusLog(line, ipAddress);
+            return this.parseServerStatusLog(line, hostKeyInfo);
 
+        } else if (fileName.contains("csmonitor_server.log")) {
+            findHostnameFromLog(hostKeyInfo, line, ".*?Canonical Host:\\s*([^:]+):\\d{4}.*");
         } else if (fileName.contains("server.log")) {
             // TDBEXCEP : do an regexp match to find is it server.log
             // information
-            Pattern hostNamePattern = Pattern.compile("([^']+Host name is ')([^']+).*");
-            Matcher m = hostNamePattern.matcher(line);
-            if (m.matches()) {
-                LogHostManager.addHostInfo(ipAddress, m.group(2));
-                System.out.println("cs_server from host : " + ipAddress + " , hostName : " + m.group(2));
-            }
-            return this.parseServerLog(line, ipAddress);
+            findHostnameFromLog(hostKeyInfo, line, "[^']+Host name is '([^']+).*");
+            return this.parseServerLog(line, hostKeyInfo);
         }
         return null;
     }
 
     // TDBEXCEP :
-    private Event parseServerStatusLog(final String eventString, final String ipAddress) {
+    private Event parseServerStatusLog(final String eventString, final String hostKeyInfo) {
 
         String eventName = "";
 
@@ -82,11 +89,11 @@ public class EventFactory {
         if (eventString.startsWith("| Server Stats |")) {
             eventName = "HostStatus";
         }
-        return this.createServerStausEventByName(eventName, eventString, ipAddress);
+        return this.createServerStausEventByName(eventName, eventString, hostKeyInfo);
     }
 
     // TDBEXCEP :
-    private Event parseServerLog(final String eventString, final String ipAddress) {
+    private Event parseServerLog(final String eventString, final String hostKeyInfo) {
 
         String eventName = "";
 
@@ -94,7 +101,7 @@ public class EventFactory {
             eventName = "ServerError";
         }
         // .. do the same for ERROR , DEBUG AND WARN
-        return this.createServerEventByName(eventName, eventString, ipAddress);
+        return this.createServerEventByName(eventName, eventString, hostKeyInfo);
     }
 
     private Event parseServerEventLog(String eventString) {
@@ -109,25 +116,25 @@ public class EventFactory {
 
     // TASK: 1
     private Event createServerStausEventByName(String eventName, String eventString,
-            String ipAddress) {
+            String hostKeyInfo) {
 
         Event event = null;
 
         if (eventName.equals("HostStatus")) {
             event = new HostStatus(eventString).setTimeStamp(ServerStatusTimestampManager
-                    .getTSInfo(ipAddress));;
-                    
+                    .getTSInfo(hostKeyInfo));;
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {
             event.parse();
+            LogHostManager.addHostInfo(hostKeyInfo, event.getAttribute("hostname").toString());
         }
 
         return event;
     }
 
     // TASK: 1
-    private Event createServerEventByName(String eventName, String eventString, String ipAddress) {
+    private Event createServerEventByName(String eventName, String eventString, String hostKeyInfo) {
 
         ServerEvent event = null;
 
@@ -136,7 +143,7 @@ public class EventFactory {
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {
-            event.setHost(LogHostManager.getHostInfo(ipAddress));
+            event.setHost(LogHostManager.getHostInfo(hostKeyInfo));
             event.parse();
         }
 
@@ -219,6 +226,15 @@ public class EventFactory {
 
         }
         return "";
+    }
+    
+    private void findHostnameFromLog(String hostKeyInfo, String line, String pattern) {
+        
+        Pattern hostNamePattern = Pattern.compile(pattern);
+        Matcher m = hostNamePattern.matcher(line);
+        if (m.matches()) {
+            LogHostManager.addHostInfo(hostKeyInfo, m.group(1));
+        }
     }
 
 }

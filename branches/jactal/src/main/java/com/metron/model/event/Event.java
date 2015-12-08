@@ -86,7 +86,7 @@ public abstract class Event extends BaseModel {
         String eventId = (this.getAttribute("eventId") != null) ? this.getAttribute(
                 "eventId").toString() : null;
         rawEvent = new RawEvent(eventId);
-		System.out.println("Event attributes : " + this.attributes.toString());
+		//System.out.println("Event attributes : " + this.attributes.toString());
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
         rawEvent.save();
     }
@@ -131,48 +131,6 @@ public abstract class Event extends BaseModel {
     public boolean isValid() {
         return this.eventData.length > 9;
     }
-
-    /*public User getUser() {
-
-        String userName = (String) this.getAttribute("userName");
-        if (user == null) {
-            user = new User(userName);
-            HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("name", userName);
-            user.setProperties(props);
-            user.save();
-        }
-        return user;
-    }
-
-    public Domain getDomain() {
-
-        String domainName = (String) this.getAttribute("domainName");
-        if (domain == null) {
-            domain = new Domain(domainName);
-            HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("name", domainName);
-            domain.setProperties(props);
-            domain.save();
-        }
-        return domain;
-    }
-
-    public Host getHost() {
-
-        String hostName = (String) this.getAttribute("hostname");
-		System.out.println("getHost function: hostName : " + hostName);
-        if (host == null) {
-            host = new Host(hostName);
-            HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("hostname", hostName);
-            host.setProperties(props);
-            host.save();
-        }
-        return host;
-    }
-
-    */
 
     public TimeWindow getTimeWindow(DURATION duration) {
         Date date = Utils.parseEventDate((String) this.getAttribute("timestamp"));
