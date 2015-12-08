@@ -66,7 +66,9 @@ public class BaseModel {
     }
 
     public void addEdge( BaseModel toVertex, String label) {
-        
+        if(toVertex == null){
+            return;
+        }
         Iterable<Edge> edges = this.vertex.getEdges(toVertex.vertex, Direction.OUT, label);
        // OrientEdge resultEdge = null;
         int size = 0;
@@ -93,6 +95,9 @@ public class BaseModel {
     }
 
     public void addEdge(BaseModel toVertex, String label, Object[] props) {
+        if(toVertex == null){
+            return;
+        }
         try {
             this.vertex.addEdge(label, toVertex.vertex, props);
             maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
