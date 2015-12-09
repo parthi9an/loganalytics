@@ -66,7 +66,7 @@ public class BaseModel {
     }
 
     public void addEdge( BaseModel toVertex, String label) {
-        if(toVertex == null){
+        if(toVertex.vertex == null){
             return;
         }
         Iterable<Edge> edges = this.vertex.getEdges(toVertex.vertex, Direction.OUT, label);
@@ -95,7 +95,7 @@ public class BaseModel {
     }
 
     public void addEdge(BaseModel toVertex, String label, Object[] props) {
-        if(toVertex == null){
+        if(toVertex.vertex == null){
             return;
         }
         try {

@@ -51,7 +51,7 @@ public class OrientDBGraphManager {
         // OGlobalConfiguration.RID_BAG_SBTREEBONSAI_TO_EMBEDDED_THRESHOLD.setValue(1000);
         if (graphFactory == null) {
             graphFactory =  new OrientGraphFactory("remote:" + host + "/" + db, userName, password)
-                    .setupPool(0, 100);
+                    .setupPool(0, 10000);
 //            graphFactory.declareIntent(new OIntentMassiveInsert());
             // OGlobalConfiguration.NETWORK_BINARY_DNS_LOADBALANCING_ENABLED.setValue(true);
         }
