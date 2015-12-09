@@ -123,7 +123,7 @@ public class DatabaseService {
                 vType.createProperty("timestamp", OType.DATETIME);
                 vType.createProperty("severity", OType.STRING);
                 vType.createProperty("rawData", OType.STRING);
-                vType.createProperty("processed", OType.STRING);
+                vType.createProperty("eventId", OType.STRING);
             }
             
             if (!schema.existsClass("Event_Host")) {
@@ -298,7 +298,7 @@ public class DatabaseService {
 
             if (!schema.existsClass("ExceptionElement")) {
                 vType = graph.createVertexType("ExceptionElement");
-                vType.createProperty("heading", OType.STRING);
+                vType.createProperty("value", OType.STRING);
             }
 
             if (!schema.existsClass("Exception_ExceptionElement")) {
