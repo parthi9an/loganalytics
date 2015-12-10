@@ -26,11 +26,11 @@ public class TransactionRollback extends Event {
     @Override
     public void process() {
 
-        transaction = new Transaction(this.getAttribute("transactionId").toString());
-        session = new Session(this.getAttribute("sessionId").toString());
-        host = new Host(getHostName());
-        domain = new Domain(this.getAttribute("domainName").toString());
-        user = new User(this.getAttribute("userName").toString());
+        transaction = new Transaction(this.getAttribute("transactionId").toString(), this.getGraph());
+        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
+        host = new Host(getHostName(), this.getGraph());
+        domain = new Domain(this.getAttribute("domainName").toString(), this.getGraph());
+        user = new User(this.getAttribute("userName").toString(), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();

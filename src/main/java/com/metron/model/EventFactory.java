@@ -122,7 +122,7 @@ public class EventFactory {
 
         if (eventName.equals("HostStatus")) {
             event = new HostStatus(eventString).setTimeStamp(ServerStatusTimestampManager
-                    .getTSInfo(hostKeyInfo));;
+                    .getTSInfo(hostKeyInfo));
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {

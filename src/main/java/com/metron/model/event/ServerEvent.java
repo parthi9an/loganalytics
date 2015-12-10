@@ -26,7 +26,7 @@ public class ServerEvent extends Event {
     @Override
     public void process() {
         // TBD-T1 : save rawEvent
-        host = new Host(this.getAttribute("hostname").toString());
+        host = new Host(this.getAttribute("hostname"), this.getGraph());
         this.saveRawEvent();
         this.associateRawEventToHost();
     }

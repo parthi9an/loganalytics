@@ -28,7 +28,7 @@ public class HostStatus extends Event {
     
     @Override
     public void process() {
-        host = new Host(this.getAttribute("hostname").toString());
+        host = new Host(this.getAttribute("hostname"), this.getGraph());
         this.saveRawEvent();
         this.associateRawEventToHost();
         this.saveHostStatus();

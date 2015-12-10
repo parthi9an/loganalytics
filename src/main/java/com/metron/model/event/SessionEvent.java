@@ -17,10 +17,10 @@ public class SessionEvent extends Event {
 
     @Override
     public void process() {
-        session = new Session(this.getAttribute("sessionId").toString());
-        host = new Host(this.getAttribute("hostname").toString());
-        domain = new Domain(this.getAttribute("domainName").toString());
-        user = new User(this.getAttribute("userName").toString());
+        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
+        host = new Host(this.getAttribute("hostname"), this.getGraph());
+        domain = new Domain(this.getAttribute("domainName").toString(), this.getGraph());
+        user = new User(this.getAttribute("userName").toString(), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();

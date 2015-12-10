@@ -6,8 +6,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class RawEvent extends BaseModel {
     
-    public RawEvent(String eventId) {
-        OrientBaseGraph graph = this.getGraph();
+    public RawEvent(String eventId, OrientBaseGraph graph) {
         if(eventId != null){
             this.vertex = find(graph, eventId);
         }
