@@ -78,7 +78,7 @@ public class ServerExpection extends ServerEvent {
 
         HashMap<String, Object> propsExceptionElement = null;
         for (String elem : this.exceptionElems) {
-            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem));
+            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem), this.getGraph());
             propsExceptionElement = new HashMap<String, Object>();
             propsExceptionElement.put("value", elem);
             exceptionElement.setProperties(propsExceptionElement);

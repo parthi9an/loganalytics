@@ -85,7 +85,7 @@ public abstract class Event extends BaseModel {
     protected void saveRawEvent() {
         String eventId = (this.getAttribute("eventId") != null) ? this.getAttribute(
                 "eventId").toString() : null;
-        rawEvent = new RawEvent(eventId);
+        rawEvent = new RawEvent(eventId, this.getGraph());
 		//System.out.println("Event attributes : " + this.attributes.toString());
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
         rawEvent.save();
@@ -134,7 +134,7 @@ public abstract class Event extends BaseModel {
 
     public TimeWindow getTimeWindow(DURATION duration) {
         Date date = Utils.parseEventDate((String) this.getAttribute("timestamp"));
-        return new TimeWindow(date, duration);
+        return new TimeWindow(date, duration, this.getGraph());
     }
 
     @Override

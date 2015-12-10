@@ -13,9 +13,8 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class User extends BaseModel {
 
-    public User(String userName) {
+    public User(String userName, OrientBaseGraph graph) {
         if (userName != null) {
-            OrientBaseGraph graph = this.getGraph();
             this.vertex = find(graph, userName);
             if (vertex == null) {
                 this.vertex = graph.addVertex("class:User");
