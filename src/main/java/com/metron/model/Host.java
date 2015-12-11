@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class Host extends BaseModel {
 
     public Host(Object hostName, OrientBaseGraph graph) {
+        super(graph);
         if (hostName != null) {
             this.vertex = find(graph, hostName.toString());
             if (vertex == null) {

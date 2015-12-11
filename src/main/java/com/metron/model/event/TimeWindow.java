@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class TimeWindow extends BaseModel{
     
     public TimeWindow(Date date, DURATION duration, OrientBaseGraph graph) {
-        
+        super(graph);
         this.vertex = find(date, duration, graph);
         
     }
