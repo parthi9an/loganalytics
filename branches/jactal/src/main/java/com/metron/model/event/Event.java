@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import com.metron.model.EventMappings;
 import com.metron.model.Host;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
+import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public abstract class Event extends BaseModel {
 
@@ -28,6 +31,8 @@ public abstract class Event extends BaseModel {
     private Map<String, Integer> mapping;
 
     private String[] eventData = null;
+    
+    private JSONObject ciseventData = null;
 
     public Event() {
         this.attributes = new HashMap<String, Object>();
@@ -49,6 +54,22 @@ public abstract class Event extends BaseModel {
 
     }
 
+    public Event(JSONObject eventData) {
+        
+        this.attributes = new HashMap<String, Object>();
+        this.ciseventData = eventData;
+        Iterator<?> keys = ciseventData.keys();        
+        try { 
+            while( keys.hasNext() ) {
+                String key = (String)keys.next();
+                attributes.put(key, ciseventData.get(key).toString());
+            }   
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
     public void parse() {
         if (this.eventData.length < EventMappings.getInstance().getDefaultColumnSize()) {
             return;
@@ -90,6 +111,17 @@ public abstract class Event extends BaseModel {
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
         rawEvent.save();
     }
+    
+    public void saveCisEvent(OrientVertex vertex){
+        try {
+            //vertex.setProperties(attributes);
+            vertex.setProperties(this.getAttributes());
+            vertex.save();
+        }catch (OConcurrentModificationException e) {
+            e.printStackTrace();
+        }    
+    }
+    
     protected void associateRawEventToHost() {
         rawEvent.addEdge(host, "Event_Host");
     }

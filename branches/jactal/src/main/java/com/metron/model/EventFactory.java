@@ -3,9 +3,11 @@ package com.metron.model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metron.model.event.CisUiEvent;
 import com.metron.model.event.Event;
 import com.metron.model.event.HostStatus;
 import com.metron.model.event.RequestCancel;
@@ -235,6 +237,11 @@ public class EventFactory {
         if (m.matches()) {
             LogHostManager.addHostInfo(hostKeyInfo, m.group(1));
         }
+    }
+
+    public Event parseCISEvent(JSONObject event) {
+        Event e = new CisUiEvent(event);
+        return e;
     }
 
 }

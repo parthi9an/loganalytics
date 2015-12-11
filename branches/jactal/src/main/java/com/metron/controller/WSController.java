@@ -631,24 +631,6 @@ public class WSController {
         jo.put("response", "Extracted Successfully");
         return _formJSONSuccessResponse(jo.toString());
     }
-    
-    @RequestMapping(value = "/receiveJMS")
-    public @ResponseBody ResponseEntity<String> receiveJMS(HttpServletRequest request) {
-        JSONObject result = new JSONObject();
-        try {
-            JmsService service = new JmsService();
-            result = service.consumeMsg();
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                result.put("status", "Failed");
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
-        }
-        return _formJSONSuccessResponse(result.toString());
-    }
 
     private ResponseEntity<String> _formJSONSuccessResponse(String data) {
         final HttpHeaders httpHeaders = new HttpHeaders();
