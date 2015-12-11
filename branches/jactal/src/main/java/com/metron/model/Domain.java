@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class Domain extends BaseModel {
 
     public Domain(String domainName, OrientBaseGraph graph) {
+        super(graph);
         if (domainName != null) {
             this.vertex = find(graph, domainName);
             if (vertex == null) {

@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class Session extends BaseModel{
     
     public Session(String sessionId, OrientBaseGraph graph) {
+        super(graph);
         this.vertex = find(graph, sessionId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Session");

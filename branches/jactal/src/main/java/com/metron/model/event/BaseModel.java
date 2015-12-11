@@ -12,13 +12,23 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class BaseModel {
 
+    
     protected OrientVertex vertex;
     
     private OrientBaseGraph baseGraph;
     
-    protected  int maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
+    private  int maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
     
     private HashMap<String, Object> properties = null;
+    
+    public BaseModel() {
+        
+    }
+    
+    public BaseModel(OrientBaseGraph baseGraph) {
+        this.baseGraph = baseGraph;
+    }
+
     
     public OrientVertex getVertex() {
         return vertex;
@@ -49,7 +59,7 @@ public class BaseModel {
     }
     
     public void save() {
-        OrientBaseGraph graph = this.getGraph();
+      
         try {
             vertex.setProperties(properties);
             vertex.save();
@@ -58,7 +68,7 @@ public class BaseModel {
             e.printStackTrace();
             if (maxRetries > 1) {
                 System.out.println("OConcurrentModificationException: retry " + maxRetries );
-                this.vertex = graph.getVertex(vertex.getId()); 
+                this.vertex = baseGraph.getVertex(vertex.getId()); 
                 save();
                 maxRetries--;
             }
