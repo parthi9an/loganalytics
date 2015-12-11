@@ -54,4 +54,10 @@ public class JmsManager {
     	return session;
     }
     
+    public void close() throws JMSException{
+        if(connection != null){
+            connection.stop();
+        }
+    }
+    
 }
