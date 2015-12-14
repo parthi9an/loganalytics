@@ -47,7 +47,7 @@ public class EventFactory {
 
         if (fileName.contains("server_events")) {
             // Event Line
-            return this.parseServerEventLog(line);
+            return this.parseServerEventLog(line, hostKeyInfo);
         } else if (fileName.contains("server_status")) {
             // status
             // TBDLATER : Change the logstch multiline for server_status
@@ -101,13 +101,13 @@ public class EventFactory {
         return this.createServerEventByName(eventName, eventString, hostKeyInfo);
     }
 
-    private Event parseServerEventLog(String eventString) {
+    private Event parseServerEventLog(String eventString, String hostKeyInfo) {
 
         String[] eventData = eventString.split("\t");
         // TASK: 1
         String eventName = this.computeEventName(eventData);
 
-        Event e = this.createEventByName(eventName, eventData);
+        Event e = this.createEventByName(eventName, eventData, hostKeyInfo);
         return e;
     }
 
@@ -140,9 +140,7 @@ public class EventFactory {
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {
-            String hostName = (LogHostManager.getHostInfo(hostKeyInfo) != null) ? LogHostManager
-                    .getHostInfo(hostKeyInfo) : "anonymous_" + hostKeyInfo;
-            event.setHost(hostName);
+            event.setHost(LogHostManager.getHostInfo(hostKeyInfo));
             event.parse();
         }
 
@@ -150,7 +148,7 @@ public class EventFactory {
     }
 
     // TASK: 1
-    private Event createEventByName(String eventName, String[] eventData) {
+    private Event createEventByName(String eventName, String[] eventData, String hostKeyInfo) {
 
         Event event = null;
 
@@ -172,7 +170,8 @@ public class EventFactory {
         } else if (eventName.equals("RequestFail")) {
             event = new RequestFail(eventData);
         } else if (eventName.equals("TransactionRollback")) {
-            event = new TransactionRollback(eventData);
+            event = new TransactionRollback(eventData);           
+            event.setHost(LogHostManager.getHostInfo(hostKeyInfo));
         }
 
         if (event != null) {
