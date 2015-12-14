@@ -35,14 +35,14 @@ public class SessionStart extends SessionEvent {
 
         // retrieve request object for requestId - create if does not exist.
         // populate requestId, startTime, status (started)
-        String sessionId = (String) this.getAttribute("sessionId");
-        //Session session = new Session(sessionId, this.getGraph());
+        String sessionId = this.getStringAttr("sessionId");
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("sessionId", sessionId);
         props.put(
                 "startTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
-                        "timestamp").toString())));
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
         session.setProperties(props);
         session.save();
     }

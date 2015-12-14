@@ -124,7 +124,7 @@ public class EventFactory {
         if (event != null) {
             event.setTimeStamp(ServerStatusTimestampManager.getTSInfo(hostKeyInfo));
             event.parse();
-            LogHostManager.addHostInfo(hostKeyInfo, event.getAttribute("hostname").toString());
+            LogHostManager.addHostInfo(hostKeyInfo, event.getStringAttr("hostname"));
         }
 
         return event;

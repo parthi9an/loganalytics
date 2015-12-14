@@ -56,21 +56,20 @@ public class SessionEnd extends SessionEvent {
 
     private void updateSession() {
 
-        String sessionId = (String) this.getAttribute("sessionId");
-       // Session session = new Session(sessionId, this.getGraph());
+        String sessionId = this.getStringAttr("sessionId");
 
         HashMap<String, Object> props = new HashMap<String, Object>();
         if (session.vertex.getProperty("startTime") != null) {
             Date startTime = session.vertex.getProperty("startTime");
             props.put("delta", Utils.getDateDiffInMIllisec(startTime,
-                    Utils.parseEventDate(this.getAttribute("timestamp").toString())));
+                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
         }
         
         props.put("sessionId", sessionId);
         props.put(
                 "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
-                        "timestamp").toString())));
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
         session.setProperties(props);
         session.save();
     }

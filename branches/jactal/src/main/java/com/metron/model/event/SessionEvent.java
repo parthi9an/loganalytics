@@ -18,11 +18,11 @@ public class SessionEvent extends Event {
 
     @Override
     public void process() {
-        Object hostName = this.getAttribute("hostname");
-        session = new Session(this.getAttribute("sessionId"), hostName, this.getGraph());
+        String hostName = this.getStringAttr("hostname");
+        session = new Session(this.getStringAttr("sessionId"), hostName, this.getGraph());
         host = new Host(hostName, this.getGraph());
-        domain = new Domain(this.getAttribute("domainName"), this.getGraph());
-        user = new User(this.getAttribute("userName"), this.getGraph());
+        domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
+        user = new User(this.getStringAttr("userName"), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();

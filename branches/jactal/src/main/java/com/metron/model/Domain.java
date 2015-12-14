@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Domain extends BaseModel {
 
-    public Domain(Object domainName, OrientBaseGraph graph) {
+    public Domain(String domainName, OrientBaseGraph graph) {
         super(graph);
         if (domainName != null) {
             this.vertex = find(graph, domainName);
@@ -25,8 +25,8 @@ public class Domain extends BaseModel {
             }
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, Object domainName) {
-        return OrientUtils.getVertex(graph, "select *  from Domain where name = '" + domainName.toString()
+    public OrientVertex find(OrientBaseGraph graph, String domainName) {
+        return OrientUtils.getVertex(graph, "select *  from Domain where name = '" + domainName
                 + "'");
     }
 }
