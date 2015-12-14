@@ -38,6 +38,7 @@ public class DatabaseService {
             if (!schema.existsClass("User")) {
                 vType = graph.createVertexType("User");
                 vType.createProperty("name", OType.STRING);
+                vType.createIndex("User.name", "UNIQUE", "name");
             }
 
             if (!schema.existsClass("TimeWindow1")) {
@@ -66,6 +67,7 @@ public class DatabaseService {
             if (!schema.existsClass("Domain")) {
                 vType = graph.createVertexType("Domain");
                 vType.createProperty("name", OType.STRING);
+                vType.createIndex("Domain.name", "UNIQUE", "name");
             }
 
             if (!schema.existsClass("Host")) {
@@ -74,6 +76,7 @@ public class DatabaseService {
                 vType.createProperty("OS", OType.STRING);
                 vType.createProperty("numOfProcessors", OType.LONG);
                 vType.createProperty("totalMemory", OType.STRING);
+                vType.createIndex("Host.hostname", "UNIQUE", "hostname");
 
             }
 
@@ -124,6 +127,7 @@ public class DatabaseService {
                 vType.createProperty("severity", OType.STRING);
                 vType.createProperty("rawData", OType.STRING);
                 vType.createProperty("eventId", OType.STRING);
+                vType.createIndex("Event.eventId", "NOTUNIQUE", "eventId");
             }
             
             if (!schema.existsClass("Event_Host")) {
@@ -135,6 +139,7 @@ public class DatabaseService {
                 vType.createProperty("sessionId", OType.STRING);
                 vType.createProperty("startTime", OType.DATETIME);
                 vType.createProperty("endTime", OType.DATETIME);
+                vType.createIndex("Session.sessionId", "NOTUNIQUE", "sessionId");
             }
 
             if (!schema.existsClass("Session_User")) {
@@ -169,6 +174,7 @@ public class DatabaseService {
                 vType = graph.createVertexType("Error");
                 vType.createProperty("label", OType.STRING);
                 vType.createProperty("value", OType.STRING);
+                vType.createIndex("Error.value", "UNIQUE", "value");                
             }
             
 //            vType =  graph.getVertexType("Request");
@@ -183,6 +189,8 @@ public class DatabaseService {
                 vType.createProperty("errorMsg", OType.STRING);
                 vType.createProperty("bytesIn", OType.LONG);
                 vType.createProperty("bytesOut", OType.LONG);
+                vType.createIndex("Request.requestId", "NOTUNIQUE", "requestId");
+                
             }
 
             if (!schema.existsClass("Request_Error")) {
@@ -230,6 +238,8 @@ public class DatabaseService {
                 vType.createProperty("transactionId", OType.STRING);
                 vType.createProperty("status", OType.STRING);
                 vType.createProperty("timestamp", OType.DATETIME);
+                vType.createIndex("Transaction.transactionId", "NOTUNIQUE", "transactionId");
+                
             }
 
             if (!schema.existsClass("Transaction_User")) {
@@ -299,6 +309,7 @@ public class DatabaseService {
             if (!schema.existsClass("ExceptionElement")) {
                 vType = graph.createVertexType("ExceptionElement");
                 vType.createProperty("value", OType.STRING);
+                vType.createIndex("ExceptionElement.transactionId", "UNIQUE", "value");
             }
 
             if (!schema.existsClass("Exception_ExceptionElement")) {
