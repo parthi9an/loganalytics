@@ -45,7 +45,6 @@ import com.metron.service.BaseService;
 import com.metron.service.DomainService;
 import com.metron.service.ExceptionService;
 import com.metron.service.HostService;
-import com.metron.service.JmsService;
 import com.metron.service.RequestService;
 import com.metron.service.SessionService;
 import com.metron.service.UserService;
