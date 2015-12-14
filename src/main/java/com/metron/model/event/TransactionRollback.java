@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import com.metron.model.Domain;
 import com.metron.model.Host;
+import com.metron.model.Session;
+import com.metron.model.Transaction;
 import com.metron.model.User;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
@@ -26,16 +28,15 @@ public class TransactionRollback extends Event {
     @Override
     public void process() {
 
-        transaction = new Transaction(this.getAttribute("transactionId").toString(), this.getGraph());
-        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
+        transaction = new Transaction(this.getAttribute("transactionId"), this.getGraph());
+        session = new Session(this.getAttribute("sessionId"), this.getGraph());
         host = new Host(getHostName(), this.getGraph());
-        domain = new Domain(this.getAttribute("domainName").toString(), this.getGraph());
-        user = new User(this.getAttribute("userName").toString(), this.getGraph());
+        domain = new Domain(this.getAttribute("domainName"), this.getGraph());
+        user = new User(this.getAttribute("userName"), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();
         this.saveTransaction();
-        this.setVertex(transaction.vertex);
         this.updateAssociations();
 
     }
@@ -115,7 +116,6 @@ public class TransactionRollback extends Event {
         props.put("timestamp", Utils.parseEventDate(this.getAttribute("timestamp").toString()));
         transaction.setProperties(props);
         transaction.save();
-       // this.vertex = transaction.vertex;
     }
 
     private String getHostName() {

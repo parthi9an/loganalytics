@@ -1,4 +1,4 @@
-package com.metron.model.event;
+package com.metron.model;
 
 import java.util.Calendar;
 import java.util.Date;

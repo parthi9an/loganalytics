@@ -12,8 +12,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metron.model.BaseModel;
 import com.metron.model.EventMappings;
 import com.metron.model.Host;
+import com.metron.model.RawEvent;
+import com.metron.model.TimeWindow;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
@@ -172,6 +175,9 @@ public abstract class Event extends BaseModel {
     @Override
     public String toString() {
         return new JSONObject(this.attributes).toString();
+    }
+    public void setTimeStamp(String tsInfo) {
+        // TODO Auto-generated method stub
     }
 
 }

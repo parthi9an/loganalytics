@@ -1,4 +1,4 @@
-package com.metron.model.event;
+package com.metron.model;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class BaseModel {
 
     
-    protected OrientVertex vertex;
+    public OrientVertex vertex;
     
     private OrientBaseGraph baseGraph;
     
@@ -27,15 +27,6 @@ public class BaseModel {
     
     public BaseModel(OrientBaseGraph baseGraph) {
         this.baseGraph = baseGraph;
-    }
-
-    
-    public OrientVertex getVertex() {
-        return vertex;
-    }
-
-    public void setVertex(OrientVertex vertex) {
-        this.vertex = vertex;
     }
 
     public void setGraph(OrientBaseGraph graph) {

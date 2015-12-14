@@ -2,6 +2,7 @@ package com.metron.model.event;
 
 import com.metron.model.Domain;
 import com.metron.model.Host;
+import com.metron.model.Session;
 import com.metron.model.User;
 
 
@@ -17,10 +18,10 @@ public class SessionEvent extends Event {
 
     @Override
     public void process() {
-        session = new Session(this.getAttribute("sessionId").toString(), this.getGraph());
+        session = new Session(this.getAttribute("sessionId"), this.getGraph());
         host = new Host(this.getAttribute("hostname"), this.getGraph());
-        domain = new Domain(this.getAttribute("domainName").toString(), this.getGraph());
-        user = new User(this.getAttribute("userName").toString(), this.getGraph());
+        domain = new Domain(this.getAttribute("domainName"), this.getGraph());
+        user = new User(this.getAttribute("userName"), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();
