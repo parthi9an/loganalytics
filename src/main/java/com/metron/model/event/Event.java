@@ -109,7 +109,7 @@ public abstract class Event extends BaseModel {
     protected void saveRawEvent() {
         String eventId = (this.getAttribute("eventId") != null) ? this.getAttribute(
                 "eventId").toString() : null;
-        rawEvent = new RawEvent(eventId, this.getGraph());
+        rawEvent = new RawEvent(eventId,this.getAttribute("hostname"), this.getGraph());
 		//System.out.println("Event attributes : " + this.attributes.toString());
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
         rawEvent.save();
@@ -178,6 +178,10 @@ public abstract class Event extends BaseModel {
     }
     public void setTimeStamp(String tsInfo) {
         // TODO Auto-generated method stub
+    }
+    public void setHost(String hostName) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
