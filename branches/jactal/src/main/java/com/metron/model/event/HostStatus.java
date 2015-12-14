@@ -13,19 +13,18 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 public class HostStatus extends Event {
 
     private String logData = null;
-    
+
     public HostStatus(String logData) {
         this.logData = logData;
     }
 
-    public HostStatus setTimeStamp(String timestamp) {
+    public void setTimeStamp(String timestamp) {
         this.setAttribute("timestamp",
                 OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(timestamp)));
         // this.setAttribute("timestamp", timestamp); // timestamp format issue
         // when insert into rawEvent
-        return this;
     }
-    
+
     @Override
     public void process() {
         host = new Host(this.getAttribute("hostname"), this.getGraph());
@@ -67,24 +66,21 @@ public class HostStatus extends Event {
     private void associateRawEvent() {
         this.addEdge(rawEvent, "HostStatus_Event");
     }
-    
-    private void updateHost() {
-        if (host != null) {
-            HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("OS", this.getAttribute("Operating_System"));
-            props.put("numOfProcessors", this.getAttribute("Number_of_processors"));
-            props.put("totalMemory", this.getAttribute("Total_Memory"));
-            host.setProperties(props);
-            host.save();
-        }
 
+    private void updateHost() {
+        HashMap<String, Object> props = new HashMap<String, Object>();
+        props.put("OS", this.getAttribute("Operating_System"));
+        props.put("numOfProcessors", this.getAttribute("Number_of_processors"));
+        props.put("totalMemory", this.getAttribute("Total_Memory"));
+        host.update(props);
     }
-    
+
     private void saveHostStatus() {
         OrientBaseGraph graph = this.getGraph();
         this.vertex = graph.addVertex("class:HostStatus");
         HashMap<String, Object> hostStatus = new HashMap<String, Object>();
-     //   System.out.println("InsideHostStatus attributes:" + this.getAttributes().toString());
+        // System.out.println("InsideHostStatus attributes:" +
+        // this.getAttributes().toString());
         hostStatus.put("timestamp", this.getAttribute("timestamp"));
         hostStatus.put("hostname", this.getAttribute("hostname"));
         hostStatus.put("totalMemoryUsed", this.getAttribute("Total_Memory_Used"));
@@ -119,7 +115,7 @@ public class HostStatus extends Event {
                 Pattern.DOTALL);
         Matcher m = serverStatusPattern.matcher(this.logData.trim());
         if (m.matches()) {
-           // System.out.println("HostStatusParseMatch");
+            // System.out.println("HostStatusParseMatch");
             String[] statusElements = m.group(2).split("\\n");
             for (String element : statusElements) {
                 String[] detail = element.split(":\\s+");

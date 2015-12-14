@@ -1,4 +1,4 @@
-package com.metron.model.event;
+package com.metron.model;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;

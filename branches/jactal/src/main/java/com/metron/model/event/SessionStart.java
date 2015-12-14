@@ -15,7 +15,6 @@ public class SessionStart extends SessionEvent {
     public void process() {
         super.process();       
         this.saveSession();
-        this.setVertex(session.vertex);
         this.updateAssociations();
 
     }
@@ -46,7 +45,6 @@ public class SessionStart extends SessionEvent {
                         "timestamp").toString())));
         session.setProperties(props);
         session.save();
-       // this.vertex = session.vertex;
     }
 
 }

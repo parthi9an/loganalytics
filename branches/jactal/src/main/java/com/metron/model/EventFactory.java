@@ -23,7 +23,7 @@ import com.metron.model.event.TransactionRollback;
 public class EventFactory {
 
     private static EventFactory instance;
-    
+
     protected Logger log = LoggerFactory.getLogger(EventFactory.class);
 
     public static EventFactory getInstance() {
@@ -34,16 +34,10 @@ public class EventFactory {
     }
 
     public Event parseLine(String line, String fileName, String ipAddress) {
-        
-        String hostKeyInfo = null;
-        Pattern hostInfoPattern = Pattern.compile("([^/]*/.*?/.*?/.*?/)(.*)(/.*?.log.*)",
-                Pattern.DOTALL);
-        Matcher hostMatch = hostInfoPattern.matcher(fileName);
-        if (hostMatch.matches()) {
-            hostKeyInfo = ipAddress + "_" + hostMatch.group(2).replaceAll("/", "_");
-        } else {
-            hostKeyInfo = ipAddress;
-        }
+
+        String hostKeyInfo = fileName.substring(fileName.indexOf("/") + 1,
+                fileName.lastIndexOf("/")).replaceAll("/", "_");
+        hostKeyInfo = ipAddress + "_" + hostKeyInfo;
 
         line = line.trim();
         if (line.matches("^\\W*$")) {
@@ -66,16 +60,17 @@ public class EventFactory {
             Matcher timeMatch = timestampPattern.matcher(line);
             if (timeMatch.matches()) {
                 ServerStatusTimestampManager.addTSInfo(hostKeyInfo, timeMatch.group(2));
-               // System.out.println("cs_server_status from host : " + ipAddress + " , TIMESTAMP : " + m.group(2));
+                // System.out.println("cs_server_status from host : " +
+                // ipAddress + " , TIMESTAMP : " + m.group(2));
             }
             return this.parseServerStatusLog(line, hostKeyInfo);
 
         } else if (fileName.contains("csmonitor_server.log")) {
-            findHostnameFromLog(hostKeyInfo, line, ".*?Canonical Host:\\s*([^:]+):\\d{4}.*");
+            setHostnameFromLog(hostKeyInfo, line, ".*?Canonical Host:\\s*([^:]+):\\d{4}.*");
         } else if (fileName.contains("server.log")) {
             // TDBEXCEP : do an regexp match to find is it server.log
             // information
-            findHostnameFromLog(hostKeyInfo, line, "[^']+Host name is '([^']+).*");
+            setHostnameFromLog(hostKeyInfo, line, "[^']+Host name is '([^']+).*");
             return this.parseServerLog(line, hostKeyInfo);
         }
         return null;
@@ -123,11 +118,11 @@ public class EventFactory {
         Event event = null;
 
         if (eventName.equals("HostStatus")) {
-            event = new HostStatus(eventString).setTimeStamp(ServerStatusTimestampManager
-                    .getTSInfo(hostKeyInfo));
+            event = new HostStatus(eventString);
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {
+            event.setTimeStamp(ServerStatusTimestampManager.getTSInfo(hostKeyInfo));
             event.parse();
             LogHostManager.addHostInfo(hostKeyInfo, event.getAttribute("hostname").toString());
         }
@@ -145,7 +140,9 @@ public class EventFactory {
         }
         // TDBEXCEP : .. do for remaining
         if (event != null) {
-            event.setHost(LogHostManager.getHostInfo(hostKeyInfo));
+            String hostName = (LogHostManager.getHostInfo(hostKeyInfo) != null) ? LogHostManager
+                    .getHostInfo(hostKeyInfo) : "anonymous_" + hostKeyInfo;
+            event.setHost(hostName);
             event.parse();
         }
 
@@ -229,9 +226,9 @@ public class EventFactory {
         }
         return "";
     }
-    
-    private void findHostnameFromLog(String hostKeyInfo, String line, String pattern) {
-        
+
+    private void setHostnameFromLog(String hostKeyInfo, String line, String pattern) {
+
         Pattern hostNamePattern = Pattern.compile(pattern);
         Matcher m = hostNamePattern.matcher(line);
         if (m.matches()) {

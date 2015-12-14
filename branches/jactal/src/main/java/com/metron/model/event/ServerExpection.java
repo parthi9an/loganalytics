@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.metron.model.ExceptionElement;
 import com.metron.orientdb.OrientUtils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;

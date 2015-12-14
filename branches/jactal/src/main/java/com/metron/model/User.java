@@ -2,7 +2,6 @@ package com.metron.model;
 
 import java.util.HashMap;
 
-import com.metron.model.event.BaseModel;
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -13,7 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class User extends BaseModel {
 
-    public User(String userName, OrientBaseGraph graph) {
+    public User(Object userName, OrientBaseGraph graph) {
         super(graph);
         if (userName != null) {
             this.vertex = find(graph, userName);
@@ -26,7 +25,7 @@ public class User extends BaseModel {
             }
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, String userName) {
-        return OrientUtils.getVertex(graph, "select *  from User where name = '" + userName + "'");
+    public OrientVertex find(OrientBaseGraph graph, Object userName) {
+        return OrientUtils.getVertex(graph, "select *  from User where name = '" + userName.toString() + "'");
     }
 }

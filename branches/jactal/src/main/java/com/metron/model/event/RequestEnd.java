@@ -17,7 +17,6 @@ public class RequestEnd extends RequestEvent {
     public void process() {
         super.process();
         this.updateRequest();
-        this.setVertex(request.vertex);
         this.updateAssociations();
 
     }
@@ -88,7 +87,6 @@ public class RequestEnd extends RequestEvent {
 
         request.setProperties(props);
         request.save();
-        //this.vertex = request.vertex;
 
     }
 

@@ -1,4 +1,4 @@
-package com.metron.model.event;
+package com.metron.model;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Request extends BaseModel {
   
-    public Request(String requestId, OrientBaseGraph graph) {
+    public Request(Object requestId, OrientBaseGraph graph) {
         super(graph);
         this.vertex = find(graph, requestId);
         if (vertex == null) {
@@ -14,9 +14,9 @@ public class Request extends BaseModel {
         }
     }
     
-    public static OrientVertex find(OrientBaseGraph graph, String requestId) {
+    public static OrientVertex find(OrientBaseGraph graph, Object requestId) {
         OrientVertex request = OrientUtils.getVertex(graph,
-                "select *  from Request where requestId = '" + requestId + "'");
+                "select *  from Request where requestId = '" + requestId.toString() + "'");
         return request;
     }
     

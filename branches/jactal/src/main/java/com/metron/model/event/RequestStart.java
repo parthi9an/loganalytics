@@ -15,7 +15,6 @@ public class RequestStart extends RequestEvent {
     public void process() {
         super.process();
         this.saveRequest();
-        this.setVertex(request.vertex);
         this.updateAssociations();
 
     }
@@ -55,7 +54,6 @@ public class RequestStart extends RequestEvent {
 
         request.setProperties(props);
         request.save();
-       // this.vertex = request.vertex;
     }
 
 }

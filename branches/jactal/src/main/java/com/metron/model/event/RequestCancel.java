@@ -18,7 +18,6 @@ public class RequestCancel extends RequestEvent {
           
         super.process();
         this.updateRequest();
-        this.setVertex(request.vertex);
         this.updateAssociations();
 
     }
@@ -87,7 +86,6 @@ public class RequestCancel extends RequestEvent {
 
         request.setProperties(props);
         request.save();
-        //this.vertex = request.vertex;
     }
 
 }
