@@ -19,12 +19,12 @@ public class RequestEvent extends Event {
 
     @Override
     public void process() {
-        Object hostName = this.getAttribute("hostname");
-        request = new Request(this.getAttribute("requestId"), hostName, this.getGraph());
-        session = new Session(this.getAttribute("sessionId"), hostName, this.getGraph());
+        String hostName = this.getStringAttr("hostname");
+        request = new Request(this.getStringAttr("requestId"), hostName, this.getGraph());
+        session = new Session(this.getStringAttr("sessionId"), hostName, this.getGraph());
         host = new Host(hostName, this.getGraph());
-        domain = new Domain(this.getAttribute("domainName"), this.getGraph());
-        user = new User(this.getAttribute("userName"), this.getGraph());
+        domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
+        user = new User(this.getStringAttr("userName"), this.getGraph());
         
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
@@ -39,8 +39,6 @@ public class RequestEvent extends Event {
     }
 
     protected void associateSession() {
-//        this.addEdge(new Session(this.getAttribute("sessionId").toString(), this.getGraph()),
-//                "Request_Session");
         request.addEdge(session, "Request_Session");
     }
     protected void associateRawEvent() {
@@ -61,13 +59,5 @@ public class RequestEvent extends Event {
 
         request.addEdge(host, "Request_Host");
     }
-
-    // public Request getRequest() {
-    // String requestId = (String) this.getAttribute("requestId");
-    // if (request == null) {
-    // request = new Request(requestId, this.getGraph());
-    // }
-    // return request;
-    // }
 
 }

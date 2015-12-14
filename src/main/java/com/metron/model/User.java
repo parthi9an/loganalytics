@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class User extends BaseModel {
 
-    public User(Object userName, OrientBaseGraph graph) {
+    public User(String userName, OrientBaseGraph graph) {
         super(graph);
         if (userName != null) {
             this.vertex = find(graph, userName);
@@ -25,7 +25,7 @@ public class User extends BaseModel {
             }
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, Object userName) {
-        return OrientUtils.getVertex(graph, "select *  from User where name = '" + userName.toString() + "'");
+    public OrientVertex find(OrientBaseGraph graph, String userName) {
+        return OrientUtils.getVertex(graph, "select *  from User where name = '" + userName + "'");
     }
 }

@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Host extends BaseModel {
 
-    public Host(Object hostName, OrientBaseGraph graph) {
+    public Host(String hostName, OrientBaseGraph graph) {
         super(graph);
         if (hostName != null) {
             this.vertex = find(graph, hostName);
@@ -25,9 +25,9 @@ public class Host extends BaseModel {
             }
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, Object hostName) {
+    public OrientVertex find(OrientBaseGraph graph, String hostName) {
         return OrientUtils.getVertex(graph,
-                "select *  from Host where hostname = '" + hostName.toString() + "'");
+                "select *  from Host where hostname = '" + hostName + "'");
     }
     
     public void update(HashMap<String, Object> props){

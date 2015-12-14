@@ -31,12 +31,12 @@ public class TransactionRollback extends Event {
 
     @Override
     public void process() {
-        Object hostName = this.getAttribute("hostname");
-        transaction = new Transaction(this.getAttribute("transactionId"), hostName, this.getGraph());
-        session = new Session(this.getAttribute("sessionId"), hostName, this.getGraph());
+        String hostName = this.getStringAttr("hostname");
+        transaction = new Transaction(this.getStringAttr("transactionId"), hostName, this.getGraph());
+        session = new Session(this.getStringAttr("sessionId"), hostName, this.getGraph());
         host = new Host(hostName, this.getGraph());
-        domain = new Domain(this.getAttribute("domainName"), this.getGraph());
-        user = new User(this.getAttribute("userName"), this.getGraph());
+        domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
+        user = new User(this.getStringAttr("userName"), this.getGraph());
         this.saveRawEvent(); // save the raw event with
         // eventid, timestamp
         this.associateRawEventToHost();
@@ -112,12 +112,12 @@ public class TransactionRollback extends Event {
 
     private void saveTransaction() {
 
-        String transactionId = (String) this.getAttribute("transactionId");
-       // Transaction transaction = getTransaction();
+        String transactionId = this.getStringAttr("transactionId");
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("transactionId", transactionId);
         props.put("status", this.getAttribute("status"));
-        props.put("timestamp", Utils.parseEventDate(this.getAttribute("timestamp").toString()));
+        props.put("timestamp", Utils.parseEventDate(this.getStringAttr("timestamp")));
         transaction.setProperties(props);
         transaction.save();
     }
@@ -126,7 +126,7 @@ public class TransactionRollback extends Event {
         // get the session for this transaction
         // get the host associted with this session and return the host
         String sql = "select OUT('Session_Host')[0].hostname as hostname from Session where sessionId='"
-                + this.getAttribute("sessionId").toString() + "'";
+                + this.getStringAttr("sessionId") + "'";
         String data = new com.metron.orientdb.OrientRest().doSql(sql);
         String hostName = null;
         try {

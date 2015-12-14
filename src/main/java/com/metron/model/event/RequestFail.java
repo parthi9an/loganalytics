@@ -67,22 +67,22 @@ public class RequestFail extends RequestEvent {
         // retrieve request object for requestId - create if does not exist.
         // populate requestId, startTime, status (started)
 
-        String requestId = (String) this.getAttribute("requestId");
-       // Request request = this.getRequest();
+        String requestId = this.getStringAttr("requestId");
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
             props.put(
                     "delta",
                     Utils.getDateDiffInMIllisec(startTime,
-                            Utils.parseEventDate(this.getAttribute("timestamp").toString())));
+                            Utils.parseEventDate(this.getStringAttr("timestamp"))));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
         props.put(
                 "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
-                        "timestamp").toString())));
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
         props.put("errorMessage", this.getAttribute("errorMessage"));
 
         props.put("bytesIn", this.getAttribute("bytesIn"));
@@ -92,7 +92,7 @@ public class RequestFail extends RequestEvent {
         request.setProperties(props);
         request.save();
         List<Error> errors = RequestErrorType.getInstance().findErrorType(
-                this.getAttribute("errorMessage").toString());
+                this.getStringAttr("errorMessage"));
 
         for (Error error : errors) {
             //request.addEdge(error, "Request_Error")

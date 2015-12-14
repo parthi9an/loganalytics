@@ -27,7 +27,7 @@ public class HostStatus extends Event {
 
     @Override
     public void process() {
-        host = new Host(this.getAttribute("hostname"), this.getGraph());
+        host = new Host(this.getStringAttr("hostname"), this.getGraph());
         this.saveRawEvent();
         this.associateRawEventToHost();
         this.saveHostStatus();
@@ -80,7 +80,6 @@ public class HostStatus extends Event {
         this.vertex = graph.addVertex("class:HostStatus");
         HashMap<String, Object> hostStatus = new HashMap<String, Object>();
         // System.out.println("InsideHostStatus attributes:" +
-        // this.getAttributes().toString());
         hostStatus.put("timestamp", this.getAttribute("timestamp"));
         hostStatus.put("hostname", this.getAttribute("hostname"));
         hostStatus.put("totalMemoryUsed", this.getAttribute("Total_Memory_Used"));

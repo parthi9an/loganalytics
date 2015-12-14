@@ -25,7 +25,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public abstract class Event extends BaseModel {
 
     protected RawEvent rawEvent;
-    
+
     protected Host host;
 
     protected Logger log = LoggerFactory.getLogger(Event.class);
@@ -34,7 +34,7 @@ public abstract class Event extends BaseModel {
     private Map<String, Integer> mapping;
 
     private String[] eventData = null;
-    
+
     private JSONObject ciseventData = null;
 
     public Event() {
@@ -58,21 +58,21 @@ public abstract class Event extends BaseModel {
     }
 
     public Event(JSONObject eventData) {
-        
+
         this.attributes = new HashMap<String, Object>();
         this.ciseventData = eventData;
-        Iterator<?> keys = ciseventData.keys();        
-        try { 
-            while( keys.hasNext() ) {
-                String key = (String)keys.next();
+        Iterator<?> keys = ciseventData.keys();
+        try {
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
                 attributes.put(key, ciseventData.get(key).toString());
-            }   
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void parse() {
         if (this.eventData.length < EventMappings.getInstance().getDefaultColumnSize()) {
             return;
@@ -107,24 +107,24 @@ public abstract class Event extends BaseModel {
     }
 
     protected void saveRawEvent() {
-        String eventId = (this.getAttribute("eventId") != null) ? this.getAttribute(
-                "eventId").toString() : null;
-        rawEvent = new RawEvent(eventId,this.getAttribute("hostname"), this.getGraph());
-		//System.out.println("Event attributes : " + this.attributes.toString());
+        String eventId = this.getStringAttr("eventId");
+        rawEvent = new RawEvent(eventId, this.getStringAttr("hostname"), this.getGraph());
+        // System.out.println("Event attributes : " +
+        // this.attributes.toString());
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
         rawEvent.save();
     }
-    
-    public void saveCisEvent(OrientVertex vertex){
+
+    public void saveCisEvent(OrientVertex vertex) {
         try {
-            //vertex.setProperties(attributes);
+            // vertex.setProperties(attributes);
             vertex.setProperties(this.getAttributes());
             vertex.save();
-        }catch (OConcurrentModificationException e) {
+        } catch (OConcurrentModificationException e) {
             e.printStackTrace();
-        }    
+        }
     }
-    
+
     protected void associateRawEventToHost() {
         rawEvent.addEdge(host, "Event_Host");
     }
@@ -143,6 +143,10 @@ public abstract class Event extends BaseModel {
 
     public Object getAttribute(String key) {
         return this.attributes.get(key);
+    }
+
+    public String getStringAttr(String key) {
+        return (this.attributes.containsKey(key)) ? this.attributes.get(key).toString() : null;
     }
 
     public String[] getRawData() {
@@ -181,7 +185,7 @@ public abstract class Event extends BaseModel {
     }
     public void setHost(String hostName) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

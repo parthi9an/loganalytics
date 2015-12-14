@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Request extends BaseModel {
 
-    public Request(Object requestId, Object hostname, OrientBaseGraph graph) {
+    public Request(String requestId, String hostname, OrientBaseGraph graph) {
         super(graph);
         this.vertex = find(graph, requestId, hostname);
         if (vertex == null) {
@@ -14,10 +14,10 @@ public class Request extends BaseModel {
         }
     }
 
-    public static OrientVertex find(OrientBaseGraph graph, Object requestId, Object hostname) {
+    public static OrientVertex find(OrientBaseGraph graph, String requestId, String hostname) {
         OrientVertex request = OrientUtils.getVertex(graph,
-                "select *  from Request where requestId = '" + requestId.toString()
-                        + "' and OUT('Request_Host')[0].hostname='" + hostname.toString() + "'");
+                "select *  from Request where requestId = '" + requestId
+                        + "' and OUT('Request_Host')[0].hostname='" + hostname + "'");
         return request;
     }
 

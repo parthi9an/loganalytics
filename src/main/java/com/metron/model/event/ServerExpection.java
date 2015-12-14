@@ -25,7 +25,7 @@ public class ServerExpection extends ServerEvent {
         // TDBEXCEP : seperate the exception stacktrace into each line and store
         // as an exception element
         super.parse();
-        this.exceptionElems = this.getAttribute("content").toString().split("\\sat\\s");
+        this.exceptionElems = this.getStringAttr("content").split("\\sat\\s");
         this.setAttribute("heading", this.exceptionElems[0]);
 
     }
@@ -66,8 +66,8 @@ public class ServerExpection extends ServerEvent {
     private void associateHost() {
         Object[] props = new Object[]{
                 "timestamp",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
-                        "timestamp").toString()))};
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp")))};
         this.addEdge(host, "Exception_Host", props);
     }
 

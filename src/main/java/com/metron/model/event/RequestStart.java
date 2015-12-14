@@ -41,14 +41,14 @@ public class RequestStart extends RequestEvent {
         // retrieve request object for requestId - create if does not exist.
         // populate requestId, startTime, status (started)
         
-        String requestId = (String) this.getAttribute("requestId");
-     //   Request request = this.getRequest(); 
+        String requestId = this.getStringAttr("requestId");
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("requestId", requestId);
         props.put(
                 "startTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getAttribute(
-                        "timestamp").toString())));
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
         props.put("status", this.getAttribute("status"));
         props.put("sqlQuery", this.getAttribute("sqlQuery"));
 

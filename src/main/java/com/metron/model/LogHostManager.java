@@ -16,9 +16,8 @@ public class LogHostManager {
 
     public static String getHostInfo(String logstashHost) {
 
-        return (hostInfo.get(logstashHost) != null) ? hostInfo.get(logstashHost) : "anonymous_"
-                + logstashHost;
-        // return hostInfo.get(logstashHost);
+        return (hostInfo.containsKey(logstashHost)) ? hostInfo.get(logstashHost) : "anonymous";
+        
     }
 
 }
