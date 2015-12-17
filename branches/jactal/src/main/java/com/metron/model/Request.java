@@ -6,18 +6,18 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Request extends BaseModel {
 
-    public Request(String requestId, String hostname, OrientBaseGraph graph) {
+    public Request(String requestId, String parentId, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, requestId, hostname);
+        this.vertex = find(graph, requestId, parentId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Request");
         }
     }
 
-    public static OrientVertex find(OrientBaseGraph graph, String requestId, String hostname) {
+    public static OrientVertex find(OrientBaseGraph graph, String requestId, String parentId) {
         OrientVertex request = OrientUtils.getVertex(graph,
                 "select *  from Request where requestId = '" + requestId
-                        + "' and OUT('Request_Host')[0].hostname='" + hostname + "'");
+                        + "' and parentId='" + parentId + "'");
         return request;
     }
 

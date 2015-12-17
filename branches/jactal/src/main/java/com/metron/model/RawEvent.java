@@ -6,17 +6,17 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class RawEvent extends BaseModel {
 
-    public RawEvent(String eventId, String hostname, OrientBaseGraph graph) {
+    public RawEvent(String eventId, OrientBaseGraph graph) {
         super(graph);
         if (eventId != null) {
-            this.vertex = find(graph, eventId, hostname);
+            this.vertex = find(graph, eventId);
         }
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Event");
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, String eventId, String hostname) {
+    public OrientVertex find(OrientBaseGraph graph, String eventId) {
         return OrientUtils.getVertex(graph, "select from Event where eventId = '" + eventId
-                + "' and OUT('Event_Host')[0].hostname='" + hostname + "'");
+                + "'");
     }
 }

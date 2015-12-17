@@ -45,6 +45,7 @@ public class RequestStart extends RequestEvent {
 
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("requestId", requestId);
+        props.put("parentId", this.getAttribute("parentId"));
         props.put(
                 "startTime",
                 OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
