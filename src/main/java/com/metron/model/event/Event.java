@@ -108,7 +108,7 @@ public abstract class Event extends BaseModel {
 
     protected void saveRawEvent() {
         String eventId = this.getStringAttr("eventId");
-        rawEvent = new RawEvent(eventId, this.getStringAttr("hostname"), this.getGraph());
+        rawEvent = new RawEvent(eventId, this.getGraph());
         // System.out.println("Event attributes : " +
         // this.attributes.toString());
         rawEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));

@@ -22,4 +22,5 @@ public class TimeWindowUtil {
             return min;
         }
     }
+
 }

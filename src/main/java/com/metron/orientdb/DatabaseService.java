@@ -38,7 +38,7 @@ public class DatabaseService {
             if (!schema.existsClass("User")) {
                 vType = graph.createVertexType("User");
                 vType.createProperty("name", OType.STRING);
-                vType.createIndex("User.name", "UNIQUE", "name");
+                vType.createIndex("User.name", "NOTUNIQUE", "name");
             }
 
             if (!schema.existsClass("TimeWindow1")) {
@@ -67,7 +67,7 @@ public class DatabaseService {
             if (!schema.existsClass("Domain")) {
                 vType = graph.createVertexType("Domain");
                 vType.createProperty("name", OType.STRING);
-                vType.createIndex("Domain.name", "UNIQUE", "name");
+                vType.createIndex("Domain.name", "NOTUNIQUE", "name");
             }
 
             if (!schema.existsClass("Host")) {
@@ -76,7 +76,7 @@ public class DatabaseService {
                 vType.createProperty("OS", OType.STRING);
                 vType.createProperty("numOfProcessors", OType.LONG);
                 vType.createProperty("totalMemory", OType.STRING);
-                vType.createIndex("Host.hostname", "UNIQUE", "hostname");
+                vType.createIndex("Host.hostname", "NOTUNIQUE", "hostname");
 
             }
 
@@ -137,9 +137,11 @@ public class DatabaseService {
             if (!schema.existsClass("Session")) {
                 vType = graph.createVertexType("Session","BaseEvent");
                 vType.createProperty("sessionId", OType.STRING);
+                vType.createProperty("parentId", OType.STRING);
                 vType.createProperty("startTime", OType.DATETIME);
                 vType.createProperty("endTime", OType.DATETIME);
                 vType.createIndex("Session.sessionId", "NOTUNIQUE", "sessionId");
+                vType.createIndex("Session.parentId", "NOTUNIQUE", "parentId");
             }
 
             if (!schema.existsClass("Session_User")) {
@@ -174,7 +176,7 @@ public class DatabaseService {
                 vType = graph.createVertexType("Error");
                 vType.createProperty("label", OType.STRING);
                 vType.createProperty("value", OType.STRING);
-                vType.createIndex("Error.value", "UNIQUE", "value");                
+                vType.createIndex("Error.value", "NOTUNIQUE", "value");                
             }
             
 //            vType =  graph.getVertexType("Request");
@@ -183,6 +185,7 @@ public class DatabaseService {
             if (!schema.existsClass("Request")) {
                 vType = graph.createVertexType("Request","BaseEvent");
                 vType.createProperty("requestId", OType.STRING);
+                vType.createProperty("parentId", OType.STRING);
                 vType.createProperty("startTime", OType.DATETIME);
                 vType.createProperty("endTime", OType.DATETIME);
                 vType.createProperty("status", OType.STRING);
@@ -190,6 +193,7 @@ public class DatabaseService {
                 vType.createProperty("bytesIn", OType.LONG);
                 vType.createProperty("bytesOut", OType.LONG);
                 vType.createIndex("Request.requestId", "NOTUNIQUE", "requestId");
+                vType.createIndex("Request.parentId", "NOTUNIQUE", "parentId");
                 
             }
 
@@ -236,9 +240,11 @@ public class DatabaseService {
             if (!schema.existsClass("Transaction")) {
                 vType = graph.createVertexType("Transaction");
                 vType.createProperty("transactionId", OType.STRING);
+                vType.createProperty("parentId", OType.STRING);
                 vType.createProperty("status", OType.STRING);
                 vType.createProperty("timestamp", OType.DATETIME);
                 vType.createIndex("Transaction.transactionId", "NOTUNIQUE", "transactionId");
+                vType.createIndex("Transaction.parentId", "NOTUNIQUE", "parentId");
                 
             }
 
@@ -309,7 +315,7 @@ public class DatabaseService {
             if (!schema.existsClass("ExceptionElement")) {
                 vType = graph.createVertexType("ExceptionElement");
                 vType.createProperty("value", OType.STRING);
-                vType.createIndex("ExceptionElement.transactionId", "UNIQUE", "value");
+                vType.createIndex("ExceptionElement.value", "NOTUNIQUE", "value");
             }
 
             if (!schema.existsClass("Exception_ExceptionElement")) {

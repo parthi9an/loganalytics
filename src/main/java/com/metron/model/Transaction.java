@@ -6,16 +6,16 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Transaction extends BaseModel {
 
-    public Transaction(String transactionId, String hostname, OrientBaseGraph graph) {
+    public Transaction(String transactionId, String parentId, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, transactionId, hostname);
+        this.vertex = find(graph, transactionId, parentId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Transaction");
         }
     }
 
-    public OrientVertex find(OrientBaseGraph graph, String transactionId, String hostname) {
+    public OrientVertex find(OrientBaseGraph graph, String transactionId, String parentId) {
         return OrientUtils.getVertex(graph, "select *  from Transaction where transactionId = '"
-                + transactionId + "' and OUT('Transaction_Host')[0].hostname='" + hostname + "'");
+                + transactionId + "' and parentId='" + parentId + "'");
     }
 }

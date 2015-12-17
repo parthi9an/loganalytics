@@ -6,16 +6,16 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class Session extends BaseModel {
 
-    public Session(String sessionId, String hostname, OrientBaseGraph graph) {
+    public Session(String sessionId, String parentId, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, sessionId, hostname);
+        this.vertex = find(graph, sessionId, parentId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Session");
         }
     }
-    public OrientVertex find(OrientBaseGraph graph, String sessionId, String hostname) {
+    public OrientVertex find(OrientBaseGraph graph, String sessionId, String parentId) {
         return OrientUtils.getVertex(graph, "select *  from Session where sessionId = '"
-                + sessionId + "' and OUT('Session_Host')[0].hostname='" + hostname + "'");
+                + sessionId + "' and parentId ='" + parentId + "'");
     }
 
 }

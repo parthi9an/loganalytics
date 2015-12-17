@@ -39,6 +39,7 @@ public class SessionStart extends SessionEvent {
 
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("sessionId", sessionId);
+        props.put("parentId", this.getAttribute("parentId"));
         props.put(
                 "startTime",
                 OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
