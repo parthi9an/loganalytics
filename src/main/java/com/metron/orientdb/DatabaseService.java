@@ -38,7 +38,7 @@ public class DatabaseService {
             if (!schema.existsClass("User")) {
                 vType = graph.createVertexType("User");
                 vType.createProperty("name", OType.STRING);
-                vType.createIndex("User.name", "NOTUNIQUE", "name");
+                vType.createIndex("User.name", "UNIQUE", "name");
             }
 
             if (!schema.existsClass("TimeWindow1")) {
@@ -67,7 +67,7 @@ public class DatabaseService {
             if (!schema.existsClass("Domain")) {
                 vType = graph.createVertexType("Domain");
                 vType.createProperty("name", OType.STRING);
-                vType.createIndex("Domain.name", "NOTUNIQUE", "name");
+                vType.createIndex("Domain.name", "UNIQUE", "name");
             }
 
             if (!schema.existsClass("Host")) {
@@ -76,7 +76,7 @@ public class DatabaseService {
                 vType.createProperty("OS", OType.STRING);
                 vType.createProperty("numOfProcessors", OType.LONG);
                 vType.createProperty("totalMemory", OType.STRING);
-                vType.createIndex("Host.hostname", "NOTUNIQUE", "hostname");
+                vType.createIndex("Host.hostname", "UNIQUE", "hostname");
 
             }
 
