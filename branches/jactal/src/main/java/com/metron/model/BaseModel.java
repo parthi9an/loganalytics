@@ -85,7 +85,7 @@ public class BaseModel {
         } catch(OConcurrentModificationException e){
             e.printStackTrace();
             if (maxRetries > 1) {
-                System.out.println("OConcurrentModificationException: Edge retry remains " + (maxRetries - 1));
+                System.out.println("OConcurrentModificationException in " + label + " : Edge retry remains " + (maxRetries - 1));
                 this.vertex = baseGraph.getVertex(this.vertex.getId());
                 toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
                 addEdge(toVertex , label);
@@ -105,7 +105,7 @@ public class BaseModel {
         } catch(OConcurrentModificationException e){
             e.printStackTrace();
             if (maxRetries > 1) {
-                System.out.println("OConcurrentModificationException: Edge retry remains " + (maxRetries - 1));
+                System.out.println("OConcurrentModificationException in " + label + " : Edge retry remains " + (maxRetries - 1));
                 this.vertex = baseGraph.getVertex(this.vertex.getId());
                 toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId()); 
                 addEdge(toVertex, label, props);
