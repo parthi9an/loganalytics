@@ -35,11 +35,11 @@ public class TransactionRollback extends Event {
         host = new Host(this.getStringAttr("hostname"), this.getGraph());
         domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
         user = new User(this.getStringAttr("userName"), this.getGraph());
-        this.saveRawEvent(); 
-        this.associateRawEventToHost();
         session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
         transaction = new Transaction(this.getStringAttr("transactionId"), parentId,
                 this.getGraph());
+        this.saveRawEvent(); 
+        this.associateRawEventToHost();
         this.saveTransaction();
         this.updateAssociations();
 

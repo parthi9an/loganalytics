@@ -1,5 +1,7 @@
 package com.metron.model;
 
+import java.util.HashMap;
+
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -11,6 +13,11 @@ public class Request extends BaseModel {
         this.vertex = find(graph, requestId, parentId);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:Request");
+            HashMap<String, Object> props = new HashMap<String, Object>();
+            props.put("requestId", requestId);
+            props.put("parentId", parentId);
+            this.setProperties(props);
+            this.save();
         }
     }
 
