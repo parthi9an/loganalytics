@@ -48,7 +48,7 @@ public class OrientDBGraphManager {
 
     public OrientGraphFactory getFactory() {
 
-        OGlobalConfiguration.RID_BAG_EMBEDDED_TO_SBTREEBONSAI_THRESHOLD.setValue(1000);
+        //OGlobalConfiguration.RID_BAG_EMBEDDED_TO_SBTREEBONSAI_THRESHOLD.setValue(1000);
         // OGlobalConfiguration.RID_BAG_SBTREEBONSAI_TO_EMBEDDED_THRESHOLD.setValue(1000);
         if (graphFactory == null) {
             graphFactory =  new OrientGraphFactory("remote:" + host + "/" + db, userName, password)
