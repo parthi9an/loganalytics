@@ -5,26 +5,26 @@ import com.metron.model.Host;
 import com.metron.model.Session;
 import com.metron.model.User;
 
-
 public class SessionEvent extends Event {
-    
+
     protected Session session;
     protected Domain domain;
     protected User user;
-    
+
     public SessionEvent(String[] eventData) {
         super(eventData);
     }
 
     @Override
     public void process() {
-        session = new Session(this.getStringAttr("sessionId"), this.getStringAttr("parentId"), this.getGraph());
+
         host = new Host(this.getStringAttr("hostname"), this.getGraph());
         domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
         user = new User(this.getStringAttr("userName"), this.getGraph());
-        this.saveRawEvent(); // save the raw event with
-        // eventid, timestamp
+        this.saveRawEvent();
         this.associateRawEventToHost();
+        session = new Session(this.getStringAttr("sessionId"), this.getStringAttr("parentId"),
+                this.getGraph());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SessionEvent extends Event {
     protected void associateRawEvent() {
         session.addEdge(rawEvent, "Session_Event");
     }
-    
+
     protected void associateUser() {
 
         session.addEdge(user, "Session_User");
@@ -51,5 +51,5 @@ public class SessionEvent extends Event {
 
         session.addEdge(host, "Session_Host");
     }
-    
+
 }

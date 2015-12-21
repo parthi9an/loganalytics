@@ -20,11 +20,11 @@ public class TransactionRollback extends Event {
     protected Session session;
     protected Domain domain;
     protected User user;
-    
+
     public TransactionRollback(String[] eventData) {
         super(eventData);
     }
-    
+
     public void setHost(String host) {
         this.setAttribute("hostname", host);
     }
@@ -32,14 +32,14 @@ public class TransactionRollback extends Event {
     @Override
     public void process() {
         String parentId = this.getStringAttr("parentId");
-        transaction = new Transaction(this.getStringAttr("transactionId"), parentId, this.getGraph());
-        session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
         host = new Host(this.getStringAttr("hostname"), this.getGraph());
         domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
         user = new User(this.getStringAttr("userName"), this.getGraph());
-        this.saveRawEvent(); // save the raw event with
-        // eventid, timestamp
+        this.saveRawEvent(); 
         this.associateRawEventToHost();
+        session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
+        transaction = new Transaction(this.getStringAttr("transactionId"), parentId,
+                this.getGraph());
         this.saveTransaction();
         this.updateAssociations();
 

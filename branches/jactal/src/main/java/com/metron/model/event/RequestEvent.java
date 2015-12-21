@@ -20,15 +20,15 @@ public class RequestEvent extends Event {
     @Override
     public void process() {
         String parentId = this.getStringAttr("parentId");
-        request = new Request(this.getStringAttr("requestId"), parentId, this.getGraph());
-        session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
         host = new Host(this.getStringAttr("hostname"), this.getGraph());
         domain = new Domain(this.getStringAttr("domainName"), this.getGraph());
         user = new User(this.getStringAttr("userName"), this.getGraph());
-        
-        this.saveRawEvent(); // save the raw event with
-        // eventid, timestamp
+        this.saveRawEvent(); 
         this.associateRawEventToHost();
+        session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
+        request = new Request(this.getStringAttr("requestId"), parentId, this.getGraph());
+        
+        
     }
 
     @Override
