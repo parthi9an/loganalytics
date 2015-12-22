@@ -23,7 +23,9 @@ public class DatabaseService {
         OrientDBGraphManager.getInstance().createDB();
         OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
         // By Default the Date Format is yyyy-MM-dd HH:mm:ss we have changed to yyyy-MM-dd HH:mm:ss.SSS
-        graph.command(new OCommandSQL("ALTER DATABASE DATETIMEFORMAT yyyy-MM-dd HH:mm:ss.SSS")).execute();        
+        graph.command(new OCommandSQL("ALTER DATABASE DATETIMEFORMAT yyyy-MM-dd HH:mm:ss.SSS")).execute();
+        // Allow strictSql
+        graph.command(new OCommandSQL("ALTER DATABASE CUSTOM strictSql=false")).execute();        
         OSchemaProxy schema = graph.getRawGraph().getMetadata().getSchema();
         
         OrientVertexType vType = null;
