@@ -66,10 +66,12 @@ public class EventFactory {
             return this.parseServerStatusLog(line, hostKeyInfo);
 
         } else if (fileName.contains("csmonitor_server.log")) {
+            // find and set the hostname
             setHostnameFromLog(hostKeyInfo, line, ".*?Canonical Host:\\s*([^:]+):\\d{4}.*");
         } else if (fileName.contains("server.log")) {
             // TDBEXCEP : do an regexp match to find is it server.log
             // information
+            // find and set the hostname
             setHostnameFromLog(hostKeyInfo, line, "[^']+Host name is '([^']+).*");
             return this.parseServerLog(line, hostKeyInfo);
         }

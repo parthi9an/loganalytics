@@ -95,7 +95,6 @@ public class RequestFail extends RequestEvent {
                 this.getStringAttr("errorMessage"));
 
         for (Error error : errors) {
-            //request.addEdge(error, "Request_Error")
             request.addEdge(error, "Request_Error");
         }
 

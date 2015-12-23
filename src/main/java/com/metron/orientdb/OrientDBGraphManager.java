@@ -2,7 +2,6 @@ package com.metron.orientdb;
 
 import com.metron.AppConfig;
 import com.orientechnologies.orient.client.remote.OServerAdmin;
-import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
@@ -48,7 +47,7 @@ public class OrientDBGraphManager {
 
     public OrientGraphFactory getFactory() {
 
-        //OGlobalConfiguration.RID_BAG_EMBEDDED_TO_SBTREEBONSAI_THRESHOLD.setValue(1000);
+        // OGlobalConfiguration.RID_BAG_EMBEDDED_TO_SBTREEBONSAI_THRESHOLD.setValue(1000);
         // OGlobalConfiguration.RID_BAG_SBTREEBONSAI_TO_EMBEDDED_THRESHOLD.setValue(1000);
         if (graphFactory == null) {
             graphFactory =  new OrientGraphFactory("remote:" + host + "/" + db, userName, password)
