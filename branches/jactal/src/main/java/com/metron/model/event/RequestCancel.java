@@ -43,6 +43,7 @@ public class RequestCancel extends RequestEvent {
     }
     private void associateTimeWindow() {
 
+        // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
 

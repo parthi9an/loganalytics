@@ -123,21 +123,4 @@ public class TransactionRollback extends Event {
         transaction.save();
     }
 
-    private String getHostName() {
-        // get the session for this transaction
-        // get the host associted with this session and return the host
-        String sql = "select OUT('Session_Host')[0].hostname as hostname from Session where sessionId='"
-                + this.getStringAttr("sessionId") + "'";
-        String data = new com.metron.orientdb.OrientRest().doSql(sql);
-        String hostName = null;
-        try {
-            JSONObject jsondata = new JSONObject(data.toString());
-            JSONArray resultArr = jsondata.getJSONArray("result");
-            hostName = resultArr.getJSONObject(0).getString("hostname");
-        } catch (JSONException e1) {
-            e1.printStackTrace();
-        }
-        return hostName;
-    }
-
 }

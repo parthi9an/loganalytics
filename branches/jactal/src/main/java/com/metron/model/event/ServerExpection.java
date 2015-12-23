@@ -32,7 +32,7 @@ public class ServerExpection extends ServerEvent {
 
     private void associateTimeWindow() {
         // TODO Auto-generated method stub
-
+        // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
         this.addEdge(this.getTimeWindow(duration), "Exception_" + duration.getTable());
 

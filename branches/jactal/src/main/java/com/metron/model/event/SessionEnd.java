@@ -36,7 +36,8 @@ public class SessionEnd extends SessionEvent {
     }
 
     private void associateTimeWindow() {
-
+        
+        // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
         session.addEdge(this.getTimeWindow(duration), "Session_" + duration.getTable());
 

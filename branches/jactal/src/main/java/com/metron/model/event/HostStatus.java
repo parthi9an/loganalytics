@@ -79,7 +79,6 @@ public class HostStatus extends Event {
         OrientBaseGraph graph = this.getGraph();
         this.vertex = graph.addVertex("class:HostStatus");
         HashMap<String, Object> hostStatus = new HashMap<String, Object>();
-        // System.out.println("InsideHostStatus attributes:" +
         hostStatus.put("timestamp", this.getAttribute("timestamp"));
         hostStatus.put("hostname", this.getAttribute("hostname"));
         hostStatus.put("totalMemoryUsed", this.getAttribute("Total_Memory_Used"));
@@ -114,7 +113,6 @@ public class HostStatus extends Event {
                 Pattern.DOTALL);
         Matcher m = serverStatusPattern.matcher(this.logData.trim());
         if (m.matches()) {
-            // System.out.println("HostStatusParseMatch");
             String[] statusElements = m.group(2).split("\\n");
             for (String element : statusElements) {
                 String[] detail = element.split(":\\s+");
