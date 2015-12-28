@@ -64,11 +64,14 @@ public class ServerExpection extends ServerEvent {
     }
 
     private void associateHost() {
-        Object[] props = new Object[]{
-                "timestamp",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-                        "timestamp")))};
-        this.addEdge(host, "Exception_Host", props);
+        // Object[] props = new Object[]{
+        // "timestamp",
+        // OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+        // "timestamp")))};
+        // this.addEdge(host, "Exception_Host", props);
+        
+        this.addEdge(host, "Exception_Host", "timestamp", OrientUtils
+                .convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr("timestamp"))));
     }
 
     private void associateRawEvent() {
@@ -79,7 +82,8 @@ public class ServerExpection extends ServerEvent {
 
         HashMap<String, Object> propsExceptionElement = null;
         for (String elem : this.exceptionElems) {
-            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem), this.getGraph());
+            exceptionElement = new ExceptionElement(StringEscapeUtils.escapeJavaScript(elem),
+                    this.getGraph());
             propsExceptionElement = new HashMap<String, Object>();
             propsExceptionElement.put("value", elem);
             exceptionElement.setProperties(propsExceptionElement);

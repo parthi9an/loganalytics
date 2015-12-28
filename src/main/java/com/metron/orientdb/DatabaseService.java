@@ -130,6 +130,7 @@ public class DatabaseService {
                 vType.createProperty("rawData", OType.STRING);
                 vType.createProperty("eventId", OType.STRING);
                 vType.createIndex("Event.eventId", "NOTUNIQUE", "eventId");
+                vType.createIndex("Event.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("Event_Host")) {
@@ -148,6 +149,10 @@ public class DatabaseService {
 
             if (!schema.existsClass("Session_User")) {
                 eType = graph.createEdgeType("Session_User");
+            }
+            
+            if (!schema.existsClass("Session_Host")) {
+                eType = graph.createEdgeType("Session_Host");
             }
 
             if (!schema.existsClass("Session_Event")) {

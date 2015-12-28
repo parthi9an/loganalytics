@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.metron.AppConfig;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -12,19 +13,18 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class BaseModel {
 
-    
     public OrientVertex vertex;
-    
+
     private OrientBaseGraph baseGraph;
-    
-    private  int maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
-    
+
+    private int maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
+
     private HashMap<String, Object> properties = null;
-    
+
     public BaseModel() {
-        
+
     }
-    
+
     public BaseModel(OrientBaseGraph baseGraph) {
         this.baseGraph = baseGraph;
     }
@@ -40,7 +40,7 @@ public class BaseModel {
 
         return this.baseGraph;
     }
-    
+
     public HashMap<String, Object> getProperties() {
         return properties;
     }
@@ -48,31 +48,31 @@ public class BaseModel {
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
     }
-    
+
     public void save() {
-      
+
         try {
             vertex.setProperties(properties);
             vertex.save();
             // restore default maxRetries limit after successful
-            maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
+            maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
         } catch (OConcurrentModificationException e) {
             e.printStackTrace();
             if (maxRetries > 0) {
-                System.out.println("OConcurrentModificationException: retry " + maxRetries );
-                this.vertex = baseGraph.getVertex(vertex.getId()); 
+                System.out.println("OConcurrentModificationException: retry " + maxRetries);
+                this.vertex = baseGraph.getVertex(vertex.getId());
                 save();
                 maxRetries--;
             }
         }
     }
 
-    public void addEdge( BaseModel toVertex, String label) {
-        if(toVertex.vertex == null){
+    public void addEdge(BaseModel toVertex, String label) {
+        if (toVertex.vertex == null) {
             return;
         }
         Iterable<Edge> edges = this.vertex.getEdges(toVertex.vertex, Direction.OUT, label);
-       // OrientEdge resultEdge = null;
+        // OrientEdge resultEdge = null;
         int size = 0;
         for (Edge edge : edges) {
             size++;
@@ -82,42 +82,68 @@ public class BaseModel {
         }
         try {
             // to avoid version mismatch problem: get the latest
-            this.vertex = baseGraph.getVertex(this.vertex.getId());
-            toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId()); 
+            // this.vertex = baseGraph.getVertex(this.vertex.getId());
+            // toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
             // add edge
-            this.vertex.addEdge(label, toVertex.vertex);
+            // this.vertex.addEdge(label, toVertex.vertex);
+            baseGraph.command(
+                    new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
+                            + " to " + toVertex.vertex.getId())).execute();
             // restore default maxRetries limit after successful
-            maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
-        } catch(OConcurrentModificationException e){
+            maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
+        } catch (OConcurrentModificationException e) {
             e.printStackTrace();
             if (maxRetries > 0) {
-                System.out.println("OConcurrentModificationException in " + label + " : Edge retry remains " + (maxRetries - 1));
-                addEdge(toVertex , label);
+                System.out.println("OConcurrentModificationException in " + label
+                        + " : Edge retry remains " + (maxRetries - 1));
+                addEdge(toVertex, label);
                 maxRetries--;
-            }    
+            }
         }
 
     }
 
     public void addEdge(BaseModel toVertex, String label, Object[] props) {
-        if(toVertex.vertex == null){
+        if (toVertex.vertex == null) {
             return;
         }
         try {
             // to avoid version mismatch problem: get the latest
             this.vertex = baseGraph.getVertex(this.vertex.getId());
-            toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId()); 
-            // add edge            
+            toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
+             // add edge
             this.vertex.addEdge(label, toVertex.vertex, props);
             // restore default maxRetries limit after successful
-            maxRetries =  AppConfig.getInstance().getInt("db.maxRetry");
-        } catch(OConcurrentModificationException e){
+            maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
+        } catch (OConcurrentModificationException e) {
             e.printStackTrace();
             if (maxRetries > 0) {
-                System.out.println("OConcurrentModificationException in " + label + " : Edge retry remains " + (maxRetries - 1));
+                System.out.println("OConcurrentModificationException in " + label
+                        + " : Edge retry remains " + (maxRetries - 1));
                 addEdge(toVertex, label, props);
                 maxRetries--;
-            }    
+            }
+        }
+    }
+    public void addEdge(BaseModel toVertex, String label, String propKey, String propVal) {
+        if (toVertex.vertex == null) {
+            return;
+        }
+        try {
+            baseGraph.command(
+                    new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
+                            + " to " + toVertex.vertex.getId() + " set " + propKey + "='" + propVal
+                            + "'")).execute();
+            // restore default maxRetries limit after successful
+            maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
+        } catch (OConcurrentModificationException e) {
+            e.printStackTrace();
+            if (maxRetries > 0) {
+                System.out.println("OConcurrentModificationException in " + label
+                        + " : Edge retry remains " + (maxRetries - 1));
+                addEdge(toVertex, label, propKey, propVal);
+                maxRetries--;
+            }
         }
     }
 }
