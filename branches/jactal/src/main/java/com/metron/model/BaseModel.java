@@ -81,9 +81,7 @@ public class BaseModel {
             return;
         }
         try {
-            // //to avoid version mismatch problem: get the latest
-            // this.vertex = baseGraph.getVertex(this.vertex.getId());
-            // toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
+            
             // //add edge
             // this.vertex.addEdge(label, toVertex.vertex);
             baseGraph.command(
@@ -96,6 +94,9 @@ public class BaseModel {
             if (maxRetries > 0) {
                 System.out.println("OConcurrentModificationException in " + label
                         + " : Edge retry remains " + (maxRetries - 1));
+                //to avoid version mismatch problem: get the latest
+                this.vertex = baseGraph.getVertex(this.vertex.getId());
+                toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
                 addEdge(toVertex, label);
                 maxRetries--;
             }
@@ -131,6 +132,8 @@ public class BaseModel {
             return;
         }
         try {
+            // add edge
+            // this.vertex.addEdge(label, toVertex.vertex, props);
             baseGraph.command(
                     new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
                             + " to " + toVertex.vertex.getId() + " set " + propKey + "='" + propVal
@@ -142,6 +145,9 @@ public class BaseModel {
             if (maxRetries > 0) {
                 System.out.println("OConcurrentModificationException in " + label
                         + " : Edge retry remains " + (maxRetries - 1));
+                // to avoid version mismatch problem: get the latest
+                this.vertex = baseGraph.getVertex(this.vertex.getId());
+                toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
                 addEdge(toVertex, label, propKey, propVal);
                 maxRetries--;
             }
