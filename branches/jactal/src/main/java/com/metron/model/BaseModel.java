@@ -61,8 +61,8 @@ public class BaseModel {
             if (maxRetries > 0) {
                 System.out.println("OConcurrentModificationException: retry " + maxRetries);
                 this.vertex = baseGraph.getVertex(vertex.getId());
-                save();
                 maxRetries--;
+                save();
             }
         }
     }
@@ -97,8 +97,8 @@ public class BaseModel {
                 //to avoid version mismatch problem: get the latest
                 this.vertex = baseGraph.getVertex(this.vertex.getId());
                 toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
-                addEdge(toVertex, label);
                 maxRetries--;
+                addEdge(toVertex, label);
             }
         }
 
@@ -148,8 +148,8 @@ public class BaseModel {
                 // to avoid version mismatch problem: get the latest
                 this.vertex = baseGraph.getVertex(this.vertex.getId());
                 toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
-                addEdge(toVertex, label, propKey, propVal);
                 maxRetries--;
+                addEdge(toVertex, label, propKey, propVal);
             }
         }
     }
