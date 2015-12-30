@@ -81,10 +81,10 @@ public class BaseModel {
             return;
         }
         try {
-            // to avoid version mismatch problem: get the latest
+            // //to avoid version mismatch problem: get the latest
             // this.vertex = baseGraph.getVertex(this.vertex.getId());
             // toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
-            // add edge
+            // //add edge
             // this.vertex.addEdge(label, toVertex.vertex);
             baseGraph.command(
                     new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
@@ -102,7 +102,7 @@ public class BaseModel {
         }
 
     }
-
+   /*
     public void addEdge(BaseModel toVertex, String label, Object[] props) {
         if (toVertex.vertex == null) {
             return;
@@ -125,6 +125,7 @@ public class BaseModel {
             }
         }
     }
+    */
     public void addEdge(BaseModel toVertex, String label, String propKey, String propVal) {
         if (toVertex.vertex == null) {
             return;
