@@ -81,12 +81,15 @@ public class BaseModel {
             return;
         }
         try {
-            
-            // //add edge
-            // this.vertex.addEdge(label, toVertex.vertex);
-            baseGraph.command(
+
+            // to avoid version mismatch problem: get the latest
+            this.vertex = baseGraph.getVertex(this.vertex.getId());
+            toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
+            // add edge
+            this.vertex.addEdge(label, toVertex.vertex);
+            /*baseGraph.command(
                     new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
-                            + " to " + toVertex.vertex.getId())).execute();
+                            + " to " + toVertex.vertex.getId())).execute();*/
             // restore default maxRetries limit after successful
             maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
         } catch (OConcurrentModificationException e) {
@@ -103,7 +106,7 @@ public class BaseModel {
         }
 
     }
-   /*
+   
     public void addEdge(BaseModel toVertex, String label, Object[] props) {
         if (toVertex.vertex == null) {
             return;
@@ -126,14 +129,14 @@ public class BaseModel {
             }
         }
     }
-    */
-    public void addEdge(BaseModel toVertex, String label, String propKey, String propVal) {
+    
+    /*public void addEdge(BaseModel toVertex, String label, String propKey, String propVal) {
         if (toVertex.vertex == null) {
             return;
         }
         try {
             // add edge
-            // this.vertex.addEdge(label, toVertex.vertex, props);
+            //this.vertex.addEdge(label, toVertex.vertex, props);
             baseGraph.command(
                     new OCommandSQL("create edge " + label + " from " + this.vertex.getId()
                             + " to " + toVertex.vertex.getId() + " set " + propKey + "='" + propVal
@@ -152,5 +155,5 @@ public class BaseModel {
                 addEdge(toVertex, label, propKey, propVal);
             }
         }
-    }
+    }*/
 }
