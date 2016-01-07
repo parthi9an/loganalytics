@@ -145,6 +145,7 @@ public class DatabaseService {
                 vType.createProperty("endTime", OType.DATETIME);
                 vType.createIndex("Session.sessionId", "NOTUNIQUE", "sessionId");
                 vType.createIndex("Session.parentId", "NOTUNIQUE", "parentId");
+                vType.createIndex("Session.parentId_sessionId", "UNIQUE", "parentId", "sessionId");
             }
 
             if (!schema.existsClass("Session_User")) {
@@ -201,6 +202,7 @@ public class DatabaseService {
                 vType.createProperty("bytesOut", OType.LONG);
                 vType.createIndex("Request.requestId", "NOTUNIQUE", "requestId");
                 vType.createIndex("Request.parentId", "NOTUNIQUE", "parentId");
+                vType.createIndex("Request.parentId_requestId", "UNIQUE", "parentId", "requestId");
                 
             }
 
@@ -252,6 +254,7 @@ public class DatabaseService {
                 vType.createProperty("timestamp", OType.DATETIME);
                 vType.createIndex("Transaction.transactionId", "NOTUNIQUE", "transactionId");
                 vType.createIndex("Transaction.parentId", "NOTUNIQUE", "parentId");
+                vType.createIndex("Transaction.parentId_transactionId", "UNIQUE", "parentId", "transactionId");
                 
             }
 

@@ -6,6 +6,7 @@ import com.metron.AppConfig;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -64,6 +65,10 @@ public class BaseModel {
                 maxRetries--;
                 save();
             }
+        } catch(ORecordDuplicatedException e){
+            System.out.println("ORecordDuplicatedException: delete vertex");
+            vertex.remove();            
+            e.printStackTrace();
         }
     }
 
