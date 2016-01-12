@@ -3,7 +3,6 @@ package com.metron.model.event;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.metron.AppConfig;
 import com.metron.model.Session;
 import com.metron.orientdb.OrientUtils;
 import com.metron.util.TimeWindowUtil.DURATION;
@@ -11,8 +10,6 @@ import com.metron.util.Utils;
 
 public class SessionEnd extends SessionEvent {
     
-    private int maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
-
     public SessionEnd(String[] eventData) {
         super(eventData);
     }
@@ -68,14 +65,9 @@ public class SessionEnd extends SessionEvent {
         System.out.println("SessionEnd: props \t starttime is" + session.vertex.getProperty("startTime"));
         
         if(session.vertex.getProperty("startTime") == null){
-            while(maxRetries > 0){
             String parentId = this.getStringAttr("parentId");
             session = new Session(this.getStringAttr("sessionId"), parentId, this.getGraph());
-            System.out.println("SessionEnd: props retry \t starttime is" + session.vertex.getProperty("startTime"));
-            maxRetries--;
-            if (session.vertex.getProperty("startTime") != null)
-                break;
-            }
+            System.out.println("SessionEnd: props retry \t starttime is" + session.vertex.getProperty("startTime"));          
         }
         
         if (session.vertex.getProperty("startTime") != null) {
