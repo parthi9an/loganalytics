@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.metron.AppConfig;
 import com.metron.model.Error;
 import com.metron.model.Request;
 import com.metron.model.RequestErrorType;
@@ -14,8 +13,6 @@ import com.metron.util.Utils;
 
 public class RequestFail extends RequestEvent {
     
-    private int maxRetries = AppConfig.getInstance().getInt("db.maxRetry");
-
     public RequestFail(String[] eventData) {
         super(eventData);
     }
@@ -78,14 +75,9 @@ public class RequestFail extends RequestEvent {
         System.out.println("RequestFail: props \t starttime is" + request.vertex.getProperty("startTime"));
         
         if(request.vertex.getProperty("startTime") == null){
-            while(maxRetries > 0){
             String parentId = this.getStringAttr("parentId");
             request = new Request(this.getStringAttr("requestId"), parentId, this.getGraph());
             System.out.println("RequestFail: props retry \t starttime is" + request.vertex.getProperty("startTime"));
-            maxRetries--;
-            if (request.vertex.getProperty("startTime") != null)
-                break;
-            }
         }
         
         if (request.vertex.getProperty("startTime") != null) {
