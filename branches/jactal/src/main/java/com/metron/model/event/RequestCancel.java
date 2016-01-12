@@ -73,9 +73,11 @@ public class RequestCancel extends RequestEvent {
                     "delta",
                     Utils.getDateDiffInMIllisec(startTime,
                             Utils.parseEventDate(this.getStringAttr("timestamp"))));
-            log.debug("request & parentid" + request.vertex.getProperty("requestId") + "\t"
+            System.out.println("request & parentid \t" + request.vertex.getProperty("requestId") + "\t"
                     + request.vertex.getProperty("parentId"));
-            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("start & end Timestamp \t" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("RequestCancle: delta \t"+ Utils.getDateDiffInMIllisec(startTime,
+                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
@@ -89,7 +91,8 @@ public class RequestCancel extends RequestEvent {
             request.setProperties(props);
             request.save();
         } catch (Exception e) {
-            log.error("RequestCancle : Error while saving the Request");
+            System.out.println("RequestCancle : Error while saving the Request");
+            System.out.println(e);
             e.printStackTrace();
         }
     }

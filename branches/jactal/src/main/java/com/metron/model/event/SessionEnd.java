@@ -66,9 +66,11 @@ public class SessionEnd extends SessionEvent {
                     "delta",
                     Utils.getDateDiffInMIllisec(startTime,
                             Utils.parseEventDate(this.getStringAttr("timestamp"))));
-            log.debug("session & parentid" + session.vertex.getProperty("sessionId") + "\t"
+            System.out.println("session & parentid \t" + session.vertex.getProperty("sessionId") + "\t"
                     + session.vertex.getProperty("parentId"));
-            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("start & end Timestamp \t" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("SessionEnd: delta \t"+ Utils.getDateDiffInMIllisec(startTime,
+                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
         }
 
         props.put("sessionId", sessionId);
@@ -78,7 +80,8 @@ public class SessionEnd extends SessionEvent {
             session.setProperties(props);
             session.save();
         } catch (Exception e) {
-            log.error("SessionEnd : Error while saving the session");
+            System.out.println("SessionEnd : Error while saving the session");
+            System.out.println(e);
             e.printStackTrace();
         }
     }
