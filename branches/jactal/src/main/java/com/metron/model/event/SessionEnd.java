@@ -36,7 +36,7 @@ public class SessionEnd extends SessionEvent {
     }
 
     private void associateTimeWindow() {
-        
+
         // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
         session.addEdge(this.getTimeWindow(duration), "Session_" + duration.getTable());
@@ -62,16 +62,24 @@ public class SessionEnd extends SessionEvent {
         HashMap<String, Object> props = new HashMap<String, Object>();
         if (session.vertex.getProperty("startTime") != null) {
             Date startTime = session.vertex.getProperty("startTime");
-            props.put("delta", Utils.getDateDiffInMIllisec(startTime,
-                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            props.put(
+                    "delta",
+                    Utils.getDateDiffInMIllisec(startTime,
+                            Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            log.debug("session & parentid" + session.vertex.getProperty("sessionId") + "\t"
+                    + session.vertex.getProperty("parentId"));
+            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
         }
-        
+
         props.put("sessionId", sessionId);
-        props.put(
-                "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-                        "timestamp"))));
-        session.setProperties(props);
-        session.save();
+        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
+                .getStringAttr("timestamp"))));
+        try {
+            session.setProperties(props);
+            session.save();
+        } catch (Exception e) {
+            log.error("SessionEnd : Error while saving the session");
+            e.printStackTrace();
+        }
     }
 }

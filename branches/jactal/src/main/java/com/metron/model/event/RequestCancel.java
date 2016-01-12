@@ -15,7 +15,7 @@ public class RequestCancel extends RequestEvent {
 
     @Override
     public void process() {
-          
+
         super.process();
         this.updateRequest();
         this.updateAssociations();
@@ -50,41 +50,48 @@ public class RequestCancel extends RequestEvent {
         // FIVE MIN Window
         duration = DURATION.FIVEMIN;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
-        
+
         // ONE HOUR Window
         duration = DURATION.ONEHOUR;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
-        
+
         // ONEDAY Window
         duration = DURATION.ONEDAY;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
-        
+
     }
     private void updateRequest() {
 
         // retrieve request object for requestId - create if does not exist.
         // populate requestId, startTime, status (started)
         String requestId = this.getStringAttr("requestId");
-        
+
         HashMap<String, Object> props = new HashMap<String, Object>();
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
-            props.put("delta", Utils.getDateDiffInMIllisec(startTime,
-                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            props.put(
+                    "delta",
+                    Utils.getDateDiffInMIllisec(startTime,
+                            Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            log.debug("request & parentid" + request.vertex.getProperty("requestId") + "\t"
+                    + request.vertex.getProperty("parentId"));
+            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
-        props.put(
-                "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-                        "timestamp"))));
-        
+        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
+                .getStringAttr("timestamp"))));
+
         props.put("bytesIn", this.getAttribute("bytesIn"));
         props.put("bytesOut", this.getAttribute("bytesOut"));
         props.put("rowsAffected", this.getAttribute("rowsAffected"));
-
-        request.setProperties(props);
-        request.save();
+        try {
+            request.setProperties(props);
+            request.save();
+        } catch (Exception e) {
+            log.error("RequestCancle : Error while saving the Request");
+            e.printStackTrace();
+        }
     }
 
 }
