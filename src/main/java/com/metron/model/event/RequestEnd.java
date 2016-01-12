@@ -41,7 +41,7 @@ public class RequestEnd extends RequestEvent {
 
     }
     private void associateTimeWindow() {
-        
+
         // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
@@ -49,7 +49,7 @@ public class RequestEnd extends RequestEvent {
         // FIVE MIN Window
         duration = DURATION.FIVEMIN;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
-        
+
         // ONE HOUR Window
         duration = DURATION.ONEHOUR;
         request.addEdge(this.getTimeWindow(duration), "Request_" + duration.getTable());
@@ -66,27 +66,34 @@ public class RequestEnd extends RequestEvent {
         // populate requestId, startTime, status (started)
 
         String requestId = this.getStringAttr("requestId");
-        
+
         HashMap<String, Object> props = new HashMap<String, Object>();
-        
+
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
-            props.put("delta", Utils.getDateDiffInMIllisec(startTime,
-                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            props.put(
+                    "delta",
+                    Utils.getDateDiffInMIllisec(startTime,
+                            Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            log.debug("request & parentid" + request.vertex.getProperty("requestId") + "\t"
+                    + request.vertex.getProperty("parentId"));
+            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
-        props.put(
-                "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-                        "timestamp"))));
-        
+        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
+                .getStringAttr("timestamp"))));
+
         props.put("bytesIn", this.getAttribute("bytesIn"));
         props.put("bytesOut", this.getAttribute("bytesOut"));
         props.put("rowsAffected", this.getAttribute("rowsAffected"));
-
-        request.setProperties(props);
-        request.save();
+        try {
+            request.setProperties(props);
+            request.save();
+        } catch (Exception e) {
+            log.error("RequestEnd : Error while saving the Request");
+            e.printStackTrace();
+        }
 
     }
 

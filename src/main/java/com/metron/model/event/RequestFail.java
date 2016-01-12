@@ -76,21 +76,26 @@ public class RequestFail extends RequestEvent {
                     "delta",
                     Utils.getDateDiffInMIllisec(startTime,
                             Utils.parseEventDate(this.getStringAttr("timestamp"))));
+            log.debug("request & parentid" + request.vertex.getProperty("requestId") + "\t"
+                    + request.vertex.getProperty("parentId"));
+            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
-        props.put(
-                "endTime",
-                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-                        "timestamp"))));
+        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
+                .getStringAttr("timestamp"))));
         props.put("errorMessage", this.getAttribute("errorMessage"));
 
         props.put("bytesIn", this.getAttribute("bytesIn"));
         props.put("bytesOut", this.getAttribute("bytesOut"));
         props.put("rowsAffected", this.getAttribute("rowsAffected"));
-
-        request.setProperties(props);
-        request.save();
+        try {
+            request.setProperties(props);
+            request.save();
+        } catch (Exception e) {
+            log.error("RequestFail : Error while saving the request");
+            e.printStackTrace();
+        }
         List<Error> errors = RequestErrorType.getInstance().findErrorType(
                 this.getStringAttr("errorMessage"));
 
