@@ -76,9 +76,11 @@ public class RequestFail extends RequestEvent {
                     "delta",
                     Utils.getDateDiffInMIllisec(startTime,
                             Utils.parseEventDate(this.getStringAttr("timestamp"))));
-            log.debug("request & parentid" + request.vertex.getProperty("requestId") + "\t"
+            System.out.println("request & parentid \t" + request.vertex.getProperty("requestId") + "\t"
                     + request.vertex.getProperty("parentId"));
-            log.debug("start & end Timestamp" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("start & end Timestamp \t" + startTime + "\t" + this.getStringAttr("timestamp"));
+            System.out.println("RequestFail: delta \t"+ Utils.getDateDiffInMIllisec(startTime,
+                    Utils.parseEventDate(this.getStringAttr("timestamp"))));
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
@@ -93,7 +95,8 @@ public class RequestFail extends RequestEvent {
             request.setProperties(props);
             request.save();
         } catch (Exception e) {
-            log.error("RequestFail : Error while saving the request");
+            System.out.println("RequestFail : Error while saving the request");
+            System.out.println(e);
             e.printStackTrace();
         }
         List<Error> errors = RequestErrorType.getInstance().findErrorType(
