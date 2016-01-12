@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.metron.model.Error;
+import com.metron.model.Request;
 import com.metron.model.RequestErrorType;
 import com.metron.orientdb.OrientUtils;
 import com.metron.util.TimeWindowUtil.DURATION;
@@ -72,6 +73,13 @@ public class RequestFail extends RequestEvent {
         HashMap<String, Object> props = new HashMap<String, Object>();
         
         System.out.println("RequestFail: props \t starttime is" + request.vertex.getProperty("startTime"));
+        
+        if(request.vertex.getProperty("startTime") == null){
+            String parentId = this.getStringAttr("parentId");
+            request = new Request(this.getStringAttr("requestId"), parentId, this.getGraph());
+            System.out.println("RequestFail: props retry \t starttime is" + request.vertex.getProperty("startTime"));
+        }
+        
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
             props.put(
