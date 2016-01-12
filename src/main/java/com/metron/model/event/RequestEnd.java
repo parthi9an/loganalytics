@@ -3,12 +3,13 @@ package com.metron.model.event;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.metron.model.Request;
 import com.metron.orientdb.OrientUtils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 
 public class RequestEnd extends RequestEvent {
-
+    
     public RequestEnd(String[] eventData) {
         super(eventData);
     }
@@ -70,6 +71,13 @@ public class RequestEnd extends RequestEvent {
         HashMap<String, Object> props = new HashMap<String, Object>();
 
         System.out.println("RequestEnd: props \t starttime is" + request.vertex.getProperty("startTime"));
+        
+        if(request.vertex.getProperty("startTime") == null){
+            String parentId = this.getStringAttr("parentId");
+            request = new Request(this.getStringAttr("requestId"), parentId, this.getGraph());
+            System.out.println("RequestEnd: props retry \t starttime is" + request.vertex.getProperty("startTime"));
+        }
+        
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
             props.put(
