@@ -69,6 +69,7 @@ public class RequestEnd extends RequestEvent {
 
         HashMap<String, Object> props = new HashMap<String, Object>();
 
+        System.out.println("RequestEnd: props \t starttime is" + request.vertex.getProperty("startTime"));
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
             props.put(

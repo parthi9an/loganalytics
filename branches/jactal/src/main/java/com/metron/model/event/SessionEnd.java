@@ -60,6 +60,8 @@ public class SessionEnd extends SessionEvent {
         String sessionId = this.getStringAttr("sessionId");
 
         HashMap<String, Object> props = new HashMap<String, Object>();
+        
+        System.out.println("SessionEnd: props \t starttime is" + session.vertex.getProperty("startTime"));
         if (session.vertex.getProperty("startTime") != null) {
             Date startTime = session.vertex.getProperty("startTime");
             props.put(

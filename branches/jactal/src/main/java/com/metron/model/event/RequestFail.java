@@ -70,6 +70,8 @@ public class RequestFail extends RequestEvent {
         String requestId = this.getStringAttr("requestId");
 
         HashMap<String, Object> props = new HashMap<String, Object>();
+        
+        System.out.println("RequestFail: props \t starttime is" + request.vertex.getProperty("startTime"));
         if (request.vertex.getProperty("startTime") != null) {
             Date startTime = request.vertex.getProperty("startTime");
             props.put(
