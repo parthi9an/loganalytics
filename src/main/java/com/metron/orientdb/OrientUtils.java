@@ -37,7 +37,7 @@ public class OrientUtils {
 
     public static String convertDatetoorientDbDate(Date date) {
         // alter database DATETIMEFORMAT yyyy-MM-dd HH:mm:ss:SSS
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd hh:mm:ss.SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return sdf.format(date);
     }
 
