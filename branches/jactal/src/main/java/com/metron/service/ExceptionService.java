@@ -150,7 +150,7 @@ public class ExceptionService extends BaseService implements IExceptionService {
                 whereExc.append("out.content like '%" + keyword + "%' ");
             }
 
-            excQuery.append("select out.@rid as id, out.@class as type, timestamp as timestamp, out.heading as title, out.content as message from Exception_Host"
+            excQuery.append("select out.@rid as id, out.@class as type, out.timestamp as timestamp, out.heading as title, out.content as message from Exception_Host"
                     + ((!whereExc.toString().equals("")) ? " Where " + whereExc.toString() : "")
                     + " group by out order by timestamp DESC");
             Long exceptionCount = getCount("select count(distinct(out)) as count from Exception_Host"
