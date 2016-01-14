@@ -84,15 +84,11 @@ public class SessionEnd extends SessionEvent {
         }
 
         props.put("sessionId", sessionId);
-        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
-                .getStringAttr("timestamp"))));
-        try {
-            session.setProperties(props);
-            session.save();
-        } catch (Exception e) {
-            System.out.println("SessionEnd : Error while saving the session");
-            System.out.println(e);
-            e.printStackTrace();
-        }
+        props.put(
+                "endTime",
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
+        session.setProperties(props);
+        session.save();
     }
 }

@@ -64,11 +64,11 @@ public class ServerExpection extends ServerEvent {
     }
 
     private void associateHost() {
-         Object[] props = new Object[]{
-         "timestamp",
-         OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
-         "timestamp")))};
-         this.addEdge(host, "Exception_Host", props);
+        Object[] props = new Object[]{
+        "timestamp",
+        OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+        "timestamp")))};
+        this.addEdge(host, "Exception_Host", props);
         
         //this.addEdge(host, "Exception_Host", "timestamp", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr("timestamp"))));
     }
