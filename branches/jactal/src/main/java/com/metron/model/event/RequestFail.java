@@ -94,21 +94,18 @@ public class RequestFail extends RequestEvent {
         }
         props.put("requestId", requestId);
         props.put("status", this.getAttribute("status"));
-        props.put("endTime", OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this
-                .getStringAttr("timestamp"))));
+        props.put(
+                "endTime",
+                OrientUtils.convertDatetoorientDbDate(Utils.parseEventDate(this.getStringAttr(
+                        "timestamp"))));
         props.put("errorMessage", this.getAttribute("errorMessage"));
 
         props.put("bytesIn", this.getAttribute("bytesIn"));
         props.put("bytesOut", this.getAttribute("bytesOut"));
         props.put("rowsAffected", this.getAttribute("rowsAffected"));
-        try {
-            request.setProperties(props);
-            request.save();
-        } catch (Exception e) {
-            System.out.println("RequestFail : Error while saving the request");
-            System.out.println(e);
-            e.printStackTrace();
-        }
+
+        request.setProperties(props);
+        request.save();
         List<Error> errors = RequestErrorType.getInstance().findErrorType(
                 this.getStringAttr("errorMessage"));
 
