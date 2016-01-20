@@ -3,11 +3,20 @@ package com.metron.model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.metron.model.event.CisUiEvent;
+import com.metron.model.event.CisActionEvent;
+import com.metron.model.event.CisConfigurationEvent;
+import com.metron.model.event.CisDomainEvent;
+import com.metron.model.event.CisEnvironmentEvent;
+import com.metron.model.event.CisErrorEvent;
+import com.metron.model.event.CisFieldEvent;
+import com.metron.model.event.CisKeyboardEvent;
+import com.metron.model.event.CisViewEvent;
+import com.metron.model.event.CisWindowEvent;
 import com.metron.model.event.Event;
 import com.metron.model.event.HostStatus;
 import com.metron.model.event.RequestCancel;
@@ -237,9 +246,35 @@ public class EventFactory {
         }
     }
 
-    public Event parseCISEvent(JSONObject event) {
-        Event e = new CisUiEvent(event);
-        return e;
+    public Event parseCISEvent(JSONObject event) throws JSONException {
+        
+        JSONObject metric_value = (JSONObject)event.get("metric_value");
+        event.remove("metric_value");
+    
+        if(metric_value.has("action_key")){
+            return new CisActionEvent(event,metric_value);
+        } else if(metric_value.has("key_command")){
+            return new CisKeyboardEvent(event,metric_value);
+        } else if(metric_value.has("view_name")){
+            return new CisViewEvent(event,metric_value);
+        } else if(metric_value.has("domain_type")){
+            return new CisDomainEvent(event,metric_value);
+        } else if(metric_value.has("field_name")){
+            return new CisFieldEvent(event,metric_value);
+        } else if(metric_value.has("error_type")){
+            return new CisErrorEvent(event,metric_value);
+        } else if(metric_value.has("env_os")){
+            return new CisEnvironmentEvent(event,metric_value);
+        } else if(metric_value.has("config_name")){
+            return new CisConfigurationEvent(event,metric_value);
+        } else if(metric_value.has("window_length")){
+            return new CisWindowEvent(event,metric_value);
+        }
+        
+        return null;
+       
+        //Event e = new CisUiEvent(event);
+        //return e;
     }
 
 }

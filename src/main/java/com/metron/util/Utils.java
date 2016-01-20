@@ -22,6 +22,12 @@ public class Utils {
 
         return date;
     }
+    
+    public static Date parseEventDate(long timestampInString) {
+        
+        Date date = new Date(timestampInString);
+        return date;
+    }
 
     private static long getDateDiff(Date from, Date to, TimeUnit timeUnit) {
         long diffInMillies = to.getTime() - from.getTime();

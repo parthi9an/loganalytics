@@ -12,9 +12,9 @@ public class CisUiEvent extends Event{
     }
 
     public void process() {
-        OrientBaseGraph graph = this.getGraph();
+        /*OrientBaseGraph graph = this.getGraph();
         OrientVertex vertex = graph.addVertex("class:CisEvents");
-        this.saveCisEvent(vertex);      
+        this.saveCisEvent(vertex); */     
     }
 
 }

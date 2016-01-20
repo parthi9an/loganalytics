@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,26 +17,31 @@ import com.metron.model.BaseModel;
 import com.metron.model.EventMappings;
 import com.metron.model.Host;
 import com.metron.model.RawEvent;
+import com.metron.model.RawMetricEvent;
 import com.metron.model.TimeWindow;
+import com.metron.orientdb.OrientRest;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
-import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public abstract class Event extends BaseModel {
 
     protected RawEvent rawEvent;
+    
+    protected RawMetricEvent rawMetricEvent;
 
     protected Host host;
 
     protected Logger log = LoggerFactory.getLogger(Event.class);
 
     private Map<String, Object> attributes = null;
+    private Map<String, Object> metricvalueattributes = null;
     private Map<String, Integer> mapping;
 
     private String[] eventData = null;
 
     private JSONObject ciseventData = null;
+    
+    private JSONObject cismetricValueData = null;
 
     public Event() {
         this.attributes = new HashMap<String, Object>();
@@ -73,6 +79,27 @@ public abstract class Event extends BaseModel {
 
     }
 
+    public Event(JSONObject eventData, JSONObject metricValueData) {
+        
+        this.attributes = new HashMap<String, Object>();
+        this.metricvalueattributes = new HashMap<String, Object>();
+        this.ciseventData = eventData;
+        this.cismetricValueData = metricValueData;
+        persistJson(ciseventData,attributes);
+        persistJson(cismetricValueData,metricvalueattributes);
+    }
+    
+    private void persistJson(JSONObject jsondata, Map<String, Object> persistTo) {
+        Iterator<?> keys = jsondata.keys();
+        try {
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                persistTo.put(key, jsondata.get(key).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }        
+    }
     public void parse() {
         if (this.eventData.length < EventMappings.getInstance().getDefaultColumnSize()) {
             return;
@@ -115,16 +142,50 @@ public abstract class Event extends BaseModel {
         rawEvent.save();
     }
 
-    public void saveCisEvent(OrientVertex vertex) {
+    /**
+     * Create a vertex (RawMetricEvent) for sessionid
+     */
+    public void saveCisEvent() {
+        
+        //String metric_type = this.getStringAttr("metric_type");
+        //String metric_timestamp = this.getStringAttr("metric_timestamp");
+        String metric_session_id = this.getStringAttr("metric_session_id");
+        //rawMetricEvent = new RawMetricEvent(metric_type,metric_timestamp,metric_session_id,this.getGraph());
+        //rawMetricEvent.setProperties(new HashMap<String, Object>(this.getAttributes()));
+        rawMetricEvent = new RawMetricEvent(metric_session_id,this.getGraph());
+        HashMap<String, Object> props = new HashMap<String, Object>();
+        props.put("metric_session_id", this.getStringAttr("metric_session_id"));
+        rawMetricEvent.setProperties(props);
+        rawMetricEvent.save();
+     
+    }
+    
+    /**
+     * Retrieve the edges which are connected to different events at
+     * particular session
+     * @return JSONArray Contains the Edge id's 
+     */
+    public JSONArray getPreviousMetricEvent() {
+        
+        StringBuffer query = new StringBuffer();
+        query.append("select outE() as edge from CisEvents where metric_session_id =" + this.getStringAttr("metric_session_id"));
+        String result = new OrientRest().doSql(query.toString());
+        
+        JSONObject resultObject;
+        JSONArray ja,edgeObject = null;
         try {
-            // vertex.setProperties(attributes);
-            vertex.setProperties(this.getAttributes());
-            vertex.save();
-        } catch (OConcurrentModificationException e) {
+            resultObject = new JSONObject(result);
+            ja = resultObject.getJSONArray("result");
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject child = ja.getJSONObject(i);
+                edgeObject = child.getJSONArray("edge");                    
+               }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
+        return edgeObject;    
     }
-
+    
     protected void associateRawEventToHost() {
         rawEvent.addEdge(host, "Event_Host");
     }
@@ -147,6 +208,10 @@ public abstract class Event extends BaseModel {
 
     public String getStringAttr(String key) {
         return (this.attributes.containsKey(key)) ? this.attributes.get(key).toString() : null;
+    }
+    
+    public String getMetricValueAttr(String key) {
+        return (this.metricvalueattributes.containsKey(key)) ? this.metricvalueattributes.get(key).toString() : null;
     }
 
     public String[] getRawData() {
@@ -173,6 +238,11 @@ public abstract class Event extends BaseModel {
 
     public TimeWindow getTimeWindow(DURATION duration) {
         Date date = Utils.parseEventDate((String) this.getAttribute("timestamp"));
+        return new TimeWindow(date, duration, this.getGraph());
+    }
+    
+    public TimeWindow getEventTimeWindow(DURATION duration) {
+        Date date = Utils.parseEventDate(Long.parseLong((String)this.getAttribute("metric_timestamp")));
         return new TimeWindow(date, duration, this.getGraph());
     }
 
