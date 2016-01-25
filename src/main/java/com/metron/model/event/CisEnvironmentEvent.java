@@ -1,5 +1,6 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -7,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.EnvironmentEvent;
+import com.metron.model.PersistEvent;
 import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -35,6 +37,16 @@ public class CisEnvironmentEvent extends Event {
         envevent = new EnvironmentEvent(this.getMetricValueAttr("env_os"), this.getMetricValueAttr("env_screen_length"), this.getMetricValueAttr("env_screen_height"), this.getGraph());
         this.saveEnvironment();
         
+      //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"EnvironmentEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        
         this.updateAssociations();
     }
 
@@ -59,7 +71,9 @@ public class CisEnvironmentEvent extends Event {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+      //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
     
     /**

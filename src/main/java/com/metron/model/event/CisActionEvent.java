@@ -1,10 +1,14 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.ActionEvent;
+import com.metron.model.Pattern;
+import com.metron.model.PersistEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -13,6 +17,8 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class CisActionEvent extends Event {
     
     protected ActionEvent actionevent;
+    
+    protected Pattern pattern;
 
     public CisActionEvent(JSONObject eventData) {
         super(eventData);
@@ -31,15 +37,49 @@ public class CisActionEvent extends Event {
         
         // save metric event attributes (i.e Action event) - action_key, action_command, action_view
         actionevent = new ActionEvent(this.getMetricValueAttr("action_key"), this.getMetricValueAttr("action_command"), this.getMetricValueAttr("action_view"), this.getGraph());
-        
+                
+        //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ActionEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+                
         this.updateAssociations();
+        
     }
+
+    /**
+     * updates the association count of the pattern 
+     * (Events occurred till this point @session considered as pattern)
+     */
+    /*private void updatePatterns() {
+       
+        try {
+        JSONArray edgeObject = this.getPreviousMetricEvent();
+        StringBuilder patern = new StringBuilder();        
+        for(int j = 0; j < edgeObject.length(); j++){            
+            OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));            
+            patern.append(edge.getProperty("in")).append("_");          
+        }
+        String patterType = patern.toString().substring(0, patern.toString().length()-1);
+        pattern = new Pattern(patterType,this.getGraph());
+        
+        } catch (JSONException e) {
+            
+            e.printStackTrace();
+        }
+    }*/
 
     private void updateAssociations() {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+        //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
 
     /**
@@ -97,5 +137,12 @@ public class CisActionEvent extends Event {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
         rawMetricEvent.addEdge(actionevent, "Metric_Action",props);
     }
+    
+    /**
+     * Create an edge b/w RawMetricEvent (contains session info) & the pattern 
+     */
+    /*private void associatePatternRawMetricEvent() {
+        rawMetricEvent.addEdge(pattern, "session_pattern");
+    }*/
 
 }

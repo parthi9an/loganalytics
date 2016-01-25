@@ -1,9 +1,12 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.metron.model.PersistEvent;
 import com.metron.model.WindowEvent;
 import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
@@ -32,6 +35,15 @@ public class CisWindowEvent extends Event {
         // save metric event attributes (i.e window event) - window_length, window_height, window_view
         windowevent = new WindowEvent(this.getMetricValueAttr("window_length"), this.getMetricValueAttr("window_height"), this.getMetricValueAttr("window_view"), this.getGraph());
         
+      //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"WindowEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         this.updateAssociations();
     }
 
@@ -39,7 +51,9 @@ public class CisWindowEvent extends Event {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+      //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
     
     /**

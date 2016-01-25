@@ -1,10 +1,13 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.FieldEvent;
+import com.metron.model.PersistEvent;
 import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -32,6 +35,15 @@ public class CisFieldEvent extends Event {
         // save metric event attributes (i.e Action event) - field_name, field_parent
         fieldevent = new FieldEvent(this.getMetricValueAttr("field_name"), this.getMetricValueAttr("field_parent"), this.getGraph());
         
+      //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"FieldEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         this.updateAssociations();
     }
 
@@ -39,7 +51,9 @@ public class CisFieldEvent extends Event {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+      //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
     
     /**

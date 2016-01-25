@@ -16,18 +16,22 @@ import org.slf4j.LoggerFactory;
 import com.metron.model.BaseModel;
 import com.metron.model.EventMappings;
 import com.metron.model.Host;
+import com.metron.model.Pattern;
 import com.metron.model.RawEvent;
 import com.metron.model.RawMetricEvent;
 import com.metron.model.TimeWindow;
 import com.metron.orientdb.OrientRest;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
+import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 
 public abstract class Event extends BaseModel {
 
     protected RawEvent rawEvent;
     
     protected RawMetricEvent rawMetricEvent;
+    
+    protected Pattern pattern;
 
     protected Host host;
 
@@ -94,7 +98,7 @@ public abstract class Event extends BaseModel {
         try {
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                persistTo.put(key, jsondata.get(key).toString());
+                persistTo.put(key, jsondata.get(key));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -193,6 +197,10 @@ public abstract class Event extends BaseModel {
     public Map<String, Object> getAttributes() {
         return attributes;
     }
+    
+    public Map<String, Object> getMetricValueAttributes() {
+        return metricvalueattributes;
+    }
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
@@ -242,7 +250,8 @@ public abstract class Event extends BaseModel {
     }
     
     public TimeWindow getEventTimeWindow(DURATION duration) {
-        Date date = Utils.parseEventDate(Long.parseLong((String)this.getAttribute("metric_timestamp")));
+        //Date date = Utils.parseEventDate(Long.parseLong((String)this.getAttribute("metric_timestamp")));
+        Date date = Utils.parseEventDate((Long)this.getAttribute("metric_timestamp"));
         return new TimeWindow(date, duration, this.getGraph());
     }
 
@@ -256,6 +265,35 @@ public abstract class Event extends BaseModel {
     public void setHost(String hostName) {
         // TODO Auto-generated method stub
 
+    }
+    
+    /**
+     * updates the association count of the pattern 
+     * (Events occurred till this point @session considered as pattern)
+     */
+    public void updatePatterns() {
+       
+        try {
+        JSONArray edgeObject = this.getPreviousMetricEvent();
+        StringBuilder patern = new StringBuilder();        
+        for(int j = 0; j < edgeObject.length(); j++){            
+            OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));            
+            patern.append(edge.getProperty("in")).append("_");          
+        }
+        String patterType = patern.toString().substring(0, patern.toString().length()-1);
+        pattern = new Pattern(patterType,this.getGraph());
+        
+        } catch (JSONException e) {
+            
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Create an edge b/w RawMetricEvent (contains session info) & the pattern 
+     */
+    public void associatePatternRawMetricEvent() {
+        //rawMetricEvent.addEdge(pattern, "session_pattern");
     }
 
 }

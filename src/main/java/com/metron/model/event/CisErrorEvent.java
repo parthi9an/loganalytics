@@ -1,10 +1,13 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.ErrorEvent;
+import com.metron.model.PersistEvent;
 import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -32,6 +35,15 @@ public class CisErrorEvent extends Event {
         // save metric event attributes (i.e Action event) - error_type, error_message, error_trace
         errorevent = new ErrorEvent(this.getMetricValueAttr("error_type"), this.getMetricValueAttr("error_message"), this.getMetricValueAttr("error_trace"), this.getGraph());
         
+      //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ErrorEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         this.updateAssociations();
     }
 
@@ -39,7 +51,9 @@ public class CisErrorEvent extends Event {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+      //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
     
     /**
