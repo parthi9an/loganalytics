@@ -1,10 +1,13 @@
 package com.metron.model.event;
 
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.ConfigurationEvent;
+import com.metron.model.PersistEvent;
 import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -32,6 +35,15 @@ public class CisConfigurationEvent extends Event {
         // save metric event attributes (i.e Configuration event) - config_name
         configurationevent = new ConfigurationEvent(this.getMetricValueAttr("config_name"), this.getGraph());
         
+      //Save data to Relational DB (Postgres)        
+        try {
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         this.updateAssociations();
     }
 
@@ -39,7 +51,9 @@ public class CisConfigurationEvent extends Event {
         
         this.associateRawMetricEvent();
         this.associateTimeWindow();
-        this.associateExistingEvents();
+        //this.associateExistingEvents();
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
     }
 
     /**

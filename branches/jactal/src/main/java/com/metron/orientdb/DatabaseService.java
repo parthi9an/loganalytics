@@ -388,6 +388,12 @@ public class DatabaseService {
                 vType.createProperty("env_screen_length", OType.INTEGER);
             }
             
+            if (!schema.existsClass("Pattern")) {
+                vType = graph.createVertexType("Pattern");
+                vType.createProperty("pattern_type", OType.STRING);
+                vType.createProperty("association_count", OType.INTEGER);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
