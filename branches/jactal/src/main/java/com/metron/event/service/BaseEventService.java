@@ -37,5 +37,21 @@ public class BaseEventService {
         }
         return result;
     }
+    
+    public JSONObject getNames(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONObject result = new JSONObject();
+        JSONArray names = new JSONArray();
+        try {
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++)
+                names.put(resultArr.getJSONObject(j).getString("name"));
+            result.put("action_names", names);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        return result;
+    }
 
 }

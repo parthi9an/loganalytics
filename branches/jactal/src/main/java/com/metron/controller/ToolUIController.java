@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.metron.event.service.ActionEventService;
 import com.metron.event.service.DomainEventService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.SessionEventService;
@@ -101,20 +102,22 @@ public class ToolUIController {
     }
    
     /*
-     * Get action name list
+     * Get action name list (i.e action_key)
      * @params 
      * return action_name : as Json
      */
     
-    @RequestMapping(value = "/getAllAction")
+    @RequestMapping(value = "/getActionNames")
     public @ResponseBody
-    ResponseEntity<String> getAllAction(HttpServletRequest request,
-            @RequestParam(value = "eventName", required = false) String eventName,
+    ResponseEntity<String> getActionNames(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
-
-        return _formJSONSuccessResponse("");
+        ActionEventService service = new ActionEventService();
+        JSONObject result = service.getActionNames(sessionId,fromDate, toDate);
+        
+        return _formJSONSuccessResponse(result.toString());
     }
 
     /*
@@ -127,13 +130,16 @@ public class ToolUIController {
     @RequestMapping(value = "/getCommandCountOfActions")
     public @ResponseBody
     ResponseEntity<String> getCommandCountOfActions(HttpServletRequest request,
-            @RequestParam(value = "name", required = true) String name,
+            @RequestParam(value = "name", required = true) String actionKey,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "sessionFrom", required = false) String sessionFrom,
-            @RequestParam(value = "sessionTo", required = false) String sessionTo) {
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
+        ActionEventService service = new ActionEventService();
+        
+        JSONObject result = service.getCountOfCommandForAction(actionKey,sessionId, fromDate, toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*
