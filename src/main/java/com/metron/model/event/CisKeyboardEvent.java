@@ -13,7 +13,7 @@ import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-public class CisKeyboardEvent extends Event {
+public class CisKeyboardEvent extends CisEvent {
 
     protected KeyboardEvent keyboardevent;
 
@@ -27,7 +27,7 @@ public class CisKeyboardEvent extends Event {
     }
 
     @Override
-    public void process() {
+    public void process() throws ClassNotFoundException, SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
@@ -35,14 +35,8 @@ public class CisKeyboardEvent extends Event {
         // save metric event attributes (i.e Action event) - key_command, key_target
         keyboardevent = new KeyboardEvent(this.getMetricValueAttr("key_command"), this.getMetricValueAttr("key_target"),this.getGraph());
         
-      //Save data to Relational DB (Postgres)        
-        try {
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"KeyboardEvent");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+      //Save data to Relational DB (Postgres)
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"KeyboardEvent");
         
         this.updateAssociations();
     }

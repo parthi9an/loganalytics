@@ -13,6 +13,7 @@ import com.metron.model.event.CisConfigurationEvent;
 import com.metron.model.event.CisDomainEvent;
 import com.metron.model.event.CisEnvironmentEvent;
 import com.metron.model.event.CisErrorEvent;
+import com.metron.model.event.CisEvent;
 import com.metron.model.event.CisFieldEvent;
 import com.metron.model.event.CisKeyboardEvent;
 import com.metron.model.event.CisViewEvent;
@@ -246,7 +247,7 @@ public class EventFactory {
         }
     }
 
-    public Event parseCISEvent(JSONObject event) throws JSONException {
+    public CisEvent parseCISEvent(JSONObject event) throws JSONException {
         
         JSONObject metric_value = (JSONObject)event.get("metric_value");
         event.remove("metric_value");

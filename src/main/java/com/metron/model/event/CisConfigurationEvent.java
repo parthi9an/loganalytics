@@ -13,7 +13,7 @@ import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-public class CisConfigurationEvent extends Event {
+public class CisConfigurationEvent extends CisEvent {
 
     protected ConfigurationEvent configurationevent;
 
@@ -27,7 +27,7 @@ public class CisConfigurationEvent extends Event {
     }
 
     @Override
-    public void process() {
+    public void process() throws ClassNotFoundException, SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
@@ -35,14 +35,8 @@ public class CisConfigurationEvent extends Event {
         // save metric event attributes (i.e Configuration event) - config_name
         configurationevent = new ConfigurationEvent(this.getMetricValueAttr("config_name"), this.getGraph());
         
-      //Save data to Relational DB (Postgres)        
-        try {
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+      //Save data to Relational DB (Postgres)
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
         
         this.updateAssociations();
     }
