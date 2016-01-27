@@ -4,13 +4,10 @@ import org.json.JSONObject;
 
 import com.metron.controller.QueryWhereBuffer;
 
-public class ViewEventService extends BaseEventService {
+public class DomainEventService extends BaseEventService {
 
-    public JSONObject getAssociatedCount() {
-        return getAssociatedCount("select in.view_name as name , count(*) as count from Metric_View group by in.view_name");
-    }
-
-    public JSONObject getViewcount(String sessionId, String fromDate, String toDate) {
+    public JSONObject getCountOfLoginUserByLoginType(String sessionId, String fromDate,
+            String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -26,13 +23,12 @@ public class ViewEventService extends BaseEventService {
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select in.view_name as name , count(*) as count from Metric_View group by in.view_name"
+        query.append("select count(*) as count,in.domain_type as name from Metric_Domain group by in.domain_type"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());
 
         return result;
-
     }
 
 }

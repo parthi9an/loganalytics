@@ -2,6 +2,8 @@ package com.metron.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.metron.event.service.DomainEventService;
+import com.metron.event.service.KeyboardEventService;
+import com.metron.event.service.SessionEventService;
+import com.metron.event.service.ViewEventService;
+import com.metron.event.service.WindowEventService;
 
 @RestController
 @RequestMapping("/TUI")
@@ -56,8 +64,23 @@ public class ToolUIController {
     @RequestMapping(value = "/getOverAllSummary")
     public @ResponseBody
     ResponseEntity<String> getOverAllSummary(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
 
-        return _formJSONSuccessResponse("");
+        try {
+            JSONObject window = new JSONObject();
+            window.put("count", new WindowEventService().count());
+            JSONObject session = new JSONObject();
+            session.put("count", new SessionEventService().count());            
+            
+            
+            result.put("window", window);
+            result.put("session", session);
+            
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*
@@ -132,7 +155,7 @@ public class ToolUIController {
     /*
      * Get counts of how commands are invoked (keyboard, toolbar, menu, button, mouse-click, etc.)
      * @params 
-     * optional_param: sessionId, sessionFrom, sessionTo
+     * optional_param: sessionId, fromDate, toDate
      * return Json
      * report: Pie chart
      */
@@ -140,11 +163,14 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getCommandCountByInvoked(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "sessionFrom", required = false) String sessionFrom,
-            @RequestParam(value = "sessionTo", required = false) String sessionTo) {
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
+        KeyboardEventService service = new KeyboardEventService();
+        
+        JSONObject result = service.getcommandCount(sessionId, fromDate, toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*
@@ -157,11 +183,14 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getViewCount(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "sessionFrom", required = false) String sessionFrom,
-            @RequestParam(value = "sessionTo", required = false) String sessionTo) {
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
+        ViewEventService service = new ViewEventService();
+        
+        JSONObject result = service.getViewcount(sessionId, fromDate, toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*
@@ -174,8 +203,8 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getViewActivity(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "sessionFrom", required = false) String sessionFrom,
-            @RequestParam(value = "sessionTo", required = false) String sessionTo) {
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
 
         return _formJSONSuccessResponse("");
@@ -190,10 +219,16 @@ public class ToolUIController {
     @RequestMapping(value = "/getCountOfLoginUser")
     public @ResponseBody
     ResponseEntity<String> getCountOfLoginUser(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
+        
+        DomainEventService service = new DomainEventService();
+        
+        JSONObject result = service.getCountOfLoginUserByLoginType(sessionId, fromDate, toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
+
     }
     
     /*
