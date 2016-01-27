@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.metron.event.service.ActionEventService;
+import com.metron.event.service.BaseEventService;
 import com.metron.event.service.DomainEventService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.SessionEventService;
@@ -93,10 +94,12 @@ public class ToolUIController {
     @RequestMapping(value = "/getAllEvent")
     public @ResponseBody
     ResponseEntity<String> getAllEvent(HttpServletRequest request,
-            @RequestParam(value = "eventName", required = false) String eventName,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
+        BaseEventService service = new BaseEventService();
+        service.getAllEvents(sessionId,fromDate, toDate);
 
         return _formJSONSuccessResponse("");
     }
