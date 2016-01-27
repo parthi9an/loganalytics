@@ -1,6 +1,9 @@
 package com.metron.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -22,6 +25,39 @@ public class EnvironmentEvent extends BaseModel{
             this.save();
         }
     }
+    
+    public EnvironmentEvent(Map<String, Object> metricValueAttributes,
+            OrientBaseGraph graph) {
+        super(graph);
+        this.vertex = find(graph, metricValueAttributes);
+        if (vertex == null) {
+            this.vertex = graph.addVertex("class:EnvironmentEvent");
+            HashMap<String, Object> props = new HashMap<String, Object>();
+            props.putAll(metricValueAttributes);
+            this.setProperties(props);
+            this.save();
+        }
+    }
+
+    private OrientVertex find(OrientBaseGraph graph, Map<String, Object> metricValueAttributes) {
+        
+        StringBuilder sql = new StringBuilder("select *  from EnvironmentEvent where ");
+        
+        for (Iterator<Entry<String, Object>> iter = metricValueAttributes.entrySet().iterator(); iter.hasNext();) {
+            Entry<String, Object> pair = iter.next();
+            sql.append(pair.getKey());
+            sql.append("= '");
+            sql.append(pair.getValue());
+            sql.append("'");
+
+            if (iter.hasNext()) {
+                sql.append(" and ");
+            }
+        }
+        
+        OrientVertex envevent = OrientUtils.getVertex(graph,sql.toString());
+        return envevent;
+    }
 
     public OrientVertex find(OrientBaseGraph graph, String os, String screen_length, String screen_height) {
         OrientVertex envevent = OrientUtils.getVertex(graph,
@@ -29,5 +65,7 @@ public class EnvironmentEvent extends BaseModel{
                         + "' and env_screen_length='" + screen_length + "' and env_screen_height='" + screen_height + "'");
         return envevent;
     }
+    
+    
 
 }

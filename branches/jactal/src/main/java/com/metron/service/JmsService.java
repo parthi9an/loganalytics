@@ -1,5 +1,7 @@
 package com.metron.service;
 
+import java.sql.SQLException;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -8,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.EventFactory;
-import com.metron.model.event.Event;
+import com.metron.model.event.CisEvent;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
@@ -32,12 +34,14 @@ public class JmsService implements MessageListener {
      * Save the message/event in orientDB
      *
      * @param  message/event to save in orientDB
+     * @throws SQLException 
+     * @throws ClassNotFoundException 
      */
-    private void saveEvent(String msg) throws JSONException {
+    private void saveEvent(String msg) throws JSONException, ClassNotFoundException, SQLException {
 
         JSONObject jo = new JSONObject(msg);
 
-        Event event = EventFactory.getInstance().parseCISEvent(jo);
+        CisEvent event = EventFactory.getInstance().parseCISEvent(jo);
         if (event != null) {
             OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
             event.setGraph(graph);

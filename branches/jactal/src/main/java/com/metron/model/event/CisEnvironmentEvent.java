@@ -14,7 +14,7 @@ import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-public class CisEnvironmentEvent extends Event {
+public class CisEnvironmentEvent extends CisEvent {
 
     protected EnvironmentEvent envevent;
 
@@ -28,25 +28,19 @@ public class CisEnvironmentEvent extends Event {
     }
 
     @Override
-    public void process() {
+    public void process() throws ClassNotFoundException, SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e Environment event) - env_os, env_screen_length, env_screen_height
-        envevent = new EnvironmentEvent(this.getMetricValueAttr("env_os"), this.getMetricValueAttr("env_screen_length"), this.getMetricValueAttr("env_screen_height"), this.getGraph());
-        this.saveEnvironment();
+        //envevent = new EnvironmentEvent(this.getMetricValueAttr("env_os"), this.getMetricValueAttr("env_screen_length"), this.getMetricValueAttr("env_screen_height"), this.getGraph());
+        envevent = new EnvironmentEvent(this.getMetricValueAttributes(),this.getGraph());
+        //this.saveEnvironment();
         
-      //Save data to Relational DB (Postgres)        
-        try {
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"EnvironmentEvent");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        
+      //Save data to Relational DB (Postgres)    
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"EnvironmentEvent");
+       
         this.updateAssociations();
     }
 

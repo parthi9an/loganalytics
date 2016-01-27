@@ -2,10 +2,7 @@ package com.metron.model.event;
 
 import org.json.JSONObject;
 
-import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-
-public class CisUiEvent extends Event{
+public class CisUiEvent extends CisEvent{
     
     public CisUiEvent(JSONObject eventData) {
         super(eventData);

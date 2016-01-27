@@ -7,19 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.ActionEvent;
-import com.metron.model.Pattern;
 import com.metron.model.PersistEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-public class CisActionEvent extends Event {
+public class CisActionEvent extends CisEvent {
     
     protected ActionEvent actionevent;
     
-    protected Pattern pattern;
-
     public CisActionEvent(JSONObject eventData) {
         super(eventData);
     }
@@ -30,7 +27,7 @@ public class CisActionEvent extends Event {
     }
 
     @Override
-    public void process() {
+    public void process() throws ClassNotFoundException, SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
@@ -39,13 +36,7 @@ public class CisActionEvent extends Event {
         actionevent = new ActionEvent(this.getMetricValueAttr("action_key"), this.getMetricValueAttr("action_command"), this.getMetricValueAttr("action_view"), this.getGraph());
                 
         //Save data to Relational DB (Postgres)        
-        try {
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ActionEvent");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ActionEvent");
                 
         this.updateAssociations();
         
@@ -92,6 +83,8 @@ public class CisActionEvent extends Event {
         JSONArray edgeObject = this.getPreviousMetricEvent();
         for(int j = 0; j < edgeObject.length(); j++){
             OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
+            //Excluding session_pattern edge as it doesn't represent events.
+            //if(edge.getLabel().compareToIgnoreCase("session_pattern") != 0){
             //Retrieve the timestamp when the preEvent has occurred
             String preEventTimestamp = edge.getProperty("metric_timestamp");
             //Retrieve the preEvent vertex information

@@ -13,7 +13,7 @@ import com.metron.util.TimeWindowUtil.DURATION;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
-public class CisDomainEvent extends Event {
+public class CisDomainEvent extends CisEvent {
 
     protected DomainEvent domainevent;
 
@@ -27,7 +27,7 @@ public class CisDomainEvent extends Event {
     }
 
     @Override
-    public void process() {
+    public void process() throws ClassNotFoundException, SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
@@ -35,14 +35,8 @@ public class CisDomainEvent extends Event {
         // save metric event attributes (i.e Action event) - domain_type
         domainevent = new DomainEvent(this.getMetricValueAttr("domain_type"), this.getGraph());
         
-      //Save data to Relational DB (Postgres)        
-        try {
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"DomainEvent");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+      //Save data to Relational DB (Postgres)   
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"DomainEvent");
         
         this.updateAssociations();
     }
