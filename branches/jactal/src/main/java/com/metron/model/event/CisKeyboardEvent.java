@@ -100,7 +100,7 @@ public class CisKeyboardEvent extends CisEvent {
 
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(keyboardevent, "Metric_Keyboard",props);
+        rawMetricEvent.addEdge(keyboardevent, "Metric_Event",props);
     }
 
 

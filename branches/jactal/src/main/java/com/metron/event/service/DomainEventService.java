@@ -12,7 +12,7 @@ public class DomainEventService extends BaseEventService {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-
+        whereClause.append("metric_type ='type_domain'");
         if (sessionId != null) {
             whereClause.append("out.metric_session_id ='" + sessionId + "'");
         }
@@ -23,7 +23,7 @@ public class DomainEventService extends BaseEventService {
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select count(*) as count,in.domain_type as name from Metric_Domain group by in.domain_type"
+        query.append("select count(*) as count,in.domain_type as name from Metric_Event group by in.domain_type"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());

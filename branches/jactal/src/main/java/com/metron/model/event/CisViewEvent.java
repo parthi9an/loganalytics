@@ -100,7 +100,7 @@ public class CisViewEvent extends CisEvent {
 
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(viewevent, "Metric_View",props);        
+        rawMetricEvent.addEdge(viewevent, "Metric_Event",props);        
     }
 
 

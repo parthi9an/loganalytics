@@ -128,7 +128,7 @@ public class CisActionEvent extends CisEvent {
      */
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(actionevent, "Metric_Action",props);
+        rawMetricEvent.addEdge(actionevent, "Metric_Event",props);
     }
     
     /**

@@ -3,7 +3,7 @@ package com.metron.event.service;
 public class WindowEventService extends BaseEventService{
     
     public Long count() {
-        return getCount("select count(*) as count from metric_window");
+        return getCount("select count(*) as count from Metric_Event where metric_type = 'type_window'");
     }
 
 }
