@@ -11,7 +11,7 @@ public class KeyboardEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-
+        whereClause.append("metric_type ='type_keyb'");
         if (sessionId != null) {
             whereClause.append("out.metric_session_id ='" + sessionId + "'");
         }
@@ -22,7 +22,7 @@ public class KeyboardEventService extends BaseEventService{
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select in.key_command as name, count(*) as count from Metric_Keyboard group by in.key_command"
+        query.append("select in.key_command as name, count(*) as count from Metric_Event group by in.key_command"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());

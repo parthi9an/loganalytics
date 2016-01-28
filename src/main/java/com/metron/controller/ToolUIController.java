@@ -2,6 +2,7 @@ package com.metron.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -95,13 +96,14 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getAllEvent(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "limit", required = false) String limit,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         BaseEventService service = new BaseEventService();
-        service.getAllEvents(sessionId,fromDate, toDate);
+        JSONArray result = service.getAllEvents(sessionId,fromDate, toDate,limit);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
     }
    
     /*

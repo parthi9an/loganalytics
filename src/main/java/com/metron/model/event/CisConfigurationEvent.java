@@ -99,7 +99,7 @@ public class CisConfigurationEvent extends CisEvent {
 
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(configurationevent, "Metric_Configuration",props);
+        rawMetricEvent.addEdge(configurationevent, "Metric_Event",props);
     }
 
 

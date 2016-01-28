@@ -103,7 +103,7 @@ public class CisFieldEvent extends CisEvent {
      */
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(fieldevent, "Metric_Field",props);       
+        rawMetricEvent.addEdge(fieldevent, "Metric_Event",props);       
     }
 
 

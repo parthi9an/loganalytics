@@ -12,7 +12,7 @@ public class ActionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        
+        whereClause.append("metric_type ='type_action'");
         if (actionKey != null) {
             whereClause.append("in.action_key ='" + actionKey + "'");
         }
@@ -26,7 +26,7 @@ public class ActionEventService extends BaseEventService{
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select count(*) as count,in.action_command as name from Metric_Action group by in.action_command"
+        query.append("select count(*) as count,in.action_command as name from Metric_Event group by in.action_command"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());
@@ -46,7 +46,7 @@ public class ActionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        
+        whereClause.append("metric_type ='type_action'");
         if (sessionId != null) {
             whereClause.append("out.metric_session_id ='" + sessionId + "'");
         }
@@ -57,7 +57,7 @@ public class ActionEventService extends BaseEventService{
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select distinct(in.action_key) as name from Metric_Action"
+        query.append("select distinct(in.action_key) as name from Metric_Event"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getNames(query.toString());

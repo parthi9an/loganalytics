@@ -103,6 +103,6 @@ public class CisDomainEvent extends CisEvent {
      */
     private void associateRawMetricEvent() {
         Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(domainevent, "Metric_Domain",props);  
+        rawMetricEvent.addEdge(domainevent, "Metric_Event",props);  
     }
 }
