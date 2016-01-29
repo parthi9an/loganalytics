@@ -37,5 +37,9 @@ public class Utils {
     public static long getDateDiffInMIllisec(Date from, Date to) {
         return getDateDiff(from, to, TimeUnit.MILLISECONDS);
     }
+    
+    public static long getDateDiffInSec(Date from, Date to) {
+        return getDateDiff(from, to, TimeUnit.SECONDS);
+    }
 
 }

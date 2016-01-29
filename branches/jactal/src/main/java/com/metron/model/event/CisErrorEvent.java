@@ -7,15 +7,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.ErrorEvent;
+import com.metron.model.ErrorPattern;
 import com.metron.model.PersistEvent;
-import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
+import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class CisErrorEvent extends CisEvent {
 
     protected ErrorEvent errorevent;
+    
+    protected ErrorPattern errorpattern;
 
     public CisErrorEvent(JSONObject eventData) {
         super(eventData);
@@ -47,9 +50,39 @@ public class CisErrorEvent extends CisEvent {
         this.associateTimeWindow();
       //this.associateExistingEvents();
         this.updatePatterns();
+        this.updateErrorPatterns();
         this.associatePatternRawMetricEvent();
     }
     
+    private void updateErrorPatterns() {
+        
+        try {
+            JSONArray edgeObject = this.getPreviousMetricEvent();
+            StringBuilder patern = new StringBuilder();        
+            for(int j = 0; j < edgeObject.length(); j++){            
+                OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
+                
+                //Excluding session_pattern edge as it doesn't represent events.
+                if(edge.getLabel().compareToIgnoreCase("session_pattern") != 0){
+                
+                //Previous Event Timestamp
+                String preEventTimestamp = edge.getProperty("metric_timestamp");
+                String currenttimestamp = this.getStringAttr("metric_timestamp");
+                long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
+                long diff1 = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
+                if(diff < 3600)
+                    patern.append(edge.getProperty("in")).append("_");          
+            }}
+            String patterType = patern.toString().substring(0, patern.toString().length()-1);
+            errorpattern = new ErrorPattern(patterType,this.getMetricValueAttr("error_type"),this.getGraph());
+            
+            } catch (JSONException e) {
+                
+                e.printStackTrace();
+            }
+        
+    }
+
     /**
      * At the time of inserting a new event @session id 
      * create an edge b/w existing events and the current event with difference in 

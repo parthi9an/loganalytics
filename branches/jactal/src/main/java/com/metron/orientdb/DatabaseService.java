@@ -394,6 +394,12 @@ public class DatabaseService {
                 vType.createProperty("association_count", OType.INTEGER);
             }
             
+            if (!schema.existsClass("ErrorPattern")) {
+                vType = graph.createVertexType("ErrorPattern");
+                vType.createProperty("pattern_type", OType.STRING);
+                vType.createProperty("association_count", OType.INTEGER);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

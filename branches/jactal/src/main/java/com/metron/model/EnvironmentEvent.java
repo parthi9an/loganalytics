@@ -41,7 +41,7 @@ public class EnvironmentEvent extends BaseModel{
 
     private OrientVertex find(OrientBaseGraph graph, Map<String, Object> metricValueAttributes) {
         
-        StringBuilder sql = new StringBuilder("select *  from EnvironmentEvent where ");
+        StringBuilder sql = new StringBuilder("select * from EnvironmentEvent where ");
         
         for (Iterator<Entry<String, Object>> iter = metricValueAttributes.entrySet().iterator(); iter.hasNext();) {
             Entry<String, Object> pair = iter.next();

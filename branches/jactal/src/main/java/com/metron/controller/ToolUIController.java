@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.metron.event.service.ActionEventService;
 import com.metron.event.service.BaseEventService;
 import com.metron.event.service.DomainEventService;
+import com.metron.event.service.ErrorEventService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.SessionEventService;
 import com.metron.event.service.ViewEventService;
@@ -121,6 +122,21 @@ public class ToolUIController {
 
         ActionEventService service = new ActionEventService();
         JSONObject result = service.getActionNames(sessionId,fromDate, toDate);
+        
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    /*
+     * Get sessions list 
+     * return sessions : as Json
+     */
+    
+    @RequestMapping(value = "/getSessions")
+    public @ResponseBody
+    ResponseEntity<String> getSessions(HttpServletRequest request) {
+
+        SessionEventService service = new SessionEventService();
+        JSONObject result = service.getSessionNames();
         
         return _formJSONSuccessResponse(result.toString());
     }
@@ -237,6 +253,27 @@ public class ToolUIController {
         DomainEventService service = new DomainEventService();
         
         JSONObject result = service.getCountOfLoginUserByLoginType(sessionId, fromDate, toDate);
+
+        return _formJSONSuccessResponse(result.toString());
+
+    }
+    
+    /*
+     * count of Exceptions occurred
+     * @params 
+     * return Exception along with count as Json
+     * report: table
+     */
+    @RequestMapping(value = "/getExceptionCount")
+    public @ResponseBody
+    ResponseEntity<String> getExceptionCount(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        
+        ErrorEventService service = new ErrorEventService();
+        
+        JSONObject result = service.getExceptionCount(sessionId, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 
