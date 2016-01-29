@@ -252,6 +252,30 @@ To deploy to tomcat
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>postgresCheck</id>
+			<activation>
+				<property>
+					<name>postgresCheck</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<argument>com.metron.test.PostgresJDBC</argument>
+							</arguments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
