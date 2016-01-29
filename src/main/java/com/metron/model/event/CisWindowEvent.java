@@ -34,11 +34,12 @@ public class CisWindowEvent extends CisEvent {
         
         // save metric event attributes (i.e window event) - window_length, window_height, window_view
         windowevent = new WindowEvent(this.getMetricValueAttr("window_length"), this.getMetricValueAttr("window_height"), this.getMetricValueAttr("window_view"), this.getGraph());
-        
-      //Save data to Relational DB (Postgres)  
-        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"WindowEvent");
-        
+         
         this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)  
+        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"WindowEvent");
+       
     }
 
     private void updateAssociations() {

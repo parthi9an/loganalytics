@@ -34,11 +34,12 @@ public class CisViewEvent extends CisEvent {
         
         // save metric event attributes (i.e View event) - view_name, view_event_type
         viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getGraph());
+               
+        this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ViewEvent");
-                
-        this.updateAssociations();
+         
     }
 
     private void updateAssociations() {

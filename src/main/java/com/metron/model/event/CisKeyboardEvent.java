@@ -35,10 +35,11 @@ public class CisKeyboardEvent extends CisEvent {
         // save metric event attributes (i.e Action event) - key_command, key_target
         keyboardevent = new KeyboardEvent(this.getMetricValueAttr("key_command"), this.getMetricValueAttr("key_target"),this.getGraph());
         
-      //Save data to Relational DB (Postgres)
+        this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"KeyboardEvent");
         
-        this.updateAssociations();
     }
 
     private void updateAssociations() {

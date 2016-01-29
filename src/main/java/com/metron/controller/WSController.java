@@ -38,9 +38,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
 import com.metron.AppConfig;
-import com.metron.event.service.SessionEventService;
-import com.metron.event.service.ViewEventService;
-import com.metron.event.service.WindowEventService;
 import com.metron.model.EventFactory;
 import com.metron.model.event.Event;
 import com.metron.orientdb.OrientDBGraphManager;
@@ -632,31 +629,6 @@ public class WSController {
         jo.put("token", "success");
         jo.put("response", "Extracted Successfully");
         return _formJSONSuccessResponse(jo.toString());
-    }
-    
-    @RequestMapping(value = "/getOverallEventSummary", method = {RequestMethod.GET})
-    public @ResponseBody
-    ResponseEntity<String> getOverallEventSummary() {
-        JSONObject result = new JSONObject();
-
-        try {
-            JSONObject window = new JSONObject();
-            window.put("count", new WindowEventService().count());
-            JSONObject session = new JSONObject();
-            session.put("count", new SessionEventService().count());
-            
-            JSONObject view = new JSONObject();
-            view.put("viewcount", new ViewEventService().getAssociatedCount());
-            
-            result.put("window", window);
-            result.put("session", session);
-            result.put("view", view);
-            
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return _formJSONSuccessResponse(result.toString());
     }
 
     private ResponseEntity<String> _formJSONSuccessResponse(String data) {
