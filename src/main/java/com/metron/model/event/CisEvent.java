@@ -104,7 +104,7 @@ public abstract class CisEvent extends BaseModel{
     public JSONArray getPreviousMetricEvent() {
         
         StringBuffer query = new StringBuffer();
-        query.append("select outE() as edge from CisEvents where metric_session_id =" + this.getStringAttr("metric_session_id"));
+        query.append("select outE('Metric_Event') as edge from CisEvents where metric_session_id =" + this.getStringAttr("metric_session_id"));
         String result = new OrientRest().doSql(query.toString());
         
         JSONObject resultObject;
@@ -170,7 +170,7 @@ public abstract class CisEvent extends BaseModel{
     
     /**
      * updates the association count of the pattern 
-     * (Events occurred till this point @session considered as pattern)
+     * (Events occurred before 5 min to till this point @session considered as pattern)
      */
     public void updatePatterns() {
        
@@ -179,10 +179,18 @@ public abstract class CisEvent extends BaseModel{
         StringBuilder patern = new StringBuilder();        
         for(int j = 0; j < edgeObject.length(); j++){            
             OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
+            
             //Excluding session_pattern edge as it doesn't represent events.
-            //if(edge.getLabel().compareToIgnoreCase("session_pattern") != 0)
+            if(edge.getLabel().compareToIgnoreCase("session_pattern") != 0){
+            
+            //Previous Event Timestamp
+            String preEventTimestamp = edge.getProperty("metric_timestamp");
+            String currenttimestamp = this.getStringAttr("metric_timestamp");
+            long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
+            long diff1 = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
+            if(diff < 3600)
                 patern.append(edge.getProperty("in")).append("_");          
-        }
+        }}
         String patterType = patern.toString().substring(0, patern.toString().length()-1);
         pattern = new Pattern(patterType,this.getGraph());
         
@@ -196,7 +204,7 @@ public abstract class CisEvent extends BaseModel{
      * Create an edge b/w RawMetricEvent (contains session info) & the pattern 
      */
     public void associatePatternRawMetricEvent() {
-        //rawMetricEvent.addEdge(pattern, "session_pattern");
+        rawMetricEvent.addEdge(pattern, "session_pattern");
     }
 
 

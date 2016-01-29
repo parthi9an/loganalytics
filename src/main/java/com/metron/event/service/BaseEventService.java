@@ -51,7 +51,7 @@ public class BaseEventService {
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++)
                 names.put(resultArr.getJSONObject(j).getString("name"));
-            result.put("action_names", names);
+            result.put("names", names);
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
