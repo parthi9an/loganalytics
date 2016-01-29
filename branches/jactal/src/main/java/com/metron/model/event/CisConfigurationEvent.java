@@ -34,11 +34,12 @@ public class CisConfigurationEvent extends CisEvent {
         
         // save metric event attributes (i.e Configuration event) - config_name
         configurationevent = new ConfigurationEvent(this.getMetricValueAttr("config_name"), this.getGraph());
+       
+        this.updateAssociations();
         
-      //Save data to Relational DB (Postgres)
+        //Save data to Relational DB (Postgres)
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
         
-        this.updateAssociations();
     }
 
     private void updateAssociations() {

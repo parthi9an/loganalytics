@@ -33,12 +33,12 @@ public class CisActionEvent extends CisEvent {
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e Action event) - action_key, action_command, action_view
-        actionevent = new ActionEvent(this.getMetricValueAttr("action_key"), this.getMetricValueAttr("action_command"), this.getMetricValueAttr("action_view"), this.getGraph());
-                
+        actionevent = new ActionEvent(this.getMetricValueAttr("action_key"), this.getMetricValueAttr("action_command"), this.getMetricValueAttr("action_view"), this.getGraph());       
+                        
+        this.updateAssociations();
+        
         //Save data to Relational DB (Postgres)        
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ActionEvent");
-                
-        this.updateAssociations();
         
     }
 

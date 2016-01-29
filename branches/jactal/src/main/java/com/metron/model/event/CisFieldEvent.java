@@ -35,10 +35,11 @@ public class CisFieldEvent extends CisEvent {
         // save metric event attributes (i.e Action event) - field_name, field_parent
         fieldevent = new FieldEvent(this.getMetricValueAttr("field_name"), this.getMetricValueAttr("field_parent"), this.getGraph());
         
-      //Save data to Relational DB (Postgres)
+        this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"FieldEvent");
         
-        this.updateAssociations();
     }
 
     private void updateAssociations() {

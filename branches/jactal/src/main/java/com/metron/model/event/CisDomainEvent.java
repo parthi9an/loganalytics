@@ -35,10 +35,11 @@ public class CisDomainEvent extends CisEvent {
         // save metric event attributes (i.e Action event) - domain_type
         domainevent = new DomainEvent(this.getMetricValueAttr("domain_type"), this.getGraph());
         
-      //Save data to Relational DB (Postgres)   
+        this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)   
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"DomainEvent");
         
-        this.updateAssociations();
     }
     
     /**

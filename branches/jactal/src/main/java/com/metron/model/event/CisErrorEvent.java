@@ -38,10 +38,11 @@ public class CisErrorEvent extends CisEvent {
         // save metric event attributes (i.e Action event) - error_type, error_message, error_trace
         errorevent = new ErrorEvent(this.getMetricValueAttr("error_type"), this.getMetricValueAttr("error_message"), this.getMetricValueAttr("error_trace"), this.getGraph());
         
-      //Save data to Relational DB (Postgres)   
+        this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)   
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ErrorEvent");
         
-        this.updateAssociations();
     }
 
     private void updateAssociations() {

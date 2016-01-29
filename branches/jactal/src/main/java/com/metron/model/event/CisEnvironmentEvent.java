@@ -38,10 +38,11 @@ public class CisEnvironmentEvent extends CisEvent {
         envevent = new EnvironmentEvent(this.getMetricValueAttributes(),this.getGraph());
         //this.saveEnvironment();
         
-      //Save data to Relational DB (Postgres)    
+        this.updateAssociations();
+        
+        //Save data to Relational DB (Postgres)    
         new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"EnvironmentEvent");
        
-        this.updateAssociations();
     }
 
     private void saveEnvironment() {
