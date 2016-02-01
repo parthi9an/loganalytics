@@ -208,7 +208,7 @@ public abstract class CisEvent extends BaseModel{
      * Create an edge b/w RawMetricEvent (contains session info) & the pattern 
      */
     public void associatePatternRawMetricEvent() {
-        rawMetricEvent.addEdge(pattern, "session_pattern");
+        rawMetricEvent.addEdge(pattern, "Session_Pattern");
     }
 
 

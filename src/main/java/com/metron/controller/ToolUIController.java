@@ -299,7 +299,7 @@ public class ToolUIController {
         
         ErrorEventService service = new ErrorEventService();
         
-        JSONObject result = service.getExceptionCount(sessionId, fromDate, toDate);
+        JSONArray result = service.getExceptionCount(sessionId, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 

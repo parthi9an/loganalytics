@@ -400,6 +400,11 @@ public class DatabaseService {
                 vType.createProperty("association_count", OType.INTEGER);
             }
             
+            if (!schema.existsClass("Session_Pattern")) {
+                eType = graph.createEdgeType("Session_Pattern");
+                eType.createProperty("association_count", OType.INTEGER);
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
