@@ -7,9 +7,9 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ErrorEventService extends BaseEventService {
 
-    public JSONObject getExceptionCount(String sessionId, String fromDate, String toDate) {
+    public JSONArray getExceptionCount(String sessionId, String fromDate, String toDate) {
         
-        JSONObject result = new JSONObject();
+        JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
             QueryWhereBuffer whereClause = new QueryWhereBuffer();
             whereClause.append("metric_type ='type_error'");

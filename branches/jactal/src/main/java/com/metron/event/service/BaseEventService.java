@@ -44,14 +44,18 @@ public class BaseEventService {
     }
     
   //Return a json object which contains json array's with names & associated counts, suitable for reports display in table 
-    public JSONObject getAssociatedCounts(String sql) {
+    public JSONArray getAssociatedCounts(String sql) {
         String data = new com.metron.orientdb.OrientRest().doSql(sql);
-        JSONObject result = new JSONObject();
+        JSONArray result = new JSONArray();
         try{
             JSONObject jsondata = new JSONObject(data.toString());
             JSONArray resultArr = jsondata.getJSONArray("result");
-            for(int j = 0; j < resultArr.length(); j++)
-                result.put(resultArr.getJSONObject(j).getString("name"), resultArr.getJSONObject(j).getLong("count"));
+            for(int j = 0; j < resultArr.length(); j++){
+                JSONObject eventcount = new JSONObject();
+                eventcount.put("name",resultArr.getJSONObject(j).getString("name"));
+                eventcount.put("count", resultArr.getJSONObject(j).getLong("count"));
+                result.put(eventcount);
+            }
         }catch(JSONException e){
             e.printStackTrace();
         }

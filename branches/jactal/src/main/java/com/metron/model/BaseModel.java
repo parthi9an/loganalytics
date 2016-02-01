@@ -5,7 +5,6 @@ import java.util.HashMap;
 import com.metron.AppConfig;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -81,6 +80,11 @@ public class BaseModel {
         int size = 0;
         for (Edge edge : edges) {
             size++;
+            if(edge.getLabel().compareToIgnoreCase("Session_Pattern") == 0){
+                int count = edge.getProperty("association_count");
+                count++;
+                edge.setProperty("association_count", count);
+            }
         }
         if (size > 0) {
             return;
