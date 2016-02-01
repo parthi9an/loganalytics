@@ -6,7 +6,7 @@ public class EventPatternService extends BaseEventService{
 
     public JSONArray getPatterns(String sessionId, String fromDate, String toDate) {
         
-        String sql = "select pattern_type as pattern ,association_count as count from Pattern order by association_count DESC";
+        String sql = "select pattern_type as pattern ,association_count as count from Pattern order by count DESC";
         
         JSONArray result = new JSONArray();
         
