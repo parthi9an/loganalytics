@@ -63,4 +63,20 @@ public class CisEventUtil {
         return properties;
     }
 
+    public String getEventClass(String pattern) {
+        
+        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+        
+        String[] rid=pattern.split("_");
+        StringBuilder paternclass = new StringBuilder();
+        for(int i=0;i<rid.length;i++)
+        {
+            paternclass.append(graph.getVertex(rid[i]).getLabel()).append("_");
+        }
+        
+        String patterClass = paternclass.toString().substring(0, paternclass.toString().length()-1);
+        
+        return patterClass;
+    }
+
 }

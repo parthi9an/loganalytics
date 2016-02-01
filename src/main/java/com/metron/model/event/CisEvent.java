@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.metron.AppConfig;
 import com.metron.model.BaseModel;
 import com.metron.model.Pattern;
 import com.metron.model.RawMetricEvent;
@@ -20,6 +21,7 @@ import com.metron.orientdb.OrientRest;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public abstract class CisEvent extends BaseModel{
         
@@ -176,7 +178,8 @@ public abstract class CisEvent extends BaseModel{
        
         try {
         JSONArray edgeObject = this.getPreviousMetricEvent();
-        StringBuilder patern = new StringBuilder();        
+        StringBuilder patern = new StringBuilder();
+        long timewindow = AppConfig.getInstance().getInt("event.timewindow"); 
         for(int j = 0; j < edgeObject.length(); j++){            
             OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
             
@@ -188,8 +191,9 @@ public abstract class CisEvent extends BaseModel{
             String currenttimestamp = this.getStringAttr("metric_timestamp");
             long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
             long diff1 = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
-            if(diff < 3600)
-                patern.append(edge.getProperty("in")).append("_");          
+            
+            if(diff1 < timewindow)
+                patern.append(((OrientVertex)edge.getProperty("in")).getId()).append("_");          
         }}
         String patterType = patern.toString().substring(0, patern.toString().length()-1);
         pattern = new Pattern(patterType,this.getGraph());

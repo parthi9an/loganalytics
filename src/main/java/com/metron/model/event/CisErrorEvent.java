@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.metron.AppConfig;
 import com.metron.model.ErrorEvent;
 import com.metron.model.ErrorPattern;
 import com.metron.model.PersistEvent;
@@ -59,7 +60,8 @@ public class CisErrorEvent extends CisEvent {
         
         try {
             JSONArray edgeObject = this.getPreviousMetricEvent();
-            StringBuilder patern = new StringBuilder();        
+            StringBuilder patern = new StringBuilder(); 
+            long timewindow = AppConfig.getInstance().getInt("event.timewindow");
             for(int j = 0; j < edgeObject.length(); j++){            
                 OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
                 
@@ -71,8 +73,9 @@ public class CisErrorEvent extends CisEvent {
                 String currenttimestamp = this.getStringAttr("metric_timestamp");
                 long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
                 long diff1 = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
-                if(diff < 3600)
-                    patern.append(edge.getProperty("in")).append("_");          
+                
+                if(diff1 < timewindow)
+                    patern.append(((OrientVertex)edge.getProperty("in")).getId()).append("_");          
             }}
             String patterType = patern.toString().substring(0, patern.toString().length()-1);
             errorpattern = new ErrorPattern(patterType,this.getMetricValueAttr("error_type"),this.getGraph());
