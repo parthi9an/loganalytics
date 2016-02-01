@@ -156,4 +156,16 @@ public class BaseEventService {
         return result;
     }
 
+    public JSONObject getEventDetails(String rid) {
+        
+        CisEventUtil eventUtil = new CisEventUtil();
+        JSONObject eventdetails = null;
+        try {
+            eventdetails = eventUtil.getdetails(rid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return eventdetails;
+    }
+
 }

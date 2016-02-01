@@ -55,7 +55,7 @@ public class ErrorEventService extends BaseEventService {
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select pattern_type as pattern ,association_count as count from ErrorPattern order by association_count DESC"
+        query.append("select pattern_type as pattern ,association_count as count from ErrorPattern order by count DESC"
                 + ((!whereClause.toString().equals(""))
                         ? " Where " + whereClause.toString()
                         : ""));

@@ -205,6 +205,18 @@ public class ToolUIController {
         return _formJSONSuccessResponse(result.toString());
     }
     
+    @RequestMapping(value = "/getEventDetails")
+    public @ResponseBody
+    ResponseEntity<String> getEventDetails(HttpServletRequest request,
+            @RequestParam(value = "rid", required = true) String rid){
+        
+        BaseEventService service = new BaseEventService();
+        
+        JSONObject result = service.getEventDetails(rid);
+
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
     /*
      * Get counts of how commands are invoked (keyboard, toolbar, menu, button, mouse-click, etc.)
      * @params 
