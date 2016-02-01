@@ -21,6 +21,7 @@ import com.metron.event.service.ActionEventService;
 import com.metron.event.service.BaseEventService;
 import com.metron.event.service.DomainEventService;
 import com.metron.event.service.ErrorEventService;
+import com.metron.event.service.EventPatternService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.SessionEventService;
 import com.metron.event.service.ViewEventService;
@@ -169,14 +170,39 @@ public class ToolUIController {
      * return Json
      * report: 
      */
-    @RequestMapping(value = "/getCommonlyUsedCommands")
+    @RequestMapping(value = "/getCommonlyUsedPatterns")
     public @ResponseBody
-    ResponseEntity<String> getCommonlyUsedCommands(HttpServletRequest request,
+    ResponseEntity<String> getCommonlyUsedPatterns(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
+        EventPatternService service = new EventPatternService();
+        
+        JSONArray result = service.getPatterns(sessionId,fromDate,toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    /*
+     * common patterns and actions leading up to the exceptions
+     * @params 
+     * return Json
+     * report: 
+     */
+    @RequestMapping(value = "/getCommonExceptionPatterns")
+    public @ResponseBody
+    ResponseEntity<String> getCommonExceptionPatterns(HttpServletRequest request,
+            @RequestParam(value = "errorType", required = true) String errorType,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        
+        ErrorEventService service = new ErrorEventService();
+        
+        JSONArray result = service.getPatterns(errorType,sessionId,fromDate,toDate);
+
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*

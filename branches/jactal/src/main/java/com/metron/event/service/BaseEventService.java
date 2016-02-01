@@ -22,6 +22,7 @@ public class BaseEventService {
         return count;
     }
     
+    //Return a json object which contains json array's with names & associated counts, suitable for pie chart reports
     public JSONObject getAssociatedCount(String sql) {
         String data = new com.metron.orientdb.OrientRest().doSql(sql);
         JSONObject result = new JSONObject();
@@ -42,6 +43,21 @@ public class BaseEventService {
         return result;
     }
     
+  //Return a json object which contains json array's with names & associated counts, suitable for reports display in table 
+    public JSONObject getAssociatedCounts(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONObject result = new JSONObject();
+        try{
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++)
+                result.put(resultArr.getJSONObject(j).getString("name"), resultArr.getJSONObject(j).getLong("count"));
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
     public JSONObject getNames(String sql) {
         String data = new com.metron.orientdb.OrientRest().doSql(sql);
         JSONObject result = new JSONObject();
@@ -55,6 +71,31 @@ public class BaseEventService {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
+        return result;
+    }
+    
+    /**
+     * Return the frequently occurred patterns
+     * @param sql
+     * @return
+     */
+    public JSONArray getPattern(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONArray result = new JSONArray();
+        CisEventUtil eventUtil = new CisEventUtil();
+        try {
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++){
+                JSONObject pattern = new JSONObject();
+                pattern.put("pattern",resultArr.getJSONObject(j).getString("pattern"));
+                pattern.put("association_count", resultArr.getJSONObject(j).getString("count"));
+                pattern.put("pattern_class", eventUtil.getEventClass(resultArr.getJSONObject(j).getString("pattern")));
+                result.put(pattern);
+            }
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }    
         return result;
     }
 
