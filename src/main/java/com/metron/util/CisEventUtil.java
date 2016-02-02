@@ -64,19 +64,51 @@ public class CisEventUtil {
     }
 
     public String getEventClass(String pattern) {
-        
-        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-        
+                
         String[] rid=pattern.split("_");
         StringBuilder paternclass = new StringBuilder();
         for(int i=0;i<rid.length;i++)
         {
-            paternclass.append(graph.getVertex(rid[i]).getLabel()).append("_");
+            // To Retrieve the Event Name
+            //paternclass.append(graph.getVertex(rid[i]).getLabel()).append("_");
+            
+            //To retrieve Event Name along with one attribute
+            paternclass.append(getBriefDetails(rid[i])).append("_");
         }
         
         String patterClass = paternclass.toString().substring(0, paternclass.toString().length()-1);
         
         return patterClass;
+    }
+
+    private String getBriefDetails(String rid) {
+        
+        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+        OrientVertex eventvertex = graph.getVertex(rid);
+        StringBuilder paternclassdetails = new StringBuilder();
+        
+        if(eventvertex.getLabel().compareTo("ActionEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("action_key"));
+        }else if (eventvertex.getLabel().compareTo("KeyBoardEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("key_command"));
+        }else if (eventvertex.getLabel().compareTo("ViewEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("view_name"));
+        }else if (eventvertex.getLabel().compareTo("DomainEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("domain_type"));
+        }else if (eventvertex.getLabel().compareTo("FieldEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("field_name"));
+        }else if (eventvertex.getLabel().compareTo("ErrorEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("error_type"));
+        }else if (eventvertex.getLabel().compareTo("ConfigurationEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("config_name"));
+        }else if (eventvertex.getLabel().compareTo("WindowEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("window_view"));
+        }else if (eventvertex.getLabel().compareTo("EnvironmentEvent") == 0){
+            paternclassdetails.append(eventvertex.getLabel()).append(";").append(eventvertex.getProperty("env_os"));
+        }
+        
+        
+        return paternclassdetails.toString();
     }
 
 }
