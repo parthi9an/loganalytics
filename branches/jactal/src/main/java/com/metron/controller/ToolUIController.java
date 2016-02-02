@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.metron.event.service.ActionEventService;
 import com.metron.event.service.BaseEventService;
+import com.metron.event.service.ConfiguartionEventService;
 import com.metron.event.service.DomainEventService;
 import com.metron.event.service.ErrorEventService;
 import com.metron.event.service.EventPatternService;
@@ -160,6 +161,27 @@ public class ToolUIController {
         ActionEventService service = new ActionEventService();
         
         JSONObject result = service.getCountOfCommandForAction(actionKey,sessionId, fromDate, toDate);
+
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    /*
+     * Get counts of actions invoked (action key/name)
+     * @params
+     * optional_param: sessionId, sessionFrom, sessionTo
+     * return count, action key/name
+     * report: Pie chart
+     */
+    @RequestMapping(value = "/getActionKeyCount")
+    public @ResponseBody
+    ResponseEntity<String> getActionKeyCount(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+
+        ActionEventService service = new ActionEventService();
+        
+        JSONObject result = service.getCountOfActionKey(sessionId, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -312,6 +334,27 @@ public class ToolUIController {
         ErrorEventService service = new ErrorEventService();
         
         JSONArray result = service.getExceptionCount(sessionId, fromDate, toDate);
+
+        return _formJSONSuccessResponse(result.toString());
+
+    }
+    
+    /*
+     * count of overridden Configurations
+     * @params 
+     * return Configuration along with count as Json
+     * report: pie chart
+     */
+    @RequestMapping(value = "/getOverridenConfigCount")
+    public @ResponseBody
+    ResponseEntity<String> getOverridenConfigCount(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        
+        ConfiguartionEventService service = new ConfiguartionEventService();
+        
+        JSONObject result = service.getOverridenConfigCount(sessionId, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 

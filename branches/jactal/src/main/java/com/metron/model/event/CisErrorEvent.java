@@ -78,7 +78,8 @@ public class CisErrorEvent extends CisEvent {
                     patern.append(((OrientVertex)edge.getProperty("in")).getId()).append("_");          
             }}
             String patterType = patern.toString().substring(0, patern.toString().length()-1);
-            errorpattern = new ErrorPattern(patterType,this.getMetricValueAttr("error_type"),this.getGraph());
+            //errorpattern = new ErrorPattern(patterType,this.getMetricValueAttr("error_type"),this.getGraph());
+            errorpattern = new ErrorPattern(patterType,this.getMetricValueAttributes(),this.getGraph());
             
             } catch (JSONException e) {
                 
