@@ -16,7 +16,9 @@ import com.metron.model.event.CisErrorEvent;
 import com.metron.model.event.CisEvent;
 import com.metron.model.event.CisFieldEvent;
 import com.metron.model.event.CisKeyboardEvent;
+import com.metron.model.event.CisViewCloseEvent;
 import com.metron.model.event.CisViewEvent;
+import com.metron.model.event.CisViewOpenEvent;
 import com.metron.model.event.CisWindowEvent;
 import com.metron.model.event.Event;
 import com.metron.model.event.HostStatus;
@@ -257,7 +259,12 @@ public class EventFactory {
         } else if(metric_value.has("key_command")){
             return new CisKeyboardEvent(event,metric_value);
         } else if(metric_value.has("view_name")){
-            return new CisViewEvent(event,metric_value);
+            if(metric_value.get("view_event_type").toString().compareToIgnoreCase("view_open") == 0){
+                return new CisViewOpenEvent(event,metric_value);
+            }else if(metric_value.get("view_event_type").toString().compareToIgnoreCase("view_close") == 0){
+                return new CisViewCloseEvent(event,metric_value);
+            }
+            //return new CisViewEvent(event,metric_value);
         } else if(metric_value.has("domain_type")){
             return new CisDomainEvent(event,metric_value);
         } else if(metric_value.has("field_name")){
