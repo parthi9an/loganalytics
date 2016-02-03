@@ -43,6 +43,29 @@ public class BaseEventService {
         return result;
     }
     
+    public JSONObject getTotalAndAvg(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONObject result = new JSONObject();
+        JSONArray name = new JSONArray();
+        JSONArray sum = new JSONArray();
+        JSONArray avg = new JSONArray();
+        try{
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++){
+                name.put(resultArr.getJSONObject(j).getString("name"));
+                sum.put(resultArr.getJSONObject(j).getLong("sum"));
+                avg.put(resultArr.getJSONObject(j).getLong("avg"));
+            }
+            result.put("name", name);
+            result.put("sum", sum);
+            result.put("avg", avg);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
   //Return a json object which contains json array's with names & associated counts, suitable for reports display in table 
     public JSONArray getAssociatedCounts(String sql) {
         String data = new com.metron.orientdb.OrientRest().doSql(sql);

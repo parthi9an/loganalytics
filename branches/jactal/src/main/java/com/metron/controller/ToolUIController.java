@@ -293,8 +293,11 @@ public class ToolUIController {
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
+        ViewEventService service = new ViewEventService();
+        
+        JSONObject result = service.getViewActivityDuration(sessionId, fromDate, toDate);
 
-        return _formJSONSuccessResponse("");
+        return _formJSONSuccessResponse(result.toString());
     }
     
     /*
