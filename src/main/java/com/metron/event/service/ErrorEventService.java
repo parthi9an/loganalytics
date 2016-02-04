@@ -1,6 +1,7 @@
 package com.metron.event.service;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.controller.QueryWhereBuffer;
@@ -23,17 +24,17 @@ public class ErrorEventService extends BaseEventService {
                 whereClause.append("metric_timestamp <= '" + toDate + "' ");
             }
 
-            query.append("select in.error_type as name, count(*) as count from Metric_Event group by in.error_type"
+            query.append("select in.error_message as message,in.error_trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
                     + ((!whereClause.toString().equals(""))
                             ? " Where " + whereClause.toString()
                             : ""));
 
-            result = this.getAssociatedCounts(query.toString());
+            result = this.getErrorCounts(query.toString());
 
         return result;
     }
 
-    public JSONArray getPatterns(String errorType, String sessionId, String fromDate, String toDate) {
+    public JSONArray getPatterns(String errorTracechecksum, String sessionId, String fromDate, String toDate) {
         
         //String sql = "select pattern_type as pattern ,association_count as count from ErrorPattern order by association_count DESC";
         
@@ -42,8 +43,8 @@ public class ErrorEventService extends BaseEventService {
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
-        if (errorType != null) {
-            whereClause.append("error_type ='" + errorType + "'");
+        if (errorTracechecksum != null) {
+            whereClause.append("error_trace_checksum ='" + errorTracechecksum + "'");
         }
         if (sessionId != null) {
             whereClause.append("out.metric_session_id ='" + sessionId + "'");
@@ -62,6 +63,26 @@ public class ErrorEventService extends BaseEventService {
         
         result = this.getPattern(query.toString());
 
+        return result;
+    }
+    
+    public JSONArray getErrorCounts(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONArray result = new JSONArray();
+        try{
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++){
+                JSONObject eventcount = new JSONObject();
+                eventcount.put("message",resultArr.getJSONObject(j).getString("message"));
+                eventcount.put("trace", resultArr.getJSONObject(j).getString("trace"));
+                eventcount.put("checksum",resultArr.getJSONObject(j).getString("checksum"));
+                eventcount.put("count", resultArr.getJSONObject(j).getLong("count"));
+                result.put(eventcount);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
         return result;
     }
 

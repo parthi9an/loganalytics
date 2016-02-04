@@ -223,14 +223,14 @@ public class ToolUIController {
     @RequestMapping(value = "/getCommonExceptionPatterns")
     public @ResponseBody
     ResponseEntity<String> getCommonExceptionPatterns(HttpServletRequest request,
-            @RequestParam(value = "errorType", required = true) String errorType,
+            @RequestParam(value = "errorTracechecksum", required = true) String errorTracechecksum,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         ErrorEventService service = new ErrorEventService();
         
-        JSONArray result = service.getPatterns(errorType,sessionId,fromDate,toDate);
+        JSONArray result = service.getPatterns(errorTracechecksum,sessionId,fromDate,toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
