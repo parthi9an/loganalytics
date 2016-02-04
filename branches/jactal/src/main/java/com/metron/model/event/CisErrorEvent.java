@@ -78,8 +78,10 @@ public class CisErrorEvent extends CisEvent {
                     patern.append(((OrientVertex)edge.getProperty("in")).getId()).append("_");          
             }}
             String patterType = patern.toString().substring(0, patern.toString().length()-1);
-            //errorpattern = new ErrorPattern(patterType,this.getMetricValueAttr("error_type"),this.getGraph());
-            errorpattern = new ErrorPattern(patterType,this.getMetricValueAttributes(),this.getGraph());
+            //calculate error trace checksum
+            String Checksum = org.apache.commons.codec.digest.DigestUtils.md5Hex(this.getMetricValueAttr("error_trace"));
+            errorpattern = new ErrorPattern(patterType,Checksum,this.getGraph());
+            //errorpattern = new ErrorPattern(patterType,this.getMetricValueAttributes(),this.getGraph());
             
             } catch (JSONException e) {
                 

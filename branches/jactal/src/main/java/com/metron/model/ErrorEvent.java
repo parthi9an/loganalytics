@@ -18,6 +18,7 @@ public class ErrorEvent extends BaseModel {
             props.put("error_type", type);
             props.put("error_message", message);
             props.put("error_trace", trace);
+            props.put("error_trace_checksum", org.apache.commons.codec.digest.DigestUtils.md5Hex(trace));
             this.setProperties(props);
             this.save();
         }

@@ -1,7 +1,6 @@
 package com.metron.model.event;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;

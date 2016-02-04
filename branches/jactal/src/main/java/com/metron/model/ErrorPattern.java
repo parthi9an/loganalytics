@@ -11,14 +11,14 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class ErrorPattern extends BaseModel {
 
-    public ErrorPattern(String pattern, String errorType, OrientBaseGraph graph) {
+    public ErrorPattern(String pattern, String checksum, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, pattern, errorType);
+        this.vertex = find(graph, pattern, checksum);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:ErrorPattern");
             HashMap<String, Object> props = new HashMap<String, Object>();
             props.put("pattern_type", pattern);
-            props.put("error_type", errorType);
+            props.put("error_trace_checksum", checksum);
             props.put("association_count", 1);
             this.setProperties(props);
             this.save();
@@ -84,10 +84,10 @@ public class ErrorPattern extends BaseModel {
      * @param patternType
      * @return
      */
-    public OrientVertex find(OrientBaseGraph graph, String patternType, String errorType) {
+    public OrientVertex find(OrientBaseGraph graph, String patternType, String checksum) {
         OrientVertex errorpattern = OrientUtils.getVertex(graph,
                 "select *  from ErrorPattern where pattern_type = '" + patternType
-                        + "' and error_type='" + errorType + "'");
+                        + "' and error_trace_checksum='" + checksum + "'");
 
         return errorpattern;
 
