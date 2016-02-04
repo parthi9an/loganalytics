@@ -76,11 +76,19 @@ public class ToolUIController {
             JSONObject window = new JSONObject();
             window.put("count", new WindowEventService().count());
             JSONObject session = new JSONObject();
-            session.put("count", new SessionEventService().count());            
-            
+            session.put("count", new SessionEventService().count()); 
+            JSONObject action = new JSONObject();
+            action.put("count", new ActionEventService().count());
+            JSONObject keyboard = new JSONObject();
+            keyboard.put("count", new KeyboardEventService().count());
+            JSONObject view = new JSONObject();
+            view.put("count", new ViewEventService().count());
             
             result.put("window", window);
             result.put("session", session);
+            result.put("action", action);
+            result.put("keyboard", keyboard);
+            result.put("view", view);
             
         } catch (JSONException e) {
             e.printStackTrace();

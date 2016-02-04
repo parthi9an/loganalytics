@@ -5,6 +5,10 @@ import org.json.JSONObject;
 import com.metron.controller.QueryWhereBuffer;
 
 public class ActionEventService extends BaseEventService{
+    
+    public Long count() {
+        return getCount("select count(*) as count from Metric_Event where metric_type = 'type_action'");
+    }
 
     public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,
             String fromDate, String toDate) {

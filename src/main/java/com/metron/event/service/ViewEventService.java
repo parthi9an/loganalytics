@@ -5,6 +5,10 @@ import org.json.JSONObject;
 import com.metron.controller.QueryWhereBuffer;
 
 public class ViewEventService extends BaseEventService {
+    
+    public Long count() {
+        return getCount("select count(*) as count from Metric_Event where metric_type = 'type_view'");
+    }
 
     public JSONObject getAssociatedCount() {
         return getAssociatedCount("select in.view_name as name , count(*) as count from Metric_View group by in.view_name");
@@ -39,9 +43,9 @@ public class ViewEventService extends BaseEventService {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        StringBuffer sql = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         whereClause.append("metric_type ='type_view'");
+        whereClause.append("in.view_event_type ='view_close'");
         if (sessionId != null) {
             whereClause.append("out.metric_session_id ='" + sessionId + "'");
         }
@@ -51,11 +55,11 @@ public class ViewEventService extends BaseEventService {
         if (toDate != null) {
             whereClause.append("metric_timestamp <= '" + toDate + "' ");
         }
-
-        query.append("select eval('in.view_event_close_timestamp.asLong() - metric_timestamp.asLong()') as diff, in.view_name as name from Metric_Event"
+        
+        query.append("select sum(viewActiveTime) as sum,avg(viewActiveTime) as avg,in.view_name as name from Metric_Event group by in.view_name"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
-        sql.append("select sum(diff) as sum,avg(diff) as avg,name from (").append(query.toString()).append(") group by name");
-        result = this.getTotalAndAvg(sql.toString());
+        
+        result = this.getTotalAndAvg(query.toString());
 
         return result;
     }

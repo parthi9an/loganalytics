@@ -33,8 +33,8 @@ public class CisViewEvent extends CisEvent {
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e View event) - view_name, view_event_type
-        //viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getGraph());
-        viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getStringAttr("metric_session_id"), this.getGraph());
+        viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getGraph());
+        //viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getStringAttr("metric_session_id"), this.getGraph());
                
         this.updateAssociations();
         
@@ -79,7 +79,7 @@ public class CisViewEvent extends CisEvent {
         
     }
 
-    private void associateTimeWindow() {
+    protected void associateTimeWindow() {
         
      // ONE MIN Window
         DURATION duration = DURATION.ONEMIN;
