@@ -5,6 +5,10 @@ import org.json.JSONObject;
 import com.metron.controller.QueryWhereBuffer;
 
 public class KeyboardEventService extends BaseEventService{
+    
+    public Long count() {
+        return getCount("select count(*) as count from Metric_Event where metric_type = 'type_keyb'");
+    }
 
     public JSONObject getcommandCount(String sessionId, String fromDate, String toDate) {
         
