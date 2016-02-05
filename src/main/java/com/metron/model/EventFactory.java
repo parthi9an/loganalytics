@@ -17,7 +17,6 @@ import com.metron.model.event.CisEvent;
 import com.metron.model.event.CisFieldEvent;
 import com.metron.model.event.CisKeyboardEvent;
 import com.metron.model.event.CisViewCloseEvent;
-import com.metron.model.event.CisViewEvent;
 import com.metron.model.event.CisViewOpenEvent;
 import com.metron.model.event.CisWindowEvent;
 import com.metron.model.event.Event;
@@ -250,33 +249,33 @@ public class EventFactory {
     }
 
     public CisEvent parseCISEvent(JSONObject event) throws JSONException {
-        
-        JSONObject metric_value = (JSONObject)event.get("metric_value");
-        event.remove("metric_value");
+                
+        JSONObject value = (JSONObject)event.get("value");
+        event.remove("value");
     
-        if(metric_value.has("action_key")){
-            return new CisActionEvent(event,metric_value);
-        } else if(metric_value.has("key_command")){
-            return new CisKeyboardEvent(event,metric_value);
-        } else if(metric_value.has("view_name")){
-            if(metric_value.get("view_event_type").toString().compareToIgnoreCase("view_open") == 0){
-                return new CisViewOpenEvent(event,metric_value);
-            }else if(metric_value.get("view_event_type").toString().compareToIgnoreCase("view_close") == 0){
-                return new CisViewCloseEvent(event,metric_value);
+        if(event.get("type").toString().compareToIgnoreCase("action") == 0){
+            return new CisActionEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("keyb") == 0){
+            return new CisKeyboardEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("view") == 0){
+            if(value.get("view_event_type").toString().compareToIgnoreCase("view_open") == 0){
+                return new CisViewOpenEvent(event,value);
+            }else if(value.get("view_event_type").toString().compareToIgnoreCase("view_close") == 0){
+                return new CisViewCloseEvent(event,value);
             }
             //return new CisViewEvent(event,metric_value);
-        } else if(metric_value.has("domain_type")){
-            return new CisDomainEvent(event,metric_value);
-        } else if(metric_value.has("field_name")){
-            return new CisFieldEvent(event,metric_value);
-        } else if(metric_value.has("error_type")){
-            return new CisErrorEvent(event,metric_value);
-        } else if(metric_value.has("env_os")){
-            return new CisEnvironmentEvent(event,metric_value);
-        } else if(metric_value.has("config_name")){
-            return new CisConfigurationEvent(event,metric_value);
-        } else if(metric_value.has("window_length")){
-            return new CisWindowEvent(event,metric_value);
+        } else if(event.get("type").toString().compareToIgnoreCase("domain") == 0){
+            return new CisDomainEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("field") == 0){
+            return new CisFieldEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("error") == 0){
+            return new CisErrorEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("env") == 0){
+            return new CisEnvironmentEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("config") == 0){
+            return new CisConfigurationEvent(event,value);
+        } else if(event.get("type").toString().compareToIgnoreCase("window") == 0){
+            return new CisWindowEvent(event,value);
         }
         
         return null;

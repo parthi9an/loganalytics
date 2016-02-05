@@ -23,8 +23,7 @@ public class CisViewCloseEvent extends CisViewEvent {
 
         this.saveCisEvent();
 
-        viewevent = new ViewEvent(this.getMetricValueAttr("view_name"),
-                this.getMetricValueAttr("view_event_type"), this.getGraph());
+        viewevent = new ViewEvent(this.getMetricValueAttributes(), this.getGraph());
 
         this.updateCloseViewDetails();
         
@@ -40,6 +39,7 @@ public class CisViewCloseEvent extends CisViewEvent {
         super.associateTimeWindow();
         this.updatePatterns();
         this.associatePatternRawMetricEvent();
+        this.associateDomainRawMetricEvent();
     }
 
     /**
@@ -49,18 +49,18 @@ public class CisViewCloseEvent extends CisViewEvent {
     private void updateCloseViewDetails() {
 
         StringBuffer query = new StringBuffer();
-        query.append("select * from Metric_Event where metric_type = 'type_view' and in.view_name = '"
-                + this.getMetricValueAttr("view_name")
-                + "' and out.metric_session_id = '"
-                + this.getStringAttr("metric_session_id")
-                + "' order by metric_timestamp desc");
+        query.append("select * from Metric_Event where type = 'view' and in.view_name = '"
+                + this.getMetricValueAttr(this.mappingEventkeys.get("view_name"))
+                + "' and out.session_id = '"
+                + this.getStringAttr(this.mappingEventkeys.get("session_id"))
+                + "' order by timestamp desc");
         String result = new OrientRest().doSql(query.toString());
         long viewOpentimestamp = 0;
         try {
             JSONObject jsondata = new JSONObject(result.toString());
             JSONArray resultArr = jsondata.getJSONArray("result");
-            viewOpentimestamp = resultArr.getJSONObject(0).getLong("metric_timestamp");
-            String viewclosetimestamp = this.getStringAttr("metric_timestamp");
+            viewOpentimestamp = resultArr.getJSONObject(0).getLong(this.mappingEventkeys.get("timestamp"));
+            String viewclosetimestamp = this.getStringAttr(this.mappingEventkeys.get("timestamp"));
             viewActiveTime = Utils.getDateDiffInMIllisec(Utils.parseEventDate(viewOpentimestamp),Utils.parseEventDate(Long.parseLong(viewclosetimestamp)));
         }catch (JSONException e1) {
             e1.printStackTrace();
@@ -70,8 +70,8 @@ public class CisViewCloseEvent extends CisViewEvent {
     }
 
     private void associateRawMetricEvent() {
-        Object[] props = new Object[]{"metric_timestamp", this.getStringAttr("metric_timestamp"),
-                "metric_type", this.getStringAttr("metric_type"),"viewActiveTime",viewActiveTime};
+        Object[] props = new Object[]{this.mappingEventkeys.get("timestamp"), this.getStringAttr(this.mappingEventkeys.get("timestamp")),
+                this.mappingEventkeys.get("type"), this.getStringAttr(this.mappingEventkeys.get("type")),"viewActiveTime",viewActiveTime};
         rawMetricEvent.addEdge(viewevent, "Metric_Event", props);
     }
 

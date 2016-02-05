@@ -37,7 +37,7 @@ public class CisErrorEvent extends CisEvent {
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e Action event) - error_type, error_message, error_trace
-        errorevent = new ErrorEvent(this.getMetricValueAttr("error_type"), this.getMetricValueAttr("error_message"), this.getMetricValueAttr("error_trace"), this.getGraph());
+        errorevent = new ErrorEvent(this.getMetricValueAttributes(), this.getGraph());
         
         this.updateAssociations();
         
@@ -48,12 +48,12 @@ public class CisErrorEvent extends CisEvent {
 
     private void updateAssociations() {
         
-        this.associateRawMetricEvent();
+        this.associateRawMetricEvent(errorevent);
         this.associateTimeWindow();
-      //this.associateExistingEvents();
         this.updatePatterns();
         this.updateErrorPatterns();
         this.associatePatternRawMetricEvent();
+        this.associateDomainRawMetricEvent();
     }
     
     private void updateErrorPatterns() {
@@ -69,9 +69,9 @@ public class CisErrorEvent extends CisEvent {
                 if(edge.getLabel().compareToIgnoreCase("session_pattern") != 0){
                 
                 //Previous Event Timestamp
-                String preEventTimestamp = edge.getProperty("metric_timestamp");
-                String currenttimestamp = this.getStringAttr("metric_timestamp");
-                long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
+                String preEventTimestamp = edge.getProperty(this.mappingEventkeys.get("timestamp"));
+                String currenttimestamp = this.getStringAttr(this.mappingEventkeys.get("timestamp"));
+                //long diff = Utils.getDateDiffInSec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
                 long diff1 = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
                 
                 if(diff1 < timewindow)
@@ -79,7 +79,7 @@ public class CisErrorEvent extends CisEvent {
             }}
             String patterType = patern.toString().substring(0, patern.toString().length()-1);
             //calculate error trace checksum
-            String Checksum = org.apache.commons.codec.digest.DigestUtils.md5Hex(this.getMetricValueAttr("error_trace"));
+            String Checksum = org.apache.commons.codec.digest.DigestUtils.md5Hex(this.getMetricValueAttr(this.mappingEventkeys.get("error_trace")));
             errorpattern = new ErrorPattern(patterType,Checksum,this.getGraph());
             //errorpattern = new ErrorPattern(patterType,this.getMetricValueAttributes(),this.getGraph());
             
@@ -88,32 +88,6 @@ public class CisErrorEvent extends CisEvent {
                 e.printStackTrace();
             }
         
-    }
-
-    /**
-     * At the time of inserting a new event @session id 
-     * create an edge b/w existing events and the current event with difference in 
-     * timestamp as property
-     */
-    private void associateExistingEvents() {
-        try{
-        JSONArray edgeObject = this.getPreviousMetricEvent();
-        for(int j = 0; j < edgeObject.length(); j++){
-            OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
-            //Retrieve the timestamp when the preEvent has occurred
-            String preEventTimestamp = edge.getProperty("metric_timestamp");
-            //Retrieve the preEvent vertex information
-            OrientVertex preEventvertex = this.getGraph().getVertex(edge.getProperty("in"));
-            String currenttimestamp = this.getStringAttr("metric_timestamp");
-            long diff = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
-            Object[] props = new Object[]{"delta",diff};
-            if(diff != 0){
-                OrientVertex currentevent = errorevent.find(this.getGraph(), this.getMetricValueAttr("error_type"), this.getMetricValueAttr("error_message"), this.getMetricValueAttr("error_trace"));
-                currentevent.addEdge("Correlation",preEventvertex,props);
-            }    
-        }}catch(JSONException e){
-            e.printStackTrace();
-        }   
     }
 
     private void associateTimeWindow() {
@@ -136,11 +110,4 @@ public class CisErrorEvent extends CisEvent {
 
         
     }
-
-    private void associateRawMetricEvent() {
-        Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(errorevent, "Metric_Event",props); 
-    }
-
-
 }

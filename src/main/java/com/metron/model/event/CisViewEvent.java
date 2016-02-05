@@ -2,16 +2,11 @@ package com.metron.model.event;
 
 import java.sql.SQLException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.PersistEvent;
 import com.metron.model.ViewEvent;
-import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
-import com.tinkerpop.blueprints.impls.orient.OrientEdge;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class CisViewEvent extends CisEvent {
 
@@ -33,8 +28,7 @@ public class CisViewEvent extends CisEvent {
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e View event) - view_name, view_event_type
-        viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getGraph());
-        //viewevent = new ViewEvent(this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"), this.getStringAttr("metric_session_id"), this.getGraph());
+        viewevent = new ViewEvent(this.getMetricValueAttributes(), this.getGraph());
                
         this.updateAssociations();
         
@@ -45,40 +39,14 @@ public class CisViewEvent extends CisEvent {
 
     private void updateAssociations() {
         
-        this.associateRawMetricEvent();
+        this.associateRawMetricEvent(viewevent);
         this.associateTimeWindow();
       //this.associateExistingEvents();
         this.updatePatterns();
         this.associatePatternRawMetricEvent();
+        this.associateDomainRawMetricEvent();
     }
     
-    /**
-     * At the time of inserting a new event @session id 
-     * create an edge b/w existing events and the current event with difference in 
-     * timestamp as property
-     */
-    private void associateExistingEvents() {
-        try{
-        JSONArray edgeObject = this.getPreviousMetricEvent();
-        for(int j = 0; j < edgeObject.length(); j++){
-            OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
-            //Retrieve the timestamp when the preEvent has occurred
-            String preEventTimestamp = edge.getProperty("metric_timestamp");
-            //Retrieve the preEvent vertex information
-            OrientVertex preEventvertex = this.getGraph().getVertex(edge.getProperty("in"));
-            String currenttimestamp = this.getStringAttr("metric_timestamp");
-            long diff = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
-            Object[] props = new Object[]{"delta",diff};
-            if(diff != 0){
-                OrientVertex currentevent = viewevent.find(this.getGraph(), this.getMetricValueAttr("view_name"), this.getMetricValueAttr("view_event_type"));
-                currentevent.addEdge("Correlation",preEventvertex,props);
-            }    
-        }}catch(JSONException e){
-            e.printStackTrace();
-        }
-        
-    }
-
     protected void associateTimeWindow() {
         
      // ONE MIN Window
@@ -99,11 +67,4 @@ public class CisViewEvent extends CisEvent {
 
         
     }
-
-    private void associateRawMetricEvent() {
-        Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(viewevent, "Metric_Event",props);        
-    }
-
-
 }

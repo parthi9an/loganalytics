@@ -1,6 +1,9 @@
 package com.metron.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -8,24 +11,36 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class KeyboardEvent extends BaseModel {
     
-    public KeyboardEvent(String command, String target,
+    public KeyboardEvent(Map<String, Object> metricValueAttributes,
             OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, command, target);
+        this.vertex = find(graph, metricValueAttributes);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:KeyBoardEvent");
             HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("key_command", command);
-            props.put("key_target", target);
+            props.putAll(metricValueAttributes);
             this.setProperties(props);
             this.save();
         }
     }
 
-    public OrientVertex find(OrientBaseGraph graph, String command, String target) {
-        OrientVertex keyboardevent = OrientUtils.getVertex(graph,
-                "select *  from KeyBoardEvent where key_command = '" + command
-                        + "' and key_target='" + target + "'");
+    public OrientVertex find(OrientBaseGraph graph, Map<String, Object> metricValueAttributes) {
+        StringBuilder sql = new StringBuilder("select * from KeyBoardEvent where ");
+
+        for (Iterator<Entry<String, Object>> iter = metricValueAttributes.entrySet().iterator(); iter
+                .hasNext();) {
+            Entry<String, Object> pair = iter.next();
+            sql.append(pair.getKey());
+            sql.append("= '");
+            sql.append(pair.getValue());
+            sql.append("'");
+
+            if (iter.hasNext()) {
+                sql.append(" and ");
+            }
+        }
+
+        OrientVertex keyboardevent = OrientUtils.getVertex(graph, sql.toString());
         return keyboardevent;
     }
 

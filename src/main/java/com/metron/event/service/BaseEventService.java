@@ -32,8 +32,10 @@ public class BaseEventService {
             JSONObject jsondata = new JSONObject(data.toString());
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++){
-                name.put(resultArr.getJSONObject(j).getString("name"));
-                count.put(resultArr.getJSONObject(j).getLong("count"));
+                if(resultArr.getJSONObject(j).has("name"))
+                    name.put(resultArr.getJSONObject(j).getString("name"));
+                if(resultArr.getJSONObject(j).has("count"))
+                    count.put(resultArr.getJSONObject(j).getLong("count"));
             }
             result.put("name", name);
             result.put("count", count);
@@ -75,8 +77,10 @@ public class BaseEventService {
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++){
                 JSONObject eventcount = new JSONObject();
-                eventcount.put("name",resultArr.getJSONObject(j).getString("name"));
-                eventcount.put("count", resultArr.getJSONObject(j).getLong("count"));
+                if(resultArr.getJSONObject(j).has("name"))
+                    eventcount.put("name",resultArr.getJSONObject(j).getString("name"));
+                if(resultArr.getJSONObject(j).has("count"))
+                    eventcount.put("count", resultArr.getJSONObject(j).getLong("count"));
                 result.put(eventcount);
             }
         }catch(JSONException e){
@@ -140,13 +144,13 @@ public class BaseEventService {
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
 
         if (sessionId != null) {
-            whereClause.append("out.metric_session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id ='" + sessionId + "'");
         }
         if (fromDate != null) {
-            whereClause.append("metric_timestamp >= '" + fromDate + "' ");
+            whereClause.append("timestamp >= '" + fromDate + "' ");
         }
         if (toDate != null) {
-            whereClause.append("metric_timestamp <= '" + toDate + "' ");
+            whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
         query.append("select * from Metric_Event"
@@ -166,8 +170,8 @@ public class BaseEventService {
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++){
                 JSONObject eventobject = new JSONObject();
-                eventobject.put("metric_type", resultArr.getJSONObject(j).getString("metric_type"));
-                eventobject.put("metric_timestamp", resultArr.getJSONObject(j).getString("metric_timestamp"));
+                eventobject.put("metric_type", resultArr.getJSONObject(j).getString("type"));
+                eventobject.put("metric_timestamp", resultArr.getJSONObject(j).getString("timestamp"));
                 //Retrieve Event details
                 JSONObject eventdetails = eventUtil.getdetails(resultArr.getJSONObject(j).getString("in"));
                 eventobject.put("event_details", eventdetails);

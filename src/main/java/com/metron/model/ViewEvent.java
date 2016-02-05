@@ -1,6 +1,9 @@
 package com.metron.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -8,24 +11,36 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class ViewEvent extends BaseModel {
 
-    public ViewEvent(String name, String event_type, OrientBaseGraph graph) {
+    public ViewEvent(Map<String, Object> metricValueAttributes, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, name, event_type);
+        this.vertex = find(graph, metricValueAttributes);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:ViewEvent");
             HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("view_name", name);
-            props.put("view_event_type", event_type);
+            props.putAll(metricValueAttributes);
             this.setProperties(props);
             this.save();
         }
     }
 
-    public OrientVertex find(OrientBaseGraph graph, String name, String event_type) {
-        OrientVertex actionevent = OrientUtils.getVertex(graph,
-                "select *  from ViewEvent where view_name = '" + name + "' and view_event_type='"
-                        + event_type + "'");
-        return actionevent;
+    public OrientVertex find(OrientBaseGraph graph, Map<String, Object> metricValueAttributes) {
+        StringBuilder sql = new StringBuilder("select * from ViewEvent where ");
+
+        for (Iterator<Entry<String, Object>> iter = metricValueAttributes.entrySet().iterator(); iter
+                .hasNext();) {
+            Entry<String, Object> pair = iter.next();
+            sql.append(pair.getKey());
+            sql.append("= '");
+            sql.append(pair.getValue());
+            sql.append("'");
+
+            if (iter.hasNext()) {
+                sql.append(" and ");
+            }
+        }
+
+        OrientVertex viewevent = OrientUtils.getVertex(graph, sql.toString());
+        return viewevent;
     }
 
     /*public OrientVertex find(OrientBaseGraph graph, String name, String SessionId) {

@@ -2,16 +2,11 @@ package com.metron.model.event;
 
 import java.sql.SQLException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.model.KeyboardEvent;
 import com.metron.model.PersistEvent;
-import com.metron.util.Utils;
 import com.metron.util.TimeWindowUtil.DURATION;
-import com.tinkerpop.blueprints.impls.orient.OrientEdge;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class CisKeyboardEvent extends CisEvent {
 
@@ -33,7 +28,7 @@ public class CisKeyboardEvent extends CisEvent {
         this.saveCisEvent(); 
         
         // save metric event attributes (i.e Action event) - key_command, key_target
-        keyboardevent = new KeyboardEvent(this.getMetricValueAttr("key_command"), this.getMetricValueAttr("key_target"),this.getGraph());
+        keyboardevent = new KeyboardEvent(this.getMetricValueAttributes(),this.getGraph());
         
         this.updateAssociations();
         
@@ -44,38 +39,11 @@ public class CisKeyboardEvent extends CisEvent {
 
     private void updateAssociations() {
         
-        this.associateRawMetricEvent();
+        this.associateRawMetricEvent(keyboardevent);
         this.associateTimeWindow();
-      //this.associateExistingEvents();
         this.updatePatterns();
         this.associatePatternRawMetricEvent();
-    }
-
-    /**
-     * At the time of inserting a new event @session id 
-     * create an edge b/w existing events and the current event with difference in 
-     * timestamp as property
-     */
-    private void associateExistingEvents() {
-        try{
-        JSONArray edgeObject = this.getPreviousMetricEvent();
-        for(int j = 0; j < edgeObject.length(); j++){
-            OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
-            //Retrieve the timestamp when the preEvent has occurred
-            String preEventTimestamp = edge.getProperty("metric_timestamp");
-            //Retrieve the preEvent vertex information
-            OrientVertex preEventvertex = this.getGraph().getVertex(edge.getProperty("in"));
-            String currenttimestamp = this.getStringAttr("metric_timestamp");
-            long diff = Utils.getDateDiffInMIllisec(Utils.parseEventDate(Long.parseLong(preEventTimestamp)),Utils.parseEventDate(Long.parseLong(currenttimestamp)));
-            Object[] props = new Object[]{"delta",diff};
-            if(diff != 0){
-                OrientVertex currentevent = keyboardevent.find(this.getGraph(), this.getMetricValueAttr("key_command"), this.getMetricValueAttr("key_target"));
-                currentevent.addEdge("Correlation",preEventvertex,props);
-            }    
-        }}catch(JSONException e){
-            e.printStackTrace();
-        }
-        
+        this.associateDomainRawMetricEvent();
     }
     
     private void associateTimeWindow() {
@@ -98,11 +66,4 @@ public class CisKeyboardEvent extends CisEvent {
 
         
     }
-
-    private void associateRawMetricEvent() {
-        Object[] props = new Object[]{"metric_timestamp",this.getStringAttr("metric_timestamp"),"metric_type",this.getStringAttr("metric_type")};
-        rawMetricEvent.addEdge(keyboardevent, "Metric_Event",props);
-    }
-
-
 }
