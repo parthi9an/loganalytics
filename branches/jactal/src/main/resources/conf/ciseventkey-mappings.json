@@ -1,0 +1,22 @@
+{
+	"RawEvent": {
+        "domain_id": "domain_id",
+        "session_id": "session_id",
+        "source": "source",
+        "server_id": "server_id",
+        "domain_type": "domain_type",
+        "timestamp": "timestamp",
+        "type": "type",
+        "error_trace": "error_trace",
+        "view_name": "view_name"
+    },
+    "ActionEvent": {
+        "key": "key",
+        "command": "command",
+        "view": "view"
+    },
+    "KeyBoardEvent": {
+        "key_command": "key_command",
+        "key_target": "key_target"
+    }
+}

@@ -5,25 +5,62 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.metron.postgres.JdbcManager;
 
 public class PersistEvent {
     
-    private Object Sessionid;
-
     public void save(Map<String, Object> attributes, Map<String, Object> metricValueAttributes,
             String tableName) throws ClassNotFoundException, SQLException {
         
-        metricValueAttributes.put("metric_timestamp", new Timestamp((Long)attributes.get("metric_timestamp")));
-                
-        Sessionid = attributes.get("metric_session_id");
+        metricValueAttributes.put("timestamp", new Timestamp((Long)attributes.get("timestamp")));
+                        
+        Map<String, Object> sessionprops = new HashMap<String, Object>();
+        
+        sessionprops.put("session_id", attributes.get("session_id"));
+        sessionprops.put("source", attributes.get("source"));
+        sessionprops.put("server_id", attributes.get("server_id"));
+        sessionprops.put("domain_id", attributes.get("domain_id"));
+        
+        int id = getSessionId(sessionprops,"session");
+        if(id == 0){
+            id = insertdata(sessionprops,"session");
+        }   
+        
+        //Inserting Foreign Key
+        metricValueAttributes.put("sid", id);
         
         insertdata(metricValueAttributes,tableName);
     }
     
+    private int getSessionId(Map<String, Object> sessionprops, String string) throws ClassNotFoundException, SQLException {
+        
+        Connection c = JdbcManager.getInstance().getConnection();
+        StringBuilder sql = new StringBuilder("select id from session where ");
+        for (Iterator<Entry<String, Object>> iter = sessionprops.entrySet().iterator(); iter
+                .hasNext();) {
+            Entry<String, Object> pair = iter.next();
+            sql.append(pair.getKey());
+            sql.append("= '");
+            sql.append(pair.getValue());
+            sql.append("'");
+
+            if (iter.hasNext()) {
+                sql.append(" and ");
+            }
+        }
+        
+        int rowid = 0;
+        PreparedStatement preparedStmt = c.prepareStatement(sql.toString());
+        ResultSet rs = preparedStmt.executeQuery();
+        while (rs.next()) {rowid= rs.getInt("id");}
+        return rowid;
+    }
+
     /**
      * Creates a row in session table if doesn't exist & insert the data 
      * to associated event table.
@@ -33,28 +70,10 @@ public class PersistEvent {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void insertdata(Map<String, Object> dataMap, String tableName) throws SQLException, ClassNotFoundException {
+    public int insertdata(Map<String, Object> dataMap, String tableName) throws SQLException, ClassNotFoundException {
         
         Connection c = JdbcManager.getInstance().getConnection();
-        
-        String fKV = "select id from session where metric_session_id="+Sessionid;
-        int id = 0;
-        PreparedStatement preparedStmt = c.prepareStatement(fKV);
-        ResultSet rs = preparedStmt.executeQuery();
-        while (rs.next()) {id= rs.getInt("id");}
-   
-        if(id == 0){
-            String insertsession = "INSERT INTO session (metric_session_id) values ('"+Sessionid+"')";
-            preparedStmt = c.prepareStatement(insertsession,new String [] {"id"});
-            preparedStmt.executeUpdate();
-            ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
-            if (null != generatedKeys && generatedKeys.next()) {
-                 id = generatedKeys.getInt(1);
-            }
-        }        
-        
-        //Inserting Foreign Key
-        dataMap.put("sid", id);
+        int rowid = 0;
         //Constructing a query to insert data to associated Event Table
         StringBuilder sql = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
         StringBuilder placeholders = new StringBuilder();
@@ -70,7 +89,7 @@ public class PersistEvent {
         }
 
         sql.append(") VALUES (").append(placeholders).append(")");
-        preparedStmt = c.prepareStatement(sql.toString());
+        PreparedStatement preparedStmt = c.prepareStatement(sql.toString(),new String [] {"id"});
         int i = 1;
 
         for (Object value : dataMap.values()) {
@@ -85,7 +104,11 @@ public class PersistEvent {
         }
         
         preparedStmt.executeUpdate();
-        
+        ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
+        if (null != generatedKeys && generatedKeys.next()) {
+             rowid = generatedKeys.getInt(1);
+        }
+        return rowid;
     }
     
 }

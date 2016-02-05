@@ -11,15 +11,15 @@ public class ConfiguartionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("metric_type ='type_config'");
+        whereClause.append("type ='config'");
         if (sessionId != null) {
-            whereClause.append("out.metric_session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id ='" + sessionId + "'");
         }
         if (fromDate != null) {
-            whereClause.append("metric_timestamp >= '" + fromDate + "' ");
+            whereClause.append("timestamp >= '" + fromDate + "' ");
         }
         if (toDate != null) {
-            whereClause.append("metric_timestamp <= '" + toDate + "' ");
+            whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
         query.append("select count(*) as count,in.config_name as name from Metric_Event group by in.config_name"

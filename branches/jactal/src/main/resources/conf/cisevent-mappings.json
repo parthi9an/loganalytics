@@ -1,0 +1,13 @@
+{
+    "ActionEvent": ["key","command","view"],
+    "KeyBoardEvent": ["key_command","key_target"],
+    "ViewEvent": ["view_name","view_event_type"],
+    "FieldEvent": ["field_name","field_parent"],
+    "ErrorEvent": ["error_type","error_message","error_trace"],
+    "ConfigurationEvent": ["config_name"],
+    "WindowEvent": ["window_length","window_height","window_view"],
+    "EnvironmentEvent": ["env_os", "env_screen_length", "env_screen_height",
+                    "env_app_length", "env_app_height", "env_browser_type", "env_browser_version",
+                    "env_cpu_name", "env_cpu_clock", "env_cpu_cores", "env_mem"],
+    "DomainEvent": ["domain_type"]
+}

@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class KeyboardEventService extends BaseEventService{
     
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where metric_type = 'type_keyb'");
+        return getCount("select count(*) as count from Metric_Event where type = 'keyb'");
     }
 
     public JSONObject getcommandCount(String sessionId, String fromDate, String toDate) {
@@ -15,15 +15,15 @@ public class KeyboardEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("metric_type ='type_keyb'");
+        whereClause.append("type ='keyb'");
         if (sessionId != null) {
-            whereClause.append("out.metric_session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id ='" + sessionId + "'");
         }
         if (fromDate != null) {
-            whereClause.append("metric_timestamp >= '" + fromDate + "' ");
+            whereClause.append("timestamp >= '" + fromDate + "' ");
         }
         if (toDate != null) {
-            whereClause.append("metric_timestamp <= '" + toDate + "' ");
+            whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
         query.append("select in.key_command as name, count(*) as count from Metric_Event group by in.key_command"

@@ -338,8 +338,8 @@ public class DatabaseService {
             
             if (!schema.existsClass("ActionEvent")) {
                 vType = graph.createVertexType("ActionEvent");
-                vType.createProperty("action_key", OType.STRING);
-                vType.createProperty("action_command", OType.STRING);
+                vType.createProperty("key", OType.STRING);
+                vType.createProperty("command", OType.STRING);
             }
             
             if (!schema.existsClass("KeyBoardEvent")) {

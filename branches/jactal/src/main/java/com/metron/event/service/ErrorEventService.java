@@ -13,15 +13,15 @@ public class ErrorEventService extends BaseEventService {
         JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
             QueryWhereBuffer whereClause = new QueryWhereBuffer();
-            whereClause.append("metric_type ='type_error'");
+            whereClause.append("type ='error'");
             if (sessionId != null) {
-                whereClause.append("out.metric_session_id ='" + sessionId + "'");
+                whereClause.append("out.session_id ='" + sessionId + "'");
             }
             if (fromDate != null) {
-                whereClause.append("metric_timestamp >= '" + fromDate + "' ");
+                whereClause.append("timestamp >= '" + fromDate + "' ");
             }
             if (toDate != null) {
-                whereClause.append("metric_timestamp <= '" + toDate + "' ");
+                whereClause.append("timestamp <= '" + toDate + "' ");
             }
 
             query.append("select in.error_message as message,in.error_trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
@@ -47,13 +47,13 @@ public class ErrorEventService extends BaseEventService {
             whereClause.append("error_trace_checksum ='" + errorTracechecksum + "'");
         }
         if (sessionId != null) {
-            whereClause.append("out.metric_session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id ='" + sessionId + "'");
         }
         if (fromDate != null) {
-            whereClause.append("metric_timestamp >= '" + fromDate + "' ");
+            whereClause.append("timestamp >= '" + fromDate + "' ");
         }
         if (toDate != null) {
-            whereClause.append("metric_timestamp <= '" + toDate + "' ");
+            whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
         query.append("select pattern_type as pattern ,association_count as count from ErrorPattern order by count DESC"

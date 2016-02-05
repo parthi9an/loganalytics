@@ -11,7 +11,7 @@ public class SessionEventService extends BaseEventService{
     public JSONObject getSessionNames() {
         
         JSONObject result = new JSONObject();
-        String query = "select distinct(metric_session_id) as name from CisEvents";
+        String query = "select distinct(session_id) as name from CisEvents";
         
         result = this.getNames(query);
 
