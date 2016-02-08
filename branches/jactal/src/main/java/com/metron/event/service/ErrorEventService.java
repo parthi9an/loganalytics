@@ -44,7 +44,7 @@ public class ErrorEventService extends BaseEventService {
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
         if (errorTracechecksum != null) {
-            whereClause.append("error_trace_checksum ='" + errorTracechecksum + "'");
+            whereClause.append("in.error_trace_checksum ='" + errorTracechecksum + "'");
         }
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
@@ -56,7 +56,7 @@ public class ErrorEventService extends BaseEventService {
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select pattern_type as pattern ,association_count as count from ErrorPattern order by count DESC"
+        query.append("select in.pattern_type as pattern ,count(*) as count from Session_ErrorPattern group by in.pattern_type order by count Desc"
                 + ((!whereClause.toString().equals(""))
                         ? " Where " + whereClause.toString()
                         : ""));

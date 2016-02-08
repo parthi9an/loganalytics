@@ -80,16 +80,6 @@ public class BaseModel {
         int size = 0;
         for (Edge edge : edges) {
             size++;
-            if(edge.getLabel().compareToIgnoreCase("Session_Pattern") == 0){
-                try{
-                int count = edge.getProperty("association_count");
-                count++;
-                edge.setProperty("association_count", count);
-                }catch(NullPointerException e){
-                    //Setting association count for first time
-                    edge.setProperty("association_count", 1);
-                }
-            }
         }
         if (size > 0) {
             return;
