@@ -372,6 +372,27 @@ public class ToolUIController {
     }
     
     /*
+     * count of windows moved
+     * @params 
+     * return name of window moved along with count as Json
+     * report: pie chart
+     */
+    @RequestMapping(value = "/getCountOfMovedWindows")
+    public @ResponseBody
+    ResponseEntity<String> getCountOfMovedWindows(HttpServletRequest request,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        
+        WindowEventService service = new WindowEventService();
+        
+        JSONObject result = service.getCountOfMovedWindows(sessionId, fromDate, toDate);
+
+        return _formJSONSuccessResponse(result.toString());
+
+    }
+    
+    /*
      * Get count of how many user sessions are included in the data set
      * @params 
      * return count as Json
