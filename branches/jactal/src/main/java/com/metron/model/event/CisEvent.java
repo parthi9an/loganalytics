@@ -232,7 +232,9 @@ public abstract class CisEvent extends BaseModel {
      * Type
      */
     public void associateDomainRawMetricEvent() {
-        rawMetricEvent.addEdge(domainevent, "Session_Domain");
+        Object[] props = new Object[]{mappingEventkeys.get("timestamp"),
+                this.getStringAttr(mappingEventkeys.get("timestamp"))};
+        rawMetricEvent.addEdge(domainevent, "Session_Domain",props);
     }
 
     /**
