@@ -54,8 +54,9 @@ public class CisErrorEvent extends CisEvent {
         this.updateErrorPatterns();
         this.associatePatternRawMetricEvent();
         this.associateDomainRawMetricEvent();
+        this.associateErrorPatternRawMetricEvent();
     }
-    
+
     private void updateErrorPatterns() {
         
         try {
@@ -107,7 +108,12 @@ public class CisErrorEvent extends CisEvent {
         // ONEDAY Window
         duration = DURATION.ONEDAY;
         errorevent.addEdge(this.getEventTimeWindow(duration), "ErrorEvent_" + duration.getTable());
-
         
+    }
+    
+    private void associateErrorPatternRawMetricEvent() {
+        Object[] props = new Object[]{mappingEventkeys.get("timestamp"),
+                this.getStringAttr(mappingEventkeys.get("timestamp"))};
+        rawMetricEvent.addEdge(errorpattern, "Session_ErrorPattern",props);
     }
 }
