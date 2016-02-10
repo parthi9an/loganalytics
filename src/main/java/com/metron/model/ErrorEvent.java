@@ -19,7 +19,7 @@ public class ErrorEvent extends BaseModel {
             this.vertex = graph.addVertex("class:ErrorEvent");
             HashMap<String, Object> props = new HashMap<String, Object>();
             props.putAll(metricValueAttributes);
-            props.put("error_trace_checksum", org.apache.commons.codec.digest.DigestUtils.md5Hex(metricValueAttributes.get("error_trace").toString()));
+            props.put("error_trace_checksum", org.apache.commons.codec.digest.DigestUtils.md5Hex(metricValueAttributes.get("trace").toString()));
             this.setProperties(props);
             this.save();
         }

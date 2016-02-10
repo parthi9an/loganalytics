@@ -86,7 +86,7 @@ public class ToolUIController {
             JSONObject view = new JSONObject();
             view.put("count", new ViewEventService().count());
             JSONObject site = new JSONObject();
-            view.put("count", new ServerEventService().count());
+            site.put("count", new ServerEventService().count());
             
             result.put("window", window);
             result.put("session", session);
@@ -536,10 +536,12 @@ public class ToolUIController {
     ResponseEntity<String> getCountOfSessions(HttpServletRequest request,
             @RequestParam(value = "serverId", required = false) String serverId,
             @RequestParam(value = "domainId", required = false) String domainId,
-            @RequestParam(value = "source", required = false) String source) {
+            @RequestParam(value = "source", required = false) String source,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
         SessionEventService service = new SessionEventService();
-        JSONObject result = service.getCountOfSessions(serverId,domainId,source);
+        JSONObject result = service.getCountOfSessions(serverId,domainId,source,fromDate,toDate);
         return _formJSONSuccessResponse(result.toString());
     }
     
@@ -555,10 +557,12 @@ public class ToolUIController {
     ResponseEntity<String> getCountOfUsers(HttpServletRequest request,
             @RequestParam(value = "serverId", required = false) String serverId,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "source", required = false) String source) {
+            @RequestParam(value = "source", required = false) String source,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
 
         DomainEventService service = new DomainEventService();
-        JSONObject result = service.getCountOfUsers(serverId,sessionId,source);
+        JSONObject result = service.getCountOfUsers(serverId,sessionId,source,fromDate,toDate);
         return _formJSONSuccessResponse(result.toString());
     }
     

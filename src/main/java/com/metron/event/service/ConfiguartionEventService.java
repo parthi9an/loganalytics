@@ -31,7 +31,7 @@ public class ConfiguartionEventService extends BaseEventService{
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select count(*) as count,in.config_name as name from Metric_Event group by in.config_name"
+        query.append("select count(*) as count,in.name as name from Metric_Event group by in.name"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());

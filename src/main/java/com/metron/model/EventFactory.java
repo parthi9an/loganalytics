@@ -258,9 +258,9 @@ public class EventFactory {
         } else if(event.get("type").toString().compareToIgnoreCase("keyb") == 0){
             return new CisKeyboardEvent(event,value);
         } else if(event.get("type").toString().compareToIgnoreCase("view") == 0){
-            if(value.get("view_event_type").toString().compareToIgnoreCase("view_open") == 0){
+            if(value.get("event").toString().compareToIgnoreCase("open") == 0){
                 return new CisViewOpenEvent(event,value);
-            }else if(value.get("view_event_type").toString().compareToIgnoreCase("view_close") == 0){
+            }else if(value.get("event").toString().compareToIgnoreCase("close") == 0){
                 return new CisViewCloseEvent(event,value);
             }
             //return new CisViewEvent(event,metric_value);

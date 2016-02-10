@@ -33,7 +33,7 @@ public class ErrorEventService extends BaseEventService {
                 whereClause.append("timestamp <= '" + toDate + "' ");
             }
 
-            query.append("select in.error_message as message,in.error_trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
+            query.append("select in.message as message,in.trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
                     + ((!whereClause.toString().equals(""))
                             ? " Where " + whereClause.toString()
                             : ""));

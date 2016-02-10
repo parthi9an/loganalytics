@@ -6,8 +6,8 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class DomainEventService extends BaseEventService {
 
-    public JSONObject getCountOfLoginUserByLoginType(String sessionId,String serverId, String domainId, String source, String fromDate,
-            String toDate) {
+    public JSONObject getCountOfLoginUserByLoginType(String sessionId, String serverId,
+            String domainId, String source, String fromDate, String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -44,7 +44,7 @@ public class DomainEventService extends BaseEventService {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        
+
         if (sessionId != null) {
             whereClause.append("session_id ='" + sessionId + "'");
         }
@@ -57,18 +57,20 @@ public class DomainEventService extends BaseEventService {
 
         query.append("select distinct(domain_id) as name from CisEvents"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
-        
+
         result = this.getNames(query.toString());
 
         return result;
 
     }
 
-    public JSONObject getCountOfUsers(String serverId, String sessionId, String source) {
+    public JSONObject getCountOfUsers(String serverId, String sessionId, String source, String fromDate, String toDate) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
+        StringBuffer subquery = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        
+        QueryWhereBuffer subwhereClause = new QueryWhereBuffer();
+
         if (sessionId != null) {
             whereClause.append("session_id ='" + sessionId + "'");
         }
@@ -78,10 +80,20 @@ public class DomainEventService extends BaseEventService {
         if (source != null) {
             whereClause.append("source ='" + source + "'");
         }
+        if (fromDate != null) {
+            subwhereClause.append("timestamp >= '" + fromDate + "' ");
+        }
+        if (toDate != null) {
+            subwhereClause.append("timestamp <= '" + toDate + "' ");
+        }
 
-        query.append("select domain_id as name,count(*) as count from CisEvents group by domain_id"
+        //String sql = "select domain_id as name,count(*) as count from CisEvents group by domain_id";
+        subquery.append("select out.domain_id as domain_id,out.server_id as server_id,out.source as source, out.session_id as session_id from Metric_Event group by out"
+                + ((!subwhereClause.toString().equals("")) ? " Where " + subwhereClause.toString() : ""));
+
+        query.append("select domain_id as name,count(*) as count from (").append(subquery.toString()).append(") group by domain_id"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
-
+        
         result = this.getAssociatedCount(query.toString());
 
         return result;

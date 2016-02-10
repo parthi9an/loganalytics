@@ -35,7 +35,7 @@ public class KeyboardEventService extends BaseEventService{
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select in.key_command as name, count(*) as count from Metric_Event group by in.key_command"
+        query.append("select in.command as name, count(*) as count from Metric_Event group by in.command"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());
