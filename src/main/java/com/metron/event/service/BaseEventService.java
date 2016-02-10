@@ -45,23 +45,30 @@ public class BaseEventService {
         return result;
     }
     
+    //Return a json object which contains json array's with data , series & name suitable for bar chart
     public JSONObject getTotalAndAvg(String sql) {
-        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        String query = new com.metron.orientdb.OrientRest().doSql(sql);
         JSONObject result = new JSONObject();
         JSONArray name = new JSONArray();
         JSONArray sum = new JSONArray();
         JSONArray avg = new JSONArray();
+        JSONArray data = new JSONArray();
+        JSONArray series = new JSONArray();
         try{
-            JSONObject jsondata = new JSONObject(data.toString());
+            JSONObject jsondata = new JSONObject(query.toString());
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++){
                 name.put(resultArr.getJSONObject(j).getString("name"));
                 sum.put(resultArr.getJSONObject(j).getLong("sum"));
                 avg.put(resultArr.getJSONObject(j).getLong("avg"));
             }
+            data.put(sum);
+            data.put(avg);
+            series.put("Total");
+            series.put("Avg");
             result.put("name", name);
-            result.put("sum", sum);
-            result.put("avg", avg);
+            result.put("data", data);
+            result.put("series", series);
         }catch(JSONException e){
             e.printStackTrace();
         }
@@ -136,15 +143,27 @@ public class BaseEventService {
      * @param fromDate
      * @param toDate
      * @param limit
+     * @param serverId 
+     * @param domainId 
+     * @param source 
      * @return list of events along with event type, timestamp and event details
      */
-    public JSONArray getAllEvents(String sessionId, String fromDate, String toDate,String limit) {
+    public JSONArray getAllEvents(String sessionId, String serverId, String domainId,String source, String fromDate, String toDate, String limit) {
         
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
 
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");

@@ -10,7 +10,7 @@ public class ActionEventService extends BaseEventService{
         return getCount("select count(*) as count from Metric_Event where type = 'action'");
     }
 
-    public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,
+    public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,String serverId, String domainId, String source,
             String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
@@ -22,6 +22,15 @@ public class ActionEventService extends BaseEventService{
         }
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -38,7 +47,7 @@ public class ActionEventService extends BaseEventService{
         return result;
     }
     
-    public JSONObject getCountOfActionKey( String sessionId,
+    public JSONObject getCountOfActionKey( String sessionId,String serverId, String domainId, String source,
             String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
@@ -48,6 +57,15 @@ public class ActionEventService extends BaseEventService{
         
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -69,9 +87,12 @@ public class ActionEventService extends BaseEventService{
      * @param sessionId
      * @param fromDate
      * @param toDate
+     * @param toDate 
+     * @param fromDate 
+     * @param source 
      * @return
      */
-    public JSONObject getActionNames(String sessionId, String fromDate, String toDate) {
+    public JSONObject getActionNames(String sessionId, String serverId, String domainId, String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -79,6 +100,15 @@ public class ActionEventService extends BaseEventService{
         whereClause.append("type ='action'");
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");

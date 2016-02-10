@@ -3,22 +3,12 @@ package com.metron.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.metron.orientdb.OrientRest;
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class RawMetricEvent extends BaseModel {
-    
-    public RawMetricEvent(String metric_session_id,
-            OrientBaseGraph graph) {
-        super(graph);
-        if (metric_session_id != null) {
-            this.vertex = find(graph, metric_session_id);
-        }
-        if (vertex == null) {
-            this.vertex = graph.addVertex("class:CisEvents");
-        }
-    }
     
     public RawMetricEvent(Map<String, Object> rawAttributes, OrientBaseGraph graph) {
         super(graph);
@@ -34,6 +24,8 @@ public class RawMetricEvent extends BaseModel {
             this.save();
         }
     }
+
+    public RawMetricEvent() {}
 
     private OrientVertex find(OrientBaseGraph graph, Map<String, Object> rawAttributes) {
         /*StringBuilder sql = new StringBuilder("select * from CisEvents where ");
@@ -58,9 +50,13 @@ public class RawMetricEvent extends BaseModel {
                 "' and server_id ='"+ rawAttributes.get("server_id") + "'");
     }
 
-    public OrientVertex find(OrientBaseGraph graph, String metric_session_id) {
-        return OrientUtils.getVertex(graph, "select from CisEvents where metric_session_id = '" + metric_session_id
-                + "'");
+    public String getPreviousMetricEvent(Map<String, Object> rawAttributes) {
+        StringBuffer query = new StringBuffer();
+        query.append("select outE('Metric_Event') as edge from CisEvents where session_id = '" + rawAttributes.get("session_id")
+                +"' and domain_id ='"+ rawAttributes.get("domain_id") + "' and source ='"+ rawAttributes.get("source")+
+                "' and server_id ='"+ rawAttributes.get("server_id") + "'");
+        String result = new OrientRest().doSql(query.toString());
+        return result;
     }
 
 }
