@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import com.metron.model.PersistEvent;
 import com.metron.model.ViewEvent;
-import com.metron.orientdb.OrientRest;
 import com.metron.util.Utils;
 
 public class CisViewCloseEvent extends CisViewEvent {
@@ -48,13 +47,14 @@ public class CisViewCloseEvent extends CisViewEvent {
      */
     private void updateCloseViewDetails() {
 
-        StringBuffer query = new StringBuffer();
+        String result = new ViewEvent().getOpenedViewDetails(this.getMetricValueAttributes(),this.getAttributes());
+        /*StringBuffer query = new StringBuffer();
         query.append("select * from Metric_Event where type = 'view' and in.view_name = '"
                 + this.getMetricValueAttr(this.mappingEventkeys.get("view_name"))
                 + "' and out.session_id = '"
                 + this.getStringAttr(this.mappingEventkeys.get("session_id"))
                 + "' order by timestamp desc");
-        String result = new OrientRest().doSql(query.toString());
+        String result = new OrientRest().doSql(query.toString());*/
         long viewOpentimestamp = 0;
         try {
             JSONObject jsondata = new JSONObject(result.toString());

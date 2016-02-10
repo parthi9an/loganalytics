@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.metron.orientdb.OrientRest;
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -22,6 +23,8 @@ public class ViewEvent extends BaseModel {
             this.save();
         }
     }
+
+    public ViewEvent() {}
 
     public OrientVertex find(OrientBaseGraph graph, Map<String, Object> metricValueAttributes) {
         StringBuilder sql = new StringBuilder("select * from ViewEvent where ");
@@ -41,6 +44,21 @@ public class ViewEvent extends BaseModel {
 
         OrientVertex viewevent = OrientUtils.getVertex(graph, sql.toString());
         return viewevent;
+    }
+
+    public String getOpenedViewDetails(Map<String, Object> metricValueAttributes,
+            Map<String, Object> attributes) {
+        
+        StringBuffer query = new StringBuffer();
+        query.append("select * from Metric_Event where type = 'view' and in.view_name = '"
+                + metricValueAttributes.get("view_name")
+                + "' and out.session_id = '"+ attributes.get("session_id")
+                + "' and out.domain_id = '"+ attributes.get("domain_id")
+                + "' and out.source = '"+ attributes.get("source")
+                + "' and out.server_id = '"+ attributes.get("server_id")
+                + "' order by timestamp desc");
+        String result = new OrientRest().doSql(query.toString());
+        return result;
     }
 
     /*public OrientVertex find(OrientBaseGraph graph, String name, String SessionId) {

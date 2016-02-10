@@ -8,7 +8,7 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ErrorEventService extends BaseEventService {
 
-    public JSONArray getExceptionCount(String sessionId, String fromDate, String toDate) {
+    public JSONArray getExceptionCount(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
         
         JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
@@ -16,6 +16,15 @@ public class ErrorEventService extends BaseEventService {
             whereClause.append("type ='error'");
             if (sessionId != null) {
                 whereClause.append("out.session_id ='" + sessionId + "'");
+            }
+            if (sessionId != null) {
+                whereClause.append("out.session_id ='" + sessionId + "'");
+            }
+            if (domainId != null) {
+                whereClause.append("out.domain_id ='" + domainId + "'");
+            }
+            if (serverId != null) {
+                whereClause.append("out.server_id ='" + serverId + "'");
             }
             if (fromDate != null) {
                 whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -34,7 +43,7 @@ public class ErrorEventService extends BaseEventService {
         return result;
     }
 
-    public JSONArray getPatterns(String errorTracechecksum, String sessionId, String fromDate, String toDate) {
+    public JSONArray getPatterns(String errorTracechecksum, String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
         
         //String sql = "select pattern_type as pattern ,association_count as count from ErrorPattern order by association_count DESC";
         
@@ -48,6 +57,15 @@ public class ErrorEventService extends BaseEventService {
         }
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");

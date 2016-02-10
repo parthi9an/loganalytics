@@ -19,7 +19,6 @@ import com.metron.model.DomainEvent;
 import com.metron.model.Pattern;
 import com.metron.model.RawMetricEvent;
 import com.metron.model.TimeWindow;
-import com.metron.orientdb.OrientRest;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -111,10 +110,11 @@ public abstract class CisEvent extends BaseModel {
      */
     public JSONArray getPreviousMetricEvent() {
 
-        StringBuffer query = new StringBuffer();
+        String result = new RawMetricEvent().getPreviousMetricEvent(this.getAttributes());
+        /*StringBuffer query = new StringBuffer();
         query.append("select outE('Metric_Event') as edge from CisEvents where session_id = '"
                 + this.getStringAttr(mappingEventkeys.get("session_id")) + "'");
-        String result = new OrientRest().doSql(query.toString());
+        String result = new OrientRest().doSql(query.toString());*/
 
         JSONObject resultObject;
         JSONArray ja, edgeObject = null;

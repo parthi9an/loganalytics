@@ -14,7 +14,7 @@ public class ViewEventService extends BaseEventService {
         return getAssociatedCount("select in.view_name as name , count(*) as count from Metric_View group by in.view_name");
     }
 
-    public JSONObject getViewcount(String sessionId, String fromDate, String toDate) {
+    public JSONObject getViewcount(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -22,6 +22,15 @@ public class ViewEventService extends BaseEventService {
         whereClause.append("type ='view'");
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -39,7 +48,7 @@ public class ViewEventService extends BaseEventService {
 
     }
 
-    public JSONObject getViewActivityDuration(String sessionId, String fromDate, String toDate) {
+    public JSONObject getViewActivityDuration(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -48,6 +57,15 @@ public class ViewEventService extends BaseEventService {
         whereClause.append("in.view_event_type ='view_close'");
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
+        }
+        if (domainId != null) {
+            whereClause.append("out.domain_id ='" + domainId + "'");
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id ='" + serverId + "'");
+        }
+        if (source != null) {
+            whereClause.append("out.source ='" + source + "'");
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
