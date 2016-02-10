@@ -89,28 +89,28 @@ public class CisEventUtil {
                     .append(eventvertex.getProperty("key"));
         } else if (eventvertex.getLabel().compareTo("KeyBoardEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("key_command"));
+                    .append(eventvertex.getProperty("command"));
         } else if (eventvertex.getLabel().compareTo("ViewEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("view_name"));
+                    .append(eventvertex.getProperty("name"));
         } else if (eventvertex.getLabel().compareTo("DomainEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
                     .append(eventvertex.getProperty("domain_type"));
         } else if (eventvertex.getLabel().compareTo("FieldEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("field_name"));
+                    .append(eventvertex.getProperty("field"));
         } else if (eventvertex.getLabel().compareTo("ErrorEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("error_type"));
+                    .append(eventvertex.getProperty("err_type"));
         } else if (eventvertex.getLabel().compareTo("ConfigurationEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("config_name"));
+                    .append(eventvertex.getProperty("name"));
         } else if (eventvertex.getLabel().compareTo("WindowEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("window_view"));
+                    .append(eventvertex.getProperty("view"));
         } else if (eventvertex.getLabel().compareTo("EnvironmentEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("env_os"));
+                    .append(eventvertex.getProperty("os"));
         }
 
         return paternclassdetails.toString();

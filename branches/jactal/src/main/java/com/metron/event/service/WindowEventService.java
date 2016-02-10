@@ -36,7 +36,7 @@ public class WindowEventService extends BaseEventService{
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select count(*) as count,in.window_view as name from Metric_Event group by in.window_view"
+        query.append("select count(*) as count,in.view as name from Metric_Event group by in.view"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());

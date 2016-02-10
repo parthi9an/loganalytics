@@ -344,14 +344,14 @@ public class DatabaseService {
             
             if (!schema.existsClass("KeyBoardEvent")) {
                 vType = graph.createVertexType("KeyBoardEvent");
-                vType.createProperty("key_command", OType.STRING);
-                vType.createProperty("key_target", OType.STRING);
+                vType.createProperty("command", OType.STRING);
+                vType.createProperty("target", OType.STRING);
             }
             
             if (!schema.existsClass("ViewEvent")) {
                 vType = graph.createVertexType("ViewEvent");
-                vType.createProperty("view_name", OType.STRING);
-                vType.createProperty("view_event_type", OType.STRING);
+                vType.createProperty("name", OType.STRING);
+                vType.createProperty("event", OType.STRING);
             }
             
             if (!schema.existsClass("DomainEvent")) {
@@ -361,31 +361,31 @@ public class DatabaseService {
             
             if (!schema.existsClass("FieldEvent")) {
                 vType = graph.createVertexType("FieldEvent");
-                vType.createProperty("field_name", OType.STRING);
-                vType.createProperty("field_parent", OType.STRING);
+                vType.createProperty("field", OType.STRING);
+                vType.createProperty("parent", OType.STRING);
             }
             
             if (!schema.existsClass("ErrorEvent")) {
                 vType = graph.createVertexType("ErrorEvent");
-                vType.createProperty("error_type", OType.STRING);
-                vType.createProperty("error_message", OType.STRING);
+                vType.createProperty("err_type", OType.STRING);
+                vType.createProperty("message", OType.STRING);
             }
             
             if (!schema.existsClass("ConfigurationEvent")) {
                 vType = graph.createVertexType("ConfigurationEvent");
-                vType.createProperty("config_name", OType.STRING);
+                vType.createProperty("name", OType.STRING);
             }
             
             if (!schema.existsClass("WindowEvent")) {
                 vType = graph.createVertexType("WindowEvent");
-                vType.createProperty("window_length", OType.INTEGER);
-                vType.createProperty("window_height", OType.INTEGER);
+                vType.createProperty("length", OType.INTEGER);
+                vType.createProperty("height", OType.INTEGER);
             }
             
             if (!schema.existsClass("EnvironmentEvent")) {
                 vType = graph.createVertexType("EnvironmentEvent");
-                vType.createProperty("env_os", OType.STRING);
-                vType.createProperty("env_screen_length", OType.INTEGER);
+                vType.createProperty("os", OType.STRING);
+                vType.createProperty("screen_x", OType.INTEGER);
             }
             
             if (!schema.existsClass("Pattern")) {

@@ -7,7 +7,7 @@
         "domain_type": "domain_type",
         "timestamp": "timestamp",
         "type": "type",
-        "error_trace": "error_trace",
+        "trace": "trace",
         "view_name": "view_name"
     },
     "ActionEvent": {

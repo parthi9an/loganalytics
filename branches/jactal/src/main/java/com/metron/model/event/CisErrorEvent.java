@@ -80,7 +80,7 @@ public class CisErrorEvent extends CisEvent {
             }}
             String patterType = patern.toString().substring(0, patern.toString().length()-1);
             //calculate error trace checksum
-            String Checksum = org.apache.commons.codec.digest.DigestUtils.md5Hex(this.getMetricValueAttr(this.mappingEventkeys.get("error_trace")));
+            String Checksum = org.apache.commons.codec.digest.DigestUtils.md5Hex(this.getMetricValueAttr(this.mappingEventkeys.get("trace")));
             errorpattern = new ErrorPattern(patterType,Checksum,this.getGraph());
             //errorpattern = new ErrorPattern(patterType,this.getMetricValueAttributes(),this.getGraph());
             

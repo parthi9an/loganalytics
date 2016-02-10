@@ -11,7 +11,7 @@ public class ViewEventService extends BaseEventService {
     }
 
     public JSONObject getAssociatedCount() {
-        return getAssociatedCount("select in.view_name as name , count(*) as count from Metric_View group by in.view_name");
+        return getAssociatedCount("select in.name as name , count(*) as count from Metric_View group by in.name");
     }
 
     public JSONObject getViewcount(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
@@ -39,7 +39,7 @@ public class ViewEventService extends BaseEventService {
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        query.append("select in.view_name as name , count(*) as count from Metric_Event group by in.view_name"
+        query.append("select in.name as name , count(*) as count from Metric_Event group by in.name"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());
@@ -54,7 +54,7 @@ public class ViewEventService extends BaseEventService {
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         whereClause.append("type ='view'");
-        whereClause.append("in.view_event_type ='view_close'");
+        whereClause.append("in.event ='close'");
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
@@ -74,7 +74,7 @@ public class ViewEventService extends BaseEventService {
             whereClause.append("timestamp <= '" + toDate + "' ");
         }
         
-        query.append("select sum(viewActiveTime) as sum,avg(viewActiveTime) as avg,in.view_name as name from Metric_Event group by in.view_name"
+        query.append("select sum(viewActiveTime) as sum,avg(viewActiveTime) as avg,in.name as name from Metric_Event group by in.name"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         
         result = this.getTotalAndAvg(query.toString());

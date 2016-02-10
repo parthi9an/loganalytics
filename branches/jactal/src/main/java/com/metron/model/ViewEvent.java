@@ -50,8 +50,8 @@ public class ViewEvent extends BaseModel {
             Map<String, Object> attributes) {
         
         StringBuffer query = new StringBuffer();
-        query.append("select * from Metric_Event where type = 'view' and in.view_name = '"
-                + metricValueAttributes.get("view_name")
+        query.append("select * from Metric_Event where type = 'view' and in.event = 'open' and in.name = '"
+                + metricValueAttributes.get("name")
                 + "' and out.session_id = '"+ attributes.get("session_id")
                 + "' and out.domain_id = '"+ attributes.get("domain_id")
                 + "' and out.source = '"+ attributes.get("source")
@@ -60,19 +60,4 @@ public class ViewEvent extends BaseModel {
         String result = new OrientRest().doSql(query.toString());
         return result;
     }
-
-    /*public OrientVertex find(OrientBaseGraph graph, String name, String SessionId) {
-        
-         * OrientVertex actionevent = OrientUtils.getVertex(graph,
-         * "select inV() from Metric_Event where metric_type='type_view' and in.view_name = '"
-         * + name + "'and out.metric_session_id = '" + SessionId + "'");
-         
-        OrientVertex actionevent = OrientUtils
-                .getVertex(
-                        graph,
-                        "select from (select expand(out('Metric_Event')[@class='ViewEvent']) from CisEvents where metric_session_id = '"
-                                + SessionId + "') where view_name = '" + name + "'and view_event_type = 'view_open'" );
-        return actionevent;
-    }*/
-
 }
