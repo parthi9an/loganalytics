@@ -12,10 +12,6 @@ public class CisWindowEvent extends CisEvent {
 
     protected WindowEvent windowevent;
 
-    public CisWindowEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisWindowEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

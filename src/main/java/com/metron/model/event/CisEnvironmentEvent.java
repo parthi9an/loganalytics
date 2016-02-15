@@ -12,10 +12,6 @@ public class CisEnvironmentEvent extends CisEvent {
 
     protected EnvironmentEvent envevent;
 
-    public CisEnvironmentEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisEnvironmentEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

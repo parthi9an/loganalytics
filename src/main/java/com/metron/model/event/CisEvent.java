@@ -38,28 +38,8 @@ public abstract class CisEvent extends BaseModel {
     private Map<String, Object> metricvalueattributes = null;
     protected Map<String, String> mappingEventkeys;
 
-    private JSONObject ciseventData = null;
-
-    private JSONObject cismetricValueData = null;
-
     public CisEvent() {
         this.attributes = new HashMap<String, Object>();
-    }
-
-    public CisEvent(JSONObject eventData) {
-
-        this.attributes = new HashMap<String, Object>();
-        this.ciseventData = eventData;
-        Iterator<?> keys = ciseventData.keys();
-        try {
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                attributes.put(key, ciseventData.get(key).toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public CisEvent(JSONObject eventData, JSONObject metricValueData) {
@@ -69,13 +49,11 @@ public abstract class CisEvent extends BaseModel {
 
         this.attributes = new HashMap<String, Object>();
         this.metricvalueattributes = new HashMap<String, Object>();
-        this.ciseventData = eventData;
-        this.cismetricValueData = metricValueData;
-        persistJson(ciseventData, attributes);
-        persistJson(cismetricValueData, metricvalueattributes);
+        parseJson(eventData, attributes);
+        parseJson(metricValueData, metricvalueattributes);
     }
 
-    private void persistJson(JSONObject jsondata, Map<String, Object> persistTo) {
+    private void parseJson(JSONObject jsondata, Map<String, Object> persistTo) {
         Iterator<?> keys = jsondata.keys();
         try {
             while (keys.hasNext()) {

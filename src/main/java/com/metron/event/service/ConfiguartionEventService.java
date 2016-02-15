@@ -39,4 +39,8 @@ public class ConfiguartionEventService extends BaseEventService{
         return result;
     }
 
+    public Long count() {
+        return getCount("select count(*) as count from Metric_Event where type = 'config'");
+    }
+
 }
