@@ -12,10 +12,6 @@ public class CisConfigurationEvent extends CisEvent {
 
     protected ConfigurationEvent configurationevent;
 
-    public CisConfigurationEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisConfigurationEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

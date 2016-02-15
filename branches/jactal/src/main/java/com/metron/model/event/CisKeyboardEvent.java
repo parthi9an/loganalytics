@@ -12,10 +12,6 @@ public class CisKeyboardEvent extends CisEvent {
 
     protected KeyboardEvent keyboardevent;
 
-    public CisKeyboardEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisKeyboardEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

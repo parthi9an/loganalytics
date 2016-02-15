@@ -12,10 +12,6 @@ public class CisFieldEvent extends CisEvent {
 
     protected FieldEvent fieldevent;
 
-    public CisFieldEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisFieldEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

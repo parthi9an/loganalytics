@@ -24,6 +24,7 @@ import com.metron.event.service.DomainEventService;
 import com.metron.event.service.EnvironmentEventService;
 import com.metron.event.service.ErrorEventService;
 import com.metron.event.service.EventPatternService;
+import com.metron.event.service.FieldEventService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.ServerEventService;
 import com.metron.event.service.SessionEventService;
@@ -88,6 +89,14 @@ public class ToolUIController {
             view.put("count", new ViewEventService().count());
             JSONObject site = new JSONObject();
             site.put("count", new ServerEventService().count());
+            JSONObject env = new JSONObject();
+            env.put("count", new EnvironmentEventService().count());
+            JSONObject config = new JSONObject();
+            config.put("count", new ConfiguartionEventService().count());
+            JSONObject error = new JSONObject();
+            error.put("count", new ErrorEventService().count());
+            JSONObject field = new JSONObject();
+            field.put("count", new FieldEventService().count());
             
             result.put("window", window);
             result.put("session", session);
@@ -95,6 +104,10 @@ public class ToolUIController {
             result.put("keyboard", keyboard);
             result.put("view", view);
             result.put("site", site);
+            result.put("env", env);
+            result.put("config", config);
+            result.put("error", error);
+            result.put("field", field);
             
         } catch (JSONException e) {
             e.printStackTrace();

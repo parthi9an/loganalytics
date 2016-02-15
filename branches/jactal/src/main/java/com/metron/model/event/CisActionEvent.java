@@ -12,10 +12,6 @@ public class CisActionEvent extends CisEvent {
     
     protected ActionEvent actionevent;
     
-    public CisActionEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisActionEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

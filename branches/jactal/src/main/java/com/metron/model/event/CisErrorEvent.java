@@ -20,10 +20,6 @@ public class CisErrorEvent extends CisEvent {
     protected ErrorEvent errorevent;
     
     protected ErrorPattern errorpattern;
-
-    public CisErrorEvent(JSONObject eventData) {
-        super(eventData);
-    }
     
     public CisErrorEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);

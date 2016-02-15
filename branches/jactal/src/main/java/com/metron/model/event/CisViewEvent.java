@@ -12,10 +12,6 @@ public class CisViewEvent extends CisEvent {
 
     protected ViewEvent viewevent;
 
-    public CisViewEvent(JSONObject eventData) {
-        super(eventData);
-    }
-    
     public CisViewEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
     

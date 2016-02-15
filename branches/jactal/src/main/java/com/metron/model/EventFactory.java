@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.metron.model.event.CisActionEvent;
 import com.metron.model.event.CisConfigurationEvent;
-import com.metron.model.event.CisDomainEvent;
 import com.metron.model.event.CisEnvironmentEvent;
 import com.metron.model.event.CisErrorEvent;
 import com.metron.model.event.CisEvent;
@@ -263,9 +262,6 @@ public class EventFactory {
             }else if(value.get("event").toString().compareToIgnoreCase("close") == 0){
                 return new CisViewCloseEvent(event,value);
             }
-            //return new CisViewEvent(event,metric_value);
-        } else if(event.get("type").toString().compareToIgnoreCase("domain") == 0){
-            return new CisDomainEvent(event,value);
         } else if(event.get("type").toString().compareToIgnoreCase("field") == 0){
             return new CisFieldEvent(event,value);
         } else if(event.get("type").toString().compareToIgnoreCase("error") == 0){
