@@ -21,6 +21,7 @@ import com.metron.event.service.ActionEventService;
 import com.metron.event.service.BaseEventService;
 import com.metron.event.service.ConfiguartionEventService;
 import com.metron.event.service.DomainEventService;
+import com.metron.event.service.EnvironmentEventService;
 import com.metron.event.service.ErrorEventService;
 import com.metron.event.service.EventPatternService;
 import com.metron.event.service.KeyboardEventService;
@@ -574,13 +575,29 @@ public class ToolUIController {
      * return Json
      * report: Pie Chart
      */
-    @RequestMapping(value = "/getEnvBreakdownBySessionAndSite")
+    @RequestMapping(value = "/getEnvBreakdown")
     public @ResponseBody
-    ResponseEntity<String> getEnvBreakdownBySessionAndSite(HttpServletRequest request,
+    ResponseEntity<String> getEnvBreakdown(HttpServletRequest request,
+            @RequestParam(value = "property", required = true) String property,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "serverId", required = false) String serverId,
+            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
-
-        return _formJSONSuccessResponse("");
+        
+        EnvironmentEventService service = new EnvironmentEventService();
+        JSONObject result = service.getCountOfEnv(property,sessionId,serverId,domainId,source,fromDate,toDate);
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    @RequestMapping(value = "/getEnvProperties")
+    public @ResponseBody
+    ResponseEntity<String> getEnvProperties(HttpServletRequest request){
+        
+        EnvironmentEventService service = new EnvironmentEventService();
+        JSONObject result = service.getEnvProperties();
+        return _formJSONSuccessResponse(result.toString());
     }
     
     
