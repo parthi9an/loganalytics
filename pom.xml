@@ -17,6 +17,7 @@
 		
 		mvn compile
 		mvn exec:exec -DsetUpDB
+		mvn exec:exec -DsetUpPostgresDb
 		 
 To deploy to tomcat
 		 
@@ -253,10 +254,10 @@ To deploy to tomcat
 			</build>
 		</profile>
 		<profile>
-			<id>postgresCheck</id>
+			<id>setUpPostgresDb</id>
 			<activation>
 				<property>
-					<name>postgresCheck</name>
+					<name>setUpPostgresDb</name>
 				</property>
 			</activation>
 			<build>
@@ -269,7 +270,7 @@ To deploy to tomcat
 							<arguments>
 								<argument>-classpath</argument>
 								<classpath />
-								<argument>com.metron.test.PostgresJDBC</argument>
+								<argument>com.metron.orientdb.PostgresdbService</argument>
 							</arguments>
 						</configuration>
 					</plugin>
