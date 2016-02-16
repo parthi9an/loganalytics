@@ -3,6 +3,7 @@ package com.metron.postgres;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.metron.AppConfig;
 
@@ -36,5 +37,13 @@ public class JdbcManager {
         connection = DriverManager.getConnection("jdbc:postgresql://"+host+":5432/"+db,
                 userName, password);
         return connection;  
+    }
+    
+private static Statement statement;
+    
+    public Statement getStatement() throws ClassNotFoundException, SQLException 
+    {     
+        statement = JdbcManager.getInstance().getConnection().createStatement();
+        return statement;  
     }
 }
