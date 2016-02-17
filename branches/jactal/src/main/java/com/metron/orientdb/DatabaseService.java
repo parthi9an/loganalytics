@@ -400,6 +400,10 @@ public class DatabaseService {
                 vType.createProperty("association_count", OType.INTEGER);
             }
             
+            if (!schema.existsClass("FilterCriteria")) {
+                vType = graph.createVertexType("FilterCriteria");
+            }
+            
             if (!schema.existsClass("Session_Pattern")) {
                 eType = graph.createEdgeType("Session_Pattern");
             }

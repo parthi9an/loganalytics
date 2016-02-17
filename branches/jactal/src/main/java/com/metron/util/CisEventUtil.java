@@ -23,24 +23,25 @@ public class CisEventUtil {
 
         List<String> keys = null;
         JSONObject properties = new JSONObject();
+        String eventName = props.get("@class").toString();
 
-        if (props.get("@class").toString().compareTo("ActionEvent") == 0) {
+        if (eventName.compareTo("ActionEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("ActionEvent");
-        } else if (props.get("@class").toString().compareTo("KeyBoardEvent") == 0) {
+        } else if (eventName.compareTo("KeyBoardEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("KeyBoardEvent");
-        } else if (props.get("@class").toString().compareTo("ViewEvent") == 0) {
+        } else if (eventName.compareTo("ViewEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("ViewEvent");
-        } else if (props.get("@class").toString().compareTo("DomainEvent") == 0) {
+        } else if (eventName.compareTo("DomainEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("DomainEvent");
-        } else if (props.get("@class").toString().compareTo("FieldEvent") == 0) {
+        } else if (eventName.compareTo("FieldEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("FieldEvent");
-        } else if (props.get("@class").toString().compareTo("ErrorEvent") == 0) {
+        } else if (eventName.compareTo("ErrorEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("ErrorEvent");
-        } else if (props.get("@class").toString().compareTo("ConfigurationEvent") == 0) {
+        } else if (eventName.compareTo("ConfigurationEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("ConfigurationEvent");
-        } else if (props.get("@class").toString().compareTo("WindowEvent") == 0) {
+        } else if (eventName.compareTo("WindowEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("WindowEvent");
-        } else if (props.get("@class").toString().compareTo("EnvironmentEvent") == 0) {
+        } else if (eventName.compareTo("EnvironmentEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("EnvironmentEvent");
         }
 

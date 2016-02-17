@@ -1,9 +1,7 @@
 package com.metron.model;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -28,19 +26,9 @@ public class EnvironmentEvent extends BaseModel{
         
         StringBuilder sql = new StringBuilder("select * from EnvironmentEvent where ");
         
-        for (Iterator<Entry<String, Object>> iter = metricValueAttributes.entrySet().iterator(); iter.hasNext();) {
-            Entry<String, Object> pair = iter.next();
-            sql.append(pair.getKey());
-            sql.append("= '");
-            sql.append(pair.getValue());
-            sql.append("'");
-
-            if (iter.hasNext()) {
-                sql.append(" and ");
-            }
-        }
+        String query = this.constructQuery(sql, metricValueAttributes);
         
-        OrientVertex envevent = OrientUtils.getVertex(graph,sql.toString());
+        OrientVertex envevent = OrientUtils.getVertex(graph,query);
         return envevent;
     }
 }

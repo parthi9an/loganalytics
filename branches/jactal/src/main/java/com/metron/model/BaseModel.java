@@ -1,6 +1,9 @@
 package com.metron.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.metron.AppConfig;
 import com.metron.orientdb.OrientDBGraphManager;
@@ -160,4 +163,22 @@ public class BaseModel {
             }
         }
     }*/
+    
+    public String constructQuery(StringBuilder sql,Map<String, Object> map){
+        
+        for (Iterator<Entry<String, Object>> iter = map.entrySet().iterator(); iter
+                .hasNext();) {
+            Entry<String, Object> pair = iter.next();
+            sql.append(pair.getKey());
+            sql.append("= '");
+            sql.append(pair.getValue());
+            sql.append("'");
+
+            if (iter.hasNext()) {
+                sql.append(" and ");
+            }
+        }
+        
+        return sql.toString();
+    }
 }

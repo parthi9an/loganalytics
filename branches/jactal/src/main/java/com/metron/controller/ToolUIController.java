@@ -25,6 +25,7 @@ import com.metron.event.service.EnvironmentEventService;
 import com.metron.event.service.ErrorEventService;
 import com.metron.event.service.EventPatternService;
 import com.metron.event.service.FieldEventService;
+import com.metron.event.service.FilterEventService;
 import com.metron.event.service.KeyboardEventService;
 import com.metron.event.service.ServerEventService;
 import com.metron.event.service.SessionEventService;
@@ -613,6 +614,43 @@ public class ToolUIController {
         return _formJSONSuccessResponse(result.toString());
     }
     
+    /**
+     * Save the filters chosen by the user
+     * @param request
+     * @param userName
+     * @param sessionId
+     * @param serverId
+     * @param domainId
+     * @param source
+     * @param fromDate
+     * @param toDate
+     * @return
+     */
+    @RequestMapping(value = "/saveFilterCriteria")
+    public @ResponseBody
+    ResponseEntity<String> saveFilterCriteria(HttpServletRequest request,
+            @RequestParam(value = "userName", required = true) String userName,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @RequestParam(value = "serverId", required = false) String serverId,
+            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "source", required = false) String source,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate){
+        
+        FilterEventService service = new FilterEventService();
+        JSONObject result = service.saveFilterCriteria(userName,sessionId,serverId,domainId,source,fromDate,toDate);
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    @RequestMapping(value = "/getSavedFilterCriteria")
+    public @ResponseBody
+    ResponseEntity<String> getSavedFilterCriteria(HttpServletRequest request,
+            @RequestParam(value = "userName", required = true) String userName){
+        
+        FilterEventService service = new FilterEventService();
+        JSONArray result = service.getSavedFilterCriteria(userName);
+        return _formJSONSuccessResponse(result.toString());
+    }
     
     private ResponseEntity<String> _formJSONSuccessResponse(String data) {
         final HttpHeaders httpHeaders = new HttpHeaders();

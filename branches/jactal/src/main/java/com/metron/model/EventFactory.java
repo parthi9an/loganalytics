@@ -251,33 +251,31 @@ public class EventFactory {
                 
         JSONObject value = (JSONObject)event.get("value");
         event.remove("value");
-    
-        if(event.get("type").toString().compareToIgnoreCase("action") == 0){
+        String type = event.get("type").toString();
+        
+        if(type.compareToIgnoreCase("action") == 0){
             return new CisActionEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("keyb") == 0){
+        } else if(type.compareToIgnoreCase("keyb") == 0){
             return new CisKeyboardEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("view") == 0){
+        } else if(type.compareToIgnoreCase("view") == 0){
             if(value.get("event").toString().compareToIgnoreCase("open") == 0){
                 return new CisViewOpenEvent(event,value);
             }else if(value.get("event").toString().compareToIgnoreCase("close") == 0){
                 return new CisViewCloseEvent(event,value);
             }
-        } else if(event.get("type").toString().compareToIgnoreCase("field") == 0){
+        } else if(type.compareToIgnoreCase("field") == 0){
             return new CisFieldEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("error") == 0){
+        } else if(type.compareToIgnoreCase("error") == 0){
             return new CisErrorEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("env") == 0){
+        } else if(type.compareToIgnoreCase("env") == 0){
             return new CisEnvironmentEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("config") == 0){
+        } else if(type.compareToIgnoreCase("config") == 0){
             return new CisConfigurationEvent(event,value);
-        } else if(event.get("type").toString().compareToIgnoreCase("window") == 0){
+        } else if(type.compareToIgnoreCase("window") == 0){
             return new CisWindowEvent(event,value);
         }
         
         return null;
-       
-        //Event e = new CisUiEvent(event);
-        //return e;
     }
 
 }
