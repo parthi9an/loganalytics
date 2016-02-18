@@ -26,6 +26,7 @@ public class PostgresdbService {
                 " session_id text," +
                 " domain_id text ," +
                 " source text, " +
+                " domain_type text, " +
                 " server_id text)";
         st.executeUpdate(qs);
         

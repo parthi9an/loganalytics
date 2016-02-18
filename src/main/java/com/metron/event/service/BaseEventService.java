@@ -5,7 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.controller.QueryWhereBuffer;
+import com.metron.orientdb.OrientDBGraphManager;
 import com.metron.util.CisEventUtil;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 public class BaseEventService {
     
@@ -212,6 +214,25 @@ public class BaseEventService {
             e.printStackTrace();
         }
         return eventdetails;
+    }
+
+    public JSONObject deleteRecord(String rid) {
+        
+        JSONObject result = new JSONObject();
+        try{
+        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+        graph.getVertex(rid).remove();
+        result.put("status", "Success");
+        result.put("message", "Successfully deleted");  
+        }catch(Exception e){
+            try {
+                result.put("status", "Failed");
+                result.put("message", e); 
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            } 
+        }   
+        return result;
     }
 
 }
