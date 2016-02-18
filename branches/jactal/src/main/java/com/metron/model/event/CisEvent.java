@@ -89,10 +89,6 @@ public abstract class CisEvent extends BaseModel {
     public JSONArray getPreviousMetricEvent() {
 
         String result = new RawMetricEvent().getPreviousMetricEvent(this.getAttributes());
-        /*StringBuffer query = new StringBuffer();
-        query.append("select outE('Metric_Event') as edge from CisEvents where session_id = '"
-                + this.getStringAttr(mappingEventkeys.get("session_id")) + "'");
-        String result = new OrientRest().doSql(query.toString());*/
 
         JSONObject resultObject;
         JSONArray ja, edgeObject = null;

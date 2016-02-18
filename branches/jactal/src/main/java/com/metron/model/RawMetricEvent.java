@@ -28,23 +28,7 @@ public class RawMetricEvent extends BaseModel {
     public RawMetricEvent() {}
 
     private OrientVertex find(OrientBaseGraph graph, Map<String, Object> rawAttributes) {
-        /*StringBuilder sql = new StringBuilder("select * from CisEvents where ");
-
-        for (Iterator<Entry<String, Object>> iter = rawAttributes.entrySet().iterator(); iter
-                .hasNext();) {
-            Entry<String, Object> pair = iter.next();
-            sql.append(pair.getKey());
-            sql.append("= '");
-            sql.append(pair.getValue());
-            sql.append("'");
-
-            if (iter.hasNext()) {
-                sql.append(" and ");
-            }
-        }
-
-        OrientVertex rawevent = OrientUtils.getVertex(graph, sql.toString());
-        return rawevent;*/
+        
         return OrientUtils.getVertex(graph, "select from CisEvents where session_id = '" + rawAttributes.get("session_id")
                 +"' and domain_id ='"+ rawAttributes.get("domain_id") + "' and source ='"+ rawAttributes.get("source")+
                 "' and server_id ='"+ rawAttributes.get("server_id") + "'");

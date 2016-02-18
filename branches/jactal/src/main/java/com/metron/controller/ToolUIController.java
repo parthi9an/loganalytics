@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -615,40 +616,70 @@ public class ToolUIController {
     }
     
     /**
-     * Save the filters chosen by the user
-     * @param request
-     * @param userName
-     * @param sessionId
-     * @param serverId
-     * @param domainId
-     * @param source
-     * @param fromDate
-     * @param toDate
+     * Save filter chosen by the user
+     * @param filter
      * @return
      */
-    @RequestMapping(value = "/saveFilterCriteria")
+    @RequestMapping(value = "/saveFilterCriteria",method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> saveFilterCriteria(HttpServletRequest request,
-            @RequestParam(value = "userName", required = true) String userName,
-            @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
-            @RequestParam(value = "source", required = false) String source,
-            @RequestParam(value = "fromDate", required = false) String fromDate,
-            @RequestParam(value = "toDate", required = false) String toDate){
+    ResponseEntity<String> saveFilterCriteria(@RequestBody String filter){
         
         FilterEventService service = new FilterEventService();
-        JSONObject result = service.saveFilterCriteria(userName,sessionId,serverId,domainId,source,fromDate,toDate);
+        JSONObject result = service.saveFilterCriteria(filter);
         return _formJSONSuccessResponse(result.toString());
     }
     
     @RequestMapping(value = "/getSavedFilterCriteria")
     public @ResponseBody
     ResponseEntity<String> getSavedFilterCriteria(HttpServletRequest request,
-            @RequestParam(value = "userName", required = true) String userName){
+            @RequestParam(value = "uName", required = true) String uName,
+            @RequestParam(value = "limit", required = false) String limit){
         
         FilterEventService service = new FilterEventService();
-        JSONArray result = service.getSavedFilterCriteria(userName);
+        JSONObject result = service.getSavedFilterCriteria(uName,limit);
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    @RequestMapping(value = "/deleteRecord")
+    public @ResponseBody
+    ResponseEntity<String> deleteRecord(HttpServletRequest request,
+            @RequestParam(value = "rid", required = true) String rid){
+        
+        BaseEventService service = new BaseEventService();
+        JSONObject result = service.deleteRecord(rid);
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    /**
+     * Dummy authentication
+     * @param credentials
+     * @return
+     */
+    @RequestMapping(value = "/authenticate",method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> authenticate(@RequestBody String credentials){
+        
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject credentialsobj = new JSONObject(credentials);    
+            String uName, pswd;
+            uName = credentialsobj.getString("uName");
+            pswd = credentialsobj.getString("password");
+            if (uName.compareTo("dileep") == 0 && pswd.compareTo("dileep") == 0 ||
+                    uName.compareTo("parthipan") == 0 && pswd.compareTo("parthipan") == 0 ) {
+                result.put("status", "Success");
+                result.put("uName", uName);
+            }else{
+                result.put("status", "Failed");
+            }
+        } catch (Exception e) {
+            try {
+                result.put("status", "Failed");
+                result.put("message", e);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        }
         return _formJSONSuccessResponse(result.toString());
     }
     

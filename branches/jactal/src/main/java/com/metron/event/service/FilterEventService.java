@@ -1,8 +1,9 @@
 package com.metron.event.service;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,57 +14,67 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 public class FilterEventService extends BaseEventService{
 
-    public JSONObject saveFilterCriteria(String userName, String sessionId, String serverId, String domainId, String source, String fromDate, String toDate) {
+    public JSONObject saveFilterCriteria(String filter) {
         
-        JSONObject json = new JSONObject();
+        JSONObject result = new JSONObject();
         try{
-        HashMap<String, Object> filterProps = new HashMap<String, Object>();
-        filterProps.put("userName",userName);
-        if(sessionId != null)
-            filterProps.put("sessionId",sessionId);
-        if(serverId != null)
-            filterProps.put("serverId",serverId);
-        if(domainId != null)
-            filterProps.put("domainId",domainId);
-        if(source != null)
-            filterProps.put("source",source);
-        if(fromDate != null)
-            filterProps.put("fromDate",fromDate);
-        if(toDate != null)
-            filterProps.put("toDate",toDate);
-        
-        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-        new FilterCritera(filterProps,graph);
-        json.put("status", "Successfully Saved");
+            JSONObject filterObj = new JSONObject(filter);
+            HashMap<String, Object> filterProps = new HashMap<String, Object>();
+            Iterator<String> iterator = filterObj.keys();
+
+            while (iterator.hasNext()) {
+                String key2 = iterator.next();
+                filterProps.put(key2, filterObj.getString(key2));
+            }
+            filterProps.put("timestamp", new Date().getTime());
+            
+            OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+            if(new FilterCritera(graph).filterExists(filterProps.get("filtername"),filterProps.get("uName")) != null){
+                result.put("message", "FilterName Exists");
+            }else{
+                new FilterCritera(filterProps, graph);
+                result.put("status", "Success");
+                result.put("message", "Successfully saved");                
+            }
         }catch(Exception e){
             try {
-                json.put("status", "Failed");
+                result.put("status", "Failed");
+                result.put("message", e.toString());
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
         }
         
-        return json;
+        return result;
     }
 
-    public JSONArray getSavedFilterCriteria(String userName) {
+    public JSONObject getSavedFilterCriteria(String uName,String limit) {
         
-        JSONArray result = new JSONArray();
+        JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
+        StringBuffer countquery = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("userName ='" + userName + "'");
+        whereClause.append("uName ='" + uName + "'");
         
-        query.append("select * from FilterCriteria"
+        query.append("select * from FilterCriteria order by timestamp desc"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
-        String data = new com.metron.orientdb.OrientRest().doSql(query.toString());
+        String data = null;
+        if (limit != null) {
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),Integer.parseInt(limit));
+        }else{
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString());
+        }
         try {
-            JSONObject jsondata = new JSONObject(data.toString());
-            result = jsondata.getJSONArray("result");
+            result = new JSONObject(data.toString());
+            //send count of filters the user has
+            countquery.append("select count(*) as count from FilterCriteria order by timestamp desc"
+                    + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+            Long totalFilterCountOfUser = this.getCount(countquery.toString());
+            result.put("totalFilterCount", totalFilterCountOfUser);
         }catch (JSONException e) {
             e.printStackTrace();
         }    
         
         return result;
     }
-
 }
