@@ -12,12 +12,12 @@ import com.metron.model.FilterCritera;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
-public class FilterEventService extends BaseEventService{
+public class FilterEventService extends BaseEventService {
 
     public JSONObject saveFilterCriteria(String filter) {
-        
+
         JSONObject result = new JSONObject();
-        try{
+        try {
             JSONObject filterObj = new JSONObject(filter);
             HashMap<String, Object> filterProps = new HashMap<String, Object>();
             Iterator<String> iterator = filterObj.keys();
@@ -27,16 +27,18 @@ public class FilterEventService extends BaseEventService{
                 filterProps.put(key2, filterObj.getString(key2));
             }
             filterProps.put("timestamp", new Date().getTime());
-            
+
             OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-            if(new FilterCritera(graph).filterExists(filterProps.get("filtername"),filterProps.get("uName")) != null){
+            if (new FilterCritera(graph).filterExists(filterProps.get("filtername"),
+                    filterProps.get("uName")) != null) {
+                result.put("status", "Failed");
                 result.put("message", "FilterName Exists");
-            }else{
+            } else {
                 new FilterCritera(filterProps, graph);
                 result.put("status", "Success");
-                result.put("message", "Successfully saved");                
+                result.put("message", "Successfully saved");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             try {
                 result.put("status", "Failed");
                 result.put("message", e.toString());
@@ -44,37 +46,58 @@ public class FilterEventService extends BaseEventService{
                 e1.printStackTrace();
             }
         }
-        
+
         return result;
     }
 
-    public JSONObject getSavedFilterCriteria(String uName,String limit) {
-        
+    public JSONObject getSavedFilterCriteria(String uName, String limit) {
+
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         StringBuffer countquery = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         whereClause.append("uName ='" + uName + "'");
-        
+
         query.append("select * from FilterCriteria order by timestamp desc"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         String data = null;
         if (limit != null) {
-            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),Integer.parseInt(limit));
-        }else{
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),
+                    Integer.parseInt(limit));
+        } else {
             data = new com.metron.orientdb.OrientRest().doSql(query.toString());
         }
         try {
             result = new JSONObject(data.toString());
-            //send count of filters the user has
-            countquery.append("select count(*) as count from FilterCriteria order by timestamp desc"
-                    + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+            // send count of filters the user has
+            countquery
+                    .append("select count(*) as count from FilterCriteria order by timestamp desc"
+                            + ((!whereClause.toString().equals("")) ? " Where "
+                                    + whereClause.toString() : ""));
             Long totalFilterCountOfUser = this.getCount(countquery.toString());
             result.put("totalFilterCount", totalFilterCountOfUser);
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
-        }    
-        
+        }
+
+        return result;
+    }
+
+    public JSONObject deleteAllFilters(String uName) {
+
+        JSONObject result = new JSONObject();
+        try {
+            new com.metron.orientdb.OrientRest().postSql("delete vertex from FilterCriteria where uName ='"+uName+"'");
+            result.put("status", "Success");
+            result.put("message", "Successfully deleted");
+        } catch (Exception e) {
+            try {
+                result.put("status", "Failed");
+                result.put("message", e);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        }
         return result;
     }
 }

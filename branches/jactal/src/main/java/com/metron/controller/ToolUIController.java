@@ -640,6 +640,16 @@ public class ToolUIController {
         return _formJSONSuccessResponse(result.toString());
     }
     
+    @RequestMapping(value = "/deleteAllFilters")
+    public @ResponseBody
+    ResponseEntity<String> deleteAllFilters(HttpServletRequest request,
+            @RequestParam(value = "uName", required = true) String uName){
+        
+        FilterEventService service = new FilterEventService();
+        JSONObject result = service.deleteAllFilters(uName);
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
     @RequestMapping(value = "/deleteRecord")
     public @ResponseBody
     ResponseEntity<String> deleteRecord(HttpServletRequest request,
