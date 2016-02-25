@@ -6,7 +6,7 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class EventPatternService extends BaseEventService{
 
-    public JSONArray getPatterns(String sessionId, String serverId, String domainId, String source,String fromDate, String toDate) {
+    public JSONArray getPatterns(String sessionId, String serverId, String userId, String source,String fromDate, String toDate) {
                 
         JSONArray result = new JSONArray();
           
@@ -16,8 +16,8 @@ public class EventPatternService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");

@@ -132,11 +132,11 @@ public class ToolUIController {
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source){
 
         BaseEventService service = new BaseEventService();
-        JSONArray result = service.getAllEvents(sessionId,serverId,domainId,source,fromDate, toDate,limit);
+        JSONArray result = service.getAllEvents(sessionId,serverId,userId,source,fromDate, toDate,limit);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -152,13 +152,13 @@ public class ToolUIController {
     ResponseEntity<String> getActionNames(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         ActionEventService service = new ActionEventService();
-        JSONObject result = service.getActionNames(sessionId,serverId,domainId,source,fromDate, toDate);
+        JSONObject result = service.getActionNames(sessionId,serverId,userId,source,fromDate, toDate);
         
         return _formJSONSuccessResponse(result.toString());
     }
@@ -172,11 +172,11 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getSource(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "serverId", required = false) String serverId) {
 
         SourceEventService service = new SourceEventService();
-        JSONObject result = service.getSourceNames(sessionId,domainId,serverId);
+        JSONObject result = service.getSourceNames(sessionId,userId,serverId);
         
         return _formJSONSuccessResponse(result.toString());
     }
@@ -207,11 +207,11 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getServers(HttpServletRequest request,
             @RequestParam(value = "source", required = false) String source,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "sessionId", required = false) String sessionId) {
 
         ServerEventService service = new ServerEventService();
-        JSONObject result = service.getServerNames(source,domainId,sessionId);
+        JSONObject result = service.getServerNames(source,userId,sessionId);
         
         return _formJSONSuccessResponse(result.toString());
     }
@@ -225,11 +225,11 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getSessions(HttpServletRequest request,
             @RequestParam(value = "source", required = false) String source,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "serverId", required = false) String serverId) {
 
         SessionEventService service = new SessionEventService();
-        JSONObject result = service.getSessionNames(serverId,domainId,source);
+        JSONObject result = service.getSessionNames(serverId,userId,source);
         
         return _formJSONSuccessResponse(result.toString());
     }
@@ -247,14 +247,14 @@ public class ToolUIController {
             @RequestParam(value = "name", required = true) String actionKey,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         ActionEventService service = new ActionEventService();
         
-        JSONObject result = service.getCountOfCommandForAction(actionKey,sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getCountOfCommandForAction(actionKey,sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -271,14 +271,14 @@ public class ToolUIController {
     ResponseEntity<String> getActionKeyCount(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         ActionEventService service = new ActionEventService();
         
-        JSONObject result = service.getCountOfActionKey(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getCountOfActionKey(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -294,14 +294,14 @@ public class ToolUIController {
     ResponseEntity<String> getCommonlyUsedPatterns(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         EventPatternService service = new EventPatternService();
         
-        JSONArray result = service.getPatterns(sessionId,serverId,domainId,source,fromDate,toDate);
+        JSONArray result = service.getPatterns(sessionId,serverId,userId,source,fromDate,toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -318,14 +318,14 @@ public class ToolUIController {
             @RequestParam(value = "errorTracechecksum", required = true) String errorTracechecksum,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         ErrorEventService service = new ErrorEventService();
         
-        JSONArray result = service.getPatterns(errorTracechecksum,sessionId,serverId,domainId,source,fromDate,toDate);
+        JSONArray result = service.getPatterns(errorTracechecksum,sessionId,serverId,userId,source,fromDate,toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -354,14 +354,14 @@ public class ToolUIController {
     ResponseEntity<String> getCommandCountByInvoked(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         KeyboardEventService service = new KeyboardEventService();
         
-        JSONObject result = service.getcommandCount(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getcommandCount(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -377,14 +377,14 @@ public class ToolUIController {
     ResponseEntity<String> getViewCount(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         ViewEventService service = new ViewEventService();
         
-        JSONObject result = service.getViewcount(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getViewcount(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -400,14 +400,14 @@ public class ToolUIController {
     ResponseEntity<String> getViewActivity(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         ViewEventService service = new ViewEventService();
         
-        JSONObject result = service.getViewActivityDuration(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getViewActivityDuration(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
     }
@@ -423,14 +423,14 @@ public class ToolUIController {
     ResponseEntity<String> getCountOfLoginUser(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         DomainEventService service = new DomainEventService();
         
-        JSONObject result = service.getCountOfLoginUserByLoginType(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getCountOfLoginUserByLoginType(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 
@@ -447,14 +447,14 @@ public class ToolUIController {
     ResponseEntity<String> getExceptionCount(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         ErrorEventService service = new ErrorEventService();
         
-        JSONArray result = service.getExceptionCount(sessionId,serverId,domainId,source,fromDate, toDate);
+        JSONArray result = service.getExceptionCount(sessionId,serverId,userId,source,fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 
@@ -471,14 +471,14 @@ public class ToolUIController {
     ResponseEntity<String> getOverridenConfigCount(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         ConfiguartionEventService service = new ConfiguartionEventService();
         
-        JSONObject result = service.getOverridenConfigCount(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getOverridenConfigCount(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 
@@ -495,14 +495,14 @@ public class ToolUIController {
     ResponseEntity<String> getCountOfMovedWindows(HttpServletRequest request,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         WindowEventService service = new WindowEventService();
         
-        JSONObject result = service.getCountOfMovedWindows(sessionId,serverId,domainId,source, fromDate, toDate);
+        JSONObject result = service.getCountOfMovedWindows(sessionId,serverId,userId,source, fromDate, toDate);
 
         return _formJSONSuccessResponse(result.toString());
 
@@ -551,13 +551,13 @@ public class ToolUIController {
     public @ResponseBody
     ResponseEntity<String> getCountOfSessions(HttpServletRequest request,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
 
         SessionEventService service = new SessionEventService();
-        JSONObject result = service.getCountOfSessions(serverId,domainId,source,fromDate,toDate);
+        JSONObject result = service.getCountOfSessions(serverId,userId,source,fromDate,toDate);
         return _formJSONSuccessResponse(result.toString());
     }
     
@@ -596,13 +596,13 @@ public class ToolUIController {
             @RequestParam(value = "property", required = true) String property,
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @RequestParam(value = "serverId", required = false) String serverId,
-            @RequestParam(value = "domainId", required = false) String domainId,
+            @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate) {
         
         EnvironmentEventService service = new EnvironmentEventService();
-        JSONObject result = service.getCountOfEnv(property,sessionId,serverId,domainId,source,fromDate,toDate);
+        JSONObject result = service.getCountOfEnv(property,sessionId,serverId,userId,source,fromDate,toDate);
         return _formJSONSuccessResponse(result.toString());
     }
     

@@ -11,7 +11,7 @@ import com.metron.model.CisEventMappings;
 
 public class EnvironmentEventService extends BaseEventService{
 
-    public JSONObject getCountOfEnv(String property, String sessionId, String serverId, String domainId,
+    public JSONObject getCountOfEnv(String property, String sessionId, String serverId, String userId,
             String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
@@ -21,8 +21,8 @@ public class EnvironmentEventService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");

@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class DomainEventService extends BaseEventService {
 
     public JSONObject getCountOfLoginUserByLoginType(String sessionId, String serverId,
-            String domainId, String source, String fromDate, String toDate) {
+            String userId, String source, String fromDate, String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -16,8 +16,8 @@ public class DomainEventService extends BaseEventService {
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");
@@ -55,7 +55,7 @@ public class DomainEventService extends BaseEventService {
             whereClause.append("source ='" + source + "'");
         }
 
-        query.append("select distinct(domain_id) as name from CisEvents"
+        query.append("select distinct(user_id) as name from CisEvents"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getNames(query.toString());
@@ -87,11 +87,11 @@ public class DomainEventService extends BaseEventService {
             subwhereClause.append("timestamp <= '" + toDate + "' ");
         }
 
-        //String sql = "select domain_id as name,count(*) as count from CisEvents group by domain_id";
-        subquery.append("select out.domain_id as domain_id,out.server_id as server_id,out.source as source, out.session_id as session_id from Metric_Event group by out"
+        //String sql = "select user_id as name,count(*) as count from CisEvents group by user_id";
+        subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source, out.session_id as session_id from Metric_Event group by out"
                 + ((!subwhereClause.toString().equals("")) ? " Where " + subwhereClause.toString() : ""));
 
-        query.append("select domain_id as name,count(*) as count from (").append(subquery.toString()).append(") group by domain_id"
+        query.append("select user_id as name,count(*) as count from (").append(subquery.toString()).append(") group by user_id"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         
         result = this.getAssociatedCount(query.toString());

@@ -40,7 +40,7 @@ public class ViewEvent extends BaseModel {
         query.append("select * from Metric_Event where type = 'view' and in.event = 'open' and in.name = '"
                 + metricValueAttributes.get("name")
                 + "' and out.session_id = '"+ attributes.get("session_id")
-                + "' and out.domain_id = '"+ attributes.get("domain_id")
+                + "' and out.user_id = '"+ attributes.get("user_id")
                 + "' and out.source = '"+ attributes.get("source")
                 + "' and out.server_id = '"+ attributes.get("server_id")
                 + "' order by timestamp desc");

@@ -144,11 +144,11 @@ public class BaseEventService {
      * @param toDate
      * @param limit
      * @param serverId 
-     * @param domainId 
+     * @param userId 
      * @param source 
      * @return list of events along with event type, timestamp and event details
      */
-    public JSONArray getAllEvents(String sessionId, String serverId, String domainId,String source, String fromDate, String toDate, String limit) {
+    public JSONArray getAllEvents(String sessionId, String serverId, String userId,String source, String fromDate, String toDate, String limit) {
         
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
@@ -156,8 +156,8 @@ public class BaseEventService {
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");

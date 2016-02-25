@@ -14,7 +14,7 @@ public class ViewEventService extends BaseEventService {
         return getAssociatedCount("select in.name as name , count(*) as count from Metric_View group by in.name");
     }
 
-    public JSONObject getViewcount(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
+    public JSONObject getViewcount(String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -23,8 +23,8 @@ public class ViewEventService extends BaseEventService {
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");
@@ -48,7 +48,7 @@ public class ViewEventService extends BaseEventService {
 
     }
 
-    public JSONObject getViewActivityDuration(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
+    public JSONObject getViewActivityDuration(String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -58,8 +58,8 @@ public class ViewEventService extends BaseEventService {
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");

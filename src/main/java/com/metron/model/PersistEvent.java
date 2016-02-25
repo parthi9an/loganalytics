@@ -24,7 +24,7 @@ public class PersistEvent {
         sessionprops.put("session_id", attributes.get("session_id"));
         sessionprops.put("source", attributes.get("source"));
         sessionprops.put("server_id", attributes.get("server_id"));
-        sessionprops.put("domain_id", attributes.get("domain_id"));
+        sessionprops.put("user_id", attributes.get("user_id"));
         sessionprops.put("domain_type", attributes.get("domain_type"));
         
         int id = getSessionId(sessionprops,"session");

@@ -10,7 +10,7 @@ public class ActionEventService extends BaseEventService{
         return getCount("select count(*) as count from Metric_Event where type = 'action'");
     }
 
-    public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,String serverId, String domainId, String source,
+    public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,String serverId, String userId, String source,
             String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
@@ -23,8 +23,8 @@ public class ActionEventService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");
@@ -47,7 +47,7 @@ public class ActionEventService extends BaseEventService{
         return result;
     }
     
-    public JSONObject getCountOfActionKey( String sessionId,String serverId, String domainId, String source,
+    public JSONObject getCountOfActionKey( String sessionId,String serverId, String userId, String source,
             String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
@@ -58,8 +58,8 @@ public class ActionEventService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");
@@ -92,7 +92,7 @@ public class ActionEventService extends BaseEventService{
      * @param source 
      * @return
      */
-    public JSONObject getActionNames(String sessionId, String serverId, String domainId, String source, String fromDate, String toDate) {
+    public JSONObject getActionNames(String sessionId, String serverId, String userId, String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -101,8 +101,8 @@ public class ActionEventService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");
