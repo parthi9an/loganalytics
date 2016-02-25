@@ -10,7 +10,7 @@ public class WindowEventService extends BaseEventService{
         return getCount("select count(*) as count from Metric_Event where type = 'window'");
     }
 
-    public JSONObject getCountOfMovedWindows(String sessionId,String serverId, String domainId, String source, String fromDate, String toDate) {
+    public JSONObject getCountOfMovedWindows(String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -20,8 +20,8 @@ public class WindowEventService extends BaseEventService{
         if (sessionId != null) {
             whereClause.append("out.session_id ='" + sessionId + "'");
         }
-        if (domainId != null) {
-            whereClause.append("out.domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("out.user_id ='" + userId + "'");
         }
         if (serverId != null) {
             whereClause.append("out.server_id ='" + serverId + "'");

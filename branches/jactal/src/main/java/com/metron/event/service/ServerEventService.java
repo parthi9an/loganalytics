@@ -6,13 +6,13 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ServerEventService extends BaseEventService{
 
-    public JSONObject getServerNames(String source, String domainId, String sessionId) {
+    public JSONObject getServerNames(String source, String userId, String sessionId) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
-        if (domainId != null) {
-            whereClause.append("domain_id ='" + domainId + "'");
+        if (userId != null) {
+            whereClause.append("user_id ='" + userId + "'");
         }
         if (sessionId != null) {
             whereClause.append("session_id ='" + sessionId + "'");

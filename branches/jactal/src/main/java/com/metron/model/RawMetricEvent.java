@@ -16,7 +16,7 @@ public class RawMetricEvent extends BaseModel {
         if (vertex == null) {
             this.vertex = graph.addVertex("class:CisEvents");
             HashMap<String, Object> props = new HashMap<String, Object>();
-            props.put("domain_id",rawAttributes.get("domain_id"));
+            props.put("user_id",rawAttributes.get("user_id"));
             props.put("session_id",rawAttributes.get("session_id"));
             props.put("source",rawAttributes.get("source"));
             props.put("server_id",rawAttributes.get("server_id"));
@@ -30,14 +30,14 @@ public class RawMetricEvent extends BaseModel {
     private OrientVertex find(OrientBaseGraph graph, Map<String, Object> rawAttributes) {
         
         return OrientUtils.getVertex(graph, "select from CisEvents where session_id = '" + rawAttributes.get("session_id")
-                +"' and domain_id ='"+ rawAttributes.get("domain_id") + "' and source ='"+ rawAttributes.get("source")+
+                +"' and user_id ='"+ rawAttributes.get("user_id") + "' and source ='"+ rawAttributes.get("source")+
                 "' and server_id ='"+ rawAttributes.get("server_id") + "'");
     }
 
     public String getPreviousMetricEvent(Map<String, Object> rawAttributes) {
         StringBuffer query = new StringBuffer();
         query.append("select outE('Metric_Event') as edge from CisEvents where session_id = '" + rawAttributes.get("session_id")
-                +"' and domain_id ='"+ rawAttributes.get("domain_id") + "' and source ='"+ rawAttributes.get("source")+
+                +"' and user_id ='"+ rawAttributes.get("user_id") + "' and source ='"+ rawAttributes.get("source")+
                 "' and server_id ='"+ rawAttributes.get("server_id") + "'");
         String result = new OrientRest().doSql(query.toString());
         return result;

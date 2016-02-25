@@ -24,7 +24,7 @@ public class PostgresdbService {
         String qs = "CREATE TABLE IF NOT EXISTS session(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " session_id text," +
-                " domain_id text ," +
+                " user_id text ," +
                 " source text, " +
                 " domain_type text, " +
                 " server_id text)";
