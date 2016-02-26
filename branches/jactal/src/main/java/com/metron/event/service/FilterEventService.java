@@ -89,7 +89,7 @@ public class FilterEventService extends BaseEventService {
         try {
             new com.metron.orientdb.OrientRest().postSql("delete vertex from FilterCriteria where uName ='"+uName+"'");
             result.put("status", "Success");
-            result.put("message", "Successfully deleted");
+            result.put("message", "Successfully deleted all the filters");
         } catch (Exception e) {
             try {
                 result.put("status", "Failed");

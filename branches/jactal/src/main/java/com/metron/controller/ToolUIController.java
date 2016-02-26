@@ -675,8 +675,8 @@ public class ToolUIController {
             String uName, pswd;
             uName = credentialsobj.getString("uName");
             pswd = credentialsobj.getString("password");
-            if (uName.compareTo("dileep") == 0 && pswd.compareTo("dileep") == 0 ||
-                    uName.compareTo("parthipan") == 0 && pswd.compareTo("parthipan") == 0 ) {
+            if (uName.compareTo("admin") == 0 && pswd.compareTo("admin") == 0 ||
+                    uName.compareTo("guest") == 0 && pswd.compareTo("guest") == 0 ) {
                 result.put("status", "Success");
                 result.put("uName", uName);
             }else{
