@@ -1,6 +1,10 @@
 package com.metron.controller;
 
+import java.util.Base64;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +37,9 @@ import com.metron.event.service.SessionEventService;
 import com.metron.event.service.SourceEventService;
 import com.metron.event.service.ViewEventService;
 import com.metron.event.service.WindowEventService;
+import com.metron.model.AccessToken;
+import com.metron.orientdb.OrientDBGraphManager;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 @RestController
 @RequestMapping("/TUI")
@@ -76,8 +83,8 @@ public class ToolUIController {
     @RequestMapping(value = "/getOverAllSummary")
     public @ResponseBody
     ResponseEntity<String> getOverAllSummary(HttpServletRequest request) {
+                
         JSONObject result = new JSONObject();
-
         try {
             JSONObject window = new JSONObject();
             window.put("count", new WindowEventService().count());
@@ -116,6 +123,7 @@ public class ToolUIController {
         }
 
         return _formJSONSuccessResponse(result.toString());
+        
     }
     
     /*
@@ -667,7 +675,9 @@ public class ToolUIController {
      */
     @RequestMapping(value = "/authenticate",method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> authenticate(@RequestBody String credentials){
+    ResponseEntity<String> authenticate(HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody String credentials){
         
         JSONObject result = new JSONObject();
         try {
@@ -679,6 +689,11 @@ public class ToolUIController {
                     uName.compareTo("guest") == 0 && pswd.compareTo("guest") == 0 ) {
                 result.put("status", "Success");
                 result.put("uName", uName);
+                String loginTime = Long.toString(new Date().getTime());
+                String accessToken = Base64.getEncoder().encodeToString((uName+":"+loginTime).getBytes("utf-8"));
+                response.addHeader("Access-Token", accessToken);
+                OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+                new AccessToken(uName,loginTime,accessToken,graph);
             }else{
                 result.put("status", "Failed");
             }
