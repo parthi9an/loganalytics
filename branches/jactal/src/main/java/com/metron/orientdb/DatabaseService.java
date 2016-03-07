@@ -408,6 +408,10 @@ public class DatabaseService {
                 eType = graph.createEdgeType("Session_Pattern");
             }
             
+            if (!schema.existsClass("AccessToken")) {
+                vType = graph.createVertexType("AccessToken");
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

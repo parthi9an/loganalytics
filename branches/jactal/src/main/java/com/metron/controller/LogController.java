@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.metron.model.EventFactory;
 import com.metron.model.TestVo;
-import com.metron.model.event.Event;
 
 @RestController
 public class LogController {

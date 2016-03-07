@@ -5,6 +5,7 @@ package com.metron.filter;
  */
 
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,24 +13,58 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 
+import com.metron.model.AccessToken;
+import com.metron.orientdb.OrientDBGraphManager;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+
 @Component
 public class CorsFilter implements Filter {
 
-    
-
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
             throws IOException, ServletException {
-        // CORS "pre-flight" request
+        
+        //check authenticity of request
+        HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+        boolean responseFilter = false;
+        String accessToken = request.getHeader("Access-Token");
+        
+        // For requests other than /authenticate access-token is required
+        if(! request.getRequestURI().contains("/authenticate")){           
+            if(accessToken == null){
+                //response.sendError(245, "Inavlid Access");
+                response.sendRedirect(null);
+            }else{
+                byte[] valueDecoded = Base64.getDecoder().decode(accessToken.getBytes());
+                System.out.println("Decoded value is " + new String(valueDecoded));
+                String currUserName = new String(valueDecoded).split(":")[0];
+                OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+                //Check whether access-token is valid or not
+                if (new AccessToken().isValidToken(graph,currUserName,accessToken)){
+                    responseFilter = true;
+                }else{
+                    response.sendRedirect(null);
+                }
+            }   
+        }else{
+           responseFilter = true;            
+        }
+          
+        if(responseFilter){
+        // CORS "pre-flight" request
+        //HttpServletResponse response = (HttpServletResponse) res;
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
+        response.addHeader("Access-Control-Expose-Headers", "Access-Token");
         response.addHeader("Access-Control-Max-Age", "1800");// 30 min
         filterChain.doFilter(req, res);
+        }
 
     }
 
