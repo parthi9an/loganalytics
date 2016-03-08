@@ -5,7 +5,6 @@ package com.metron.filter;
  */
 
 import java.io.IOException;
-import java.util.Base64;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
 import com.metron.model.AccessToken;
@@ -37,8 +37,8 @@ public class CorsFilter implements Filter {
             if(accessToken == null){
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }else{
-                byte[] valueDecoded = Base64.getDecoder().decode(accessToken.getBytes());
-                System.out.println("Decoded value is " + new String(valueDecoded));
+                //byte[] valueDecoded = Base64.getDecoder().decode(accessToken.getBytes());
+                byte[] valueDecoded = Base64.decodeBase64(accessToken.getBytes());
                 String currUserName = new String(valueDecoded).split(":")[0];
                 //Check whether access-token is valid or not
                 if (new AccessToken().isValidToken(currUserName,accessToken)){
