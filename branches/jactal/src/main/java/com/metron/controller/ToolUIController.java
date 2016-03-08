@@ -1,11 +1,12 @@
 package com.metron.controller;
 
-import java.util.Base64;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ import com.metron.event.service.ViewEventService;
 import com.metron.event.service.WindowEventService;
 import com.metron.model.AccessToken;
 import com.metron.orientdb.OrientDBGraphManager;
+import com.metron.service.AuthenticationService;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 @RestController
@@ -680,30 +682,27 @@ public class ToolUIController {
             @RequestBody String credentials){
         
         JSONObject result = new JSONObject();
+        String loginTime = Long.toString(new Date().getTime());
         try {
-            JSONObject credentialsobj = new JSONObject(credentials);    
-            String uName, pswd;
-            uName = credentialsobj.getString("uName");
-            pswd = credentialsobj.getString("password");
-            if (uName.compareTo("admin") == 0 && pswd.compareTo("admin") == 0 ||
-                    uName.compareTo("guest") == 0 && pswd.compareTo("guest") == 0 ) {
-                result.put("status", "Success");
-                result.put("uName", uName);
-                String loginTime = Long.toString(new Date().getTime());
-                String accessToken = Base64.getEncoder().encodeToString((uName+":"+loginTime).getBytes("utf-8"));
+            JSONObject credentialsobj = new JSONObject(credentials);
+            String currUsr, currPswd;
+            currUsr = credentialsobj.getString("uName");
+            currPswd = credentialsobj.getString("password");
+            AuthenticationService auth = new AuthenticationService();
+            result = auth.authenticate(currUsr, currPswd);
+
+            if(result.getString("status").compareTo("success") == 0){
+                //String accessToken = Base64.getEncoder().encodeToString((currUsr+":"+loginTime).getBytes("utf-8"));
+                String accessToken = new String(Base64.encodeBase64((currUsr+":"+loginTime).getBytes("utf-8")));
                 response.addHeader("Access-Token", accessToken);
                 OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-                new AccessToken(uName,loginTime,accessToken,graph);
-            }else{
-                result.put("status", "Failed");
+                new AccessToken(currUsr,loginTime,accessToken,graph);
             }
-        } catch (Exception e) {
-            try {
-                result.put("status", "Failed");
-                result.put("message", e);
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return _formJSONSuccessResponse(result.toString());
     }
