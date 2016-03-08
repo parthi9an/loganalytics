@@ -30,25 +30,33 @@ public class CorsFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         boolean responseFilter = false;
+        boolean optionsFilter = false;
         String accessToken = request.getHeader("Access-Token");
         
-        // For requests other than /authenticate access-token is required
-        if(! request.getRequestURI().contains("/authenticate")){           
-            if(accessToken == null){
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }else{
-                //byte[] valueDecoded = Base64.getDecoder().decode(accessToken.getBytes());
-                byte[] valueDecoded = Base64.decodeBase64(accessToken.getBytes());
-                String currUserName = new String(valueDecoded).split(":")[0];
-                //Check whether access-token is valid or not
-                if (new AccessToken().isValidToken(currUserName,accessToken)){
-                    responseFilter = true;
-                }else{
+        // Http Options method Describes the communication options for the
+        // target resource
+        if (request.getMethod().compareToIgnoreCase("OPTIONS") != 0) {
+            // For requests other than /authenticate access-token is required
+            if (!request.getRequestURI().contains("/authenticate")) {
+                if (accessToken == null) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    // byte[] valueDecoded =
+                    // Base64.getDecoder().decode(accessToken.getBytes());
+                    byte[] valueDecoded = Base64.decodeBase64(accessToken.getBytes());
+                    String currUserName = new String(valueDecoded).split(":")[0];
+                    // Check whether access-token is valid or not
+                    if (new AccessToken().isValidToken(currUserName, accessToken)) {
+                        responseFilter = true;
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
                 }
-            }   
-        }else{
-           responseFilter = true;            
+            } else {
+                responseFilter = true;
+            }
+        } else {
+            optionsFilter = true;
         }
           
         // CORS "pre-flight" request
@@ -58,7 +66,7 @@ public class CorsFilter implements Filter {
         response.addHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
         response.addHeader("Access-Control-Expose-Headers", "Access-Token");
         response.addHeader("Access-Control-Max-Age", "1800");// 30 min
-        if(responseFilter){
+        if(responseFilter || optionsFilter){
             filterChain.doFilter(req, res);
         }
 
