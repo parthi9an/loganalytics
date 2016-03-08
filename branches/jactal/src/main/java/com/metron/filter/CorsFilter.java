@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import com.metron.model.AccessToken;
-import com.metron.orientdb.OrientDBGraphManager;
-import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 @Component
 public class CorsFilter implements Filter {
@@ -37,25 +35,22 @@ public class CorsFilter implements Filter {
         // For requests other than /authenticate access-token is required
         if(! request.getRequestURI().contains("/authenticate")){           
             if(accessToken == null){
-                //response.sendError(245, "Inavlid Access");
-                response.sendRedirect(null);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }else{
                 byte[] valueDecoded = Base64.getDecoder().decode(accessToken.getBytes());
                 System.out.println("Decoded value is " + new String(valueDecoded));
                 String currUserName = new String(valueDecoded).split(":")[0];
-                OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
                 //Check whether access-token is valid or not
-                if (new AccessToken().isValidToken(graph,currUserName,accessToken)){
+                if (new AccessToken().isValidToken(currUserName,accessToken)){
                     responseFilter = true;
                 }else{
-                    response.sendRedirect(null);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
             }   
         }else{
            responseFilter = true;            
         }
           
-        if(responseFilter){
         // CORS "pre-flight" request
         //HttpServletResponse response = (HttpServletResponse) res;
         response.addHeader("Access-Control-Allow-Origin", "*");
@@ -63,7 +58,8 @@ public class CorsFilter implements Filter {
         response.addHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
         response.addHeader("Access-Control-Expose-Headers", "Access-Token");
         response.addHeader("Access-Control-Max-Age", "1800");// 30 min
-        filterChain.doFilter(req, res);
+        if(responseFilter){
+            filterChain.doFilter(req, res);
         }
 
     }
