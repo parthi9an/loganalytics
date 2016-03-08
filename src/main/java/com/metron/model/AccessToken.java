@@ -2,6 +2,9 @@ package com.metron.model;
 
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.metron.orientdb.OrientUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -32,12 +35,16 @@ public class AccessToken extends BaseModel {
         return token;
     }
 
-    public boolean isValidToken(OrientBaseGraph graph, String uName, String accessToken) {
-        OrientVertex token = OrientUtils.getVertex(graph,
-                "select *  from AccessToken where user_name = '" + uName
+    public boolean isValidToken(String uName, String accessToken) {
+        
+        String token = new com.metron.orientdb.OrientRest().doSql("select *  from AccessToken where user_name = '" + uName
                 + "' and access_token='" + accessToken + "'");
-        if(token != null)
-            return true;
+        try {
+            if(new JSONObject(token).getJSONArray("result").length() > 0)
+                return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
