@@ -17,6 +17,7 @@ public class AuthenticationService {
                 
             } else {
                 result.put("status", "Failed");
+                result.put("message", "Invalid UserName or Password");
             }
         } catch (JSONException e) {
             e.printStackTrace();

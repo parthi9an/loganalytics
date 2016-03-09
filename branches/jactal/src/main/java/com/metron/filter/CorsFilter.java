@@ -31,29 +31,36 @@ public class CorsFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         boolean responseFilter = false;
         boolean optionsFilter = false;
+        boolean logAnalyzerFilter = false;
         String accessToken = request.getHeader("Access-Token");
         
         // Http Options method Describes the communication options for the
         // target resource
         if (request.getMethod().compareToIgnoreCase("OPTIONS") != 0) {
-            // For requests other than /authenticate access-token is required
-            if (!request.getRequestURI().contains("/authenticate")) {
-                if (accessToken == null) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                } else {
-                    // byte[] valueDecoded =
-                    // Base64.getDecoder().decode(accessToken.getBytes());
-                    byte[] valueDecoded = Base64.decodeBase64(accessToken.getBytes());
-                    String currUserName = new String(valueDecoded).split(":")[0];
-                    // Check whether access-token is valid or not
-                    if (new AccessToken().isValidToken(currUserName, accessToken)) {
-                        responseFilter = true;
-                    } else {
+            //Allow the requests to loganalyzer without verifying the access token
+            if (request.getRequestURI().contains("/TUI/")) {
+                // For requests other than /authenticate access-token is
+                // required
+                if (!request.getRequestURI().contains("/authenticate")) {
+                    if (accessToken == null) {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    } else {
+                        // byte[] valueDecoded =
+                        // Base64.getDecoder().decode(accessToken.getBytes());
+                        byte[] valueDecoded = Base64.decodeBase64(accessToken.getBytes());
+                        String currUserName = new String(valueDecoded).split(":")[0];
+                        // Check whether access-token is valid or not
+                        if (new AccessToken().isValidToken(currUserName, accessToken)) {
+                            responseFilter = true;
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        }
                     }
+                } else {
+                    responseFilter = true;
                 }
             } else {
-                responseFilter = true;
+                logAnalyzerFilter = true;
             }
         } else {
             optionsFilter = true;
@@ -66,7 +73,7 @@ public class CorsFilter implements Filter {
         response.addHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token");
         response.addHeader("Access-Control-Expose-Headers", "Access-Token");
         response.addHeader("Access-Control-Max-Age", "1800");// 30 min
-        if(responseFilter || optionsFilter){
+        if(responseFilter || optionsFilter || logAnalyzerFilter){
             filterChain.doFilter(req, res);
         }
 
