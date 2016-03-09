@@ -38,10 +38,7 @@ import com.metron.event.service.SessionEventService;
 import com.metron.event.service.SourceEventService;
 import com.metron.event.service.ViewEventService;
 import com.metron.event.service.WindowEventService;
-import com.metron.model.AccessToken;
-import com.metron.orientdb.OrientDBGraphManager;
 import com.metron.service.AuthenticationService;
-import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 
 @RestController
 @RequestMapping("/TUI")
@@ -695,8 +692,13 @@ public class ToolUIController {
                 //String accessToken = Base64.getEncoder().encodeToString((currUsr+":"+loginTime).getBytes("utf-8"));
                 String accessToken = new String(Base64.encodeBase64((currUsr+":"+loginTime).getBytes("utf-8")));
                 response.addHeader("Access-Token", accessToken);
-                OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-                new AccessToken(currUsr,loginTime,accessToken,graph);
+                /*OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
+                new AccessToken(currUsr,loginTime,accessToken,graph);*/
+                JSONObject accessTokenData = new JSONObject();
+                accessTokenData.put("access_token", accessToken);
+                accessTokenData.put("login_time", loginTime);
+                accessTokenData.put("user_name", currUsr);
+                new com.metron.orientdb.OrientRest().postSql("insert into accesstoken content "+accessTokenData);
             }
 
         } catch (JSONException e) {
