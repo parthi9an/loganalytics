@@ -691,7 +691,7 @@ public class ToolUIController {
             AuthenticationService auth = new AuthenticationService();
             result = auth.authenticate(currUsr, currPswd);
 
-            if(result.getString("status").compareTo("success") == 0){
+            if(result.getString("status").compareTo("Success") == 0){
                 //String accessToken = Base64.getEncoder().encodeToString((currUsr+":"+loginTime).getBytes("utf-8"));
                 String accessToken = new String(Base64.encodeBase64((currUsr+":"+loginTime).getBytes("utf-8")));
                 response.addHeader("Access-Token", accessToken);

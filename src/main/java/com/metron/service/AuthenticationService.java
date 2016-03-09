@@ -12,7 +12,7 @@ public class AuthenticationService {
             if (currUsr.compareTo("admin") == 0 && currPswd.compareTo("admin") == 0
                     || currUsr.compareTo("guest") == 0 && currPswd.compareTo("guest") == 0) {
 
-                result.put("status", "success");
+                result.put("status", "Success");
                 result.put("uName", currUsr);
                 
             } else {
