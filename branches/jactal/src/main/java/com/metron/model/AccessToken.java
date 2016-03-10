@@ -48,4 +48,13 @@ public class AccessToken extends BaseModel {
         return false;
     }
 
+    public void insertData(String accessToken, String loginTime, String currUsr) throws JSONException {
+        
+        JSONObject accessTokenData = new JSONObject();
+        accessTokenData.put("access_token", accessToken);
+        accessTokenData.put("login_time", loginTime);
+        accessTokenData.put("user_name", currUsr);
+        new com.metron.orientdb.OrientRest().postSql("insert into accesstoken content "+accessTokenData);
+    }
+
 }
