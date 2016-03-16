@@ -12,13 +12,13 @@ public class ServerEventService extends BaseEventService{
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
         if (userId != null) {
-            whereClause.append("user_id ='" + userId + "'");
+            whereClause.append("user_id in " + userId);
         }
         if (sessionId != null) {
-            whereClause.append("session_id ='" + sessionId + "'");
+            whereClause.append("session_id in " + sessionId);
         }
         if (source != null) {
-            whereClause.append("source ='" + source + "'");
+            whereClause.append("source in " + source);
         }
 
         query.append("select distinct(server_id) as name from CisEvents"

@@ -18,16 +18,16 @@ public class WindowEventService extends BaseEventService{
         whereClause.append("type ='window'");
         
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");

@@ -17,13 +17,13 @@ public class SessionEventService extends BaseEventService{
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
         if (userId != null) {
-            whereClause.append("user_id ='" + userId + "'");
+            whereClause.append("user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("server_id ='" + serverId + "'");
+            whereClause.append("server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("source ='" + source + "'");
+            whereClause.append("source in " + source);
         }
 
         query.append("select distinct(session_id) as name from CisEvents"
@@ -42,13 +42,13 @@ public class SessionEventService extends BaseEventService{
         QueryWhereBuffer subwhereClause = new QueryWhereBuffer();
         
         if (userId != null) {
-            whereClause.append("user_id ='" + userId + "'");
+            whereClause.append("user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("server_id ='" + serverId + "'");
+            whereClause.append("server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("source ='" + source + "'");
+            whereClause.append("source in " + source);
         }
         if (fromDate != null) {
             subwhereClause.append("timestamp >= '" + fromDate + "' ");

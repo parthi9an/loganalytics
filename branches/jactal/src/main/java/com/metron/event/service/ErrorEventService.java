@@ -15,16 +15,16 @@ public class ErrorEventService extends BaseEventService {
             QueryWhereBuffer whereClause = new QueryWhereBuffer();
             whereClause.append("type ='error'");
             if (sessionId != null) {
-                whereClause.append("out.session_id ='" + sessionId + "'");
+                whereClause.append("out.session_id in " + sessionId);
             }
-            if (sessionId != null) {
-                whereClause.append("out.session_id ='" + sessionId + "'");
+            if (source != null) {
+                whereClause.append("out.source in " + source);
             }
             if (userId != null) {
-                whereClause.append("out.user_id ='" + userId + "'");
+                whereClause.append("out.user_id in " + userId);
             }
             if (serverId != null) {
-                whereClause.append("out.server_id ='" + serverId + "'");
+                whereClause.append("out.server_id in " + serverId);
             }
             if (fromDate != null) {
                 whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -56,16 +56,16 @@ public class ErrorEventService extends BaseEventService {
             whereClause.append("in.error_trace_checksum ='" + errorTracechecksum + "'");
         }
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
