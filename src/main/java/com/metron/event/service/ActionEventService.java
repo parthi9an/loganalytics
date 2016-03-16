@@ -21,16 +21,16 @@ public class ActionEventService extends BaseEventService{
             whereClause.append("in.key ='" + actionKey + "'");
         }
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -56,16 +56,16 @@ public class ActionEventService extends BaseEventService{
         whereClause.append("type ='action'");
         
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -99,16 +99,16 @@ public class ActionEventService extends BaseEventService{
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         whereClause.append("type ='action'");
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");

@@ -14,16 +14,16 @@ public class DomainEventService extends BaseEventService {
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
 
         if (sessionId != null) {
-            whereClause.append("out.session_id ='" + sessionId + "'");
+            whereClause.append("out.session_id in " + sessionId);
         }
         if (userId != null) {
-            whereClause.append("out.user_id ='" + userId + "'");
+            whereClause.append("out.user_id in " + userId);
         }
         if (serverId != null) {
-            whereClause.append("out.server_id ='" + serverId + "'");
+            whereClause.append("out.server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("out.source ='" + source + "'");
+            whereClause.append("out.source in " + source);
         }
         if (fromDate != null) {
             whereClause.append("timestamp >= '" + fromDate + "' ");
@@ -46,13 +46,13 @@ public class DomainEventService extends BaseEventService {
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
 
         if (sessionId != null) {
-            whereClause.append("session_id ='" + sessionId + "'");
+            whereClause.append("session_id in " + sessionId);
         }
         if (serverId != null) {
-            whereClause.append("server_id ='" + serverId + "'");
+            whereClause.append("server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("source ='" + source + "'");
+            whereClause.append("source in " + source);
         }
 
         query.append("select distinct(user_id) as name from CisEvents"
@@ -72,13 +72,13 @@ public class DomainEventService extends BaseEventService {
         QueryWhereBuffer subwhereClause = new QueryWhereBuffer();
 
         if (sessionId != null) {
-            whereClause.append("session_id ='" + sessionId + "'");
+            whereClause.append("session_id in " + sessionId);
         }
         if (serverId != null) {
-            whereClause.append("server_id ='" + serverId + "'");
+            whereClause.append("server_id in " + serverId);
         }
         if (source != null) {
-            whereClause.append("source ='" + source + "'");
+            whereClause.append("source in " + source);
         }
         if (fromDate != null) {
             subwhereClause.append("timestamp >= '" + fromDate + "' ");
