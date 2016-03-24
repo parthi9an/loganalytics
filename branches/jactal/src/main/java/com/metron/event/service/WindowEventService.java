@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class WindowEventService extends BaseEventService{
     
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'window'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'window'");
     }
 
     public JSONObject getCountOfMovedWindows(String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
@@ -15,7 +15,7 @@ public class WindowEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='window'");
+        whereClause.append("type containstext 'window'");
         
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);

@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class ActionEventService extends BaseEventService{
     
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'action'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'action'");
     }
 
     public JSONObject getCountOfCommandForAction(String actionKey, String sessionId,String serverId, String userId, String source,
@@ -16,7 +16,7 @@ public class ActionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='action'");
+        whereClause.append("type containstext 'action'");
         if (actionKey != null) {
             whereClause.append("in.key ='" + actionKey + "'");
         }
@@ -53,7 +53,7 @@ public class ActionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='action'");
+        whereClause.append("type containstext 'action'");
         
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
@@ -97,7 +97,7 @@ public class ActionEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='action'");
+        whereClause.append("type containstext 'action'");
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
         }

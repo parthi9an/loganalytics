@@ -334,29 +334,44 @@ public class DatabaseService {
             
             if (!schema.existsClass("CisEvents")) {
                 vType = graph.createVertexType("CisEvents");
+                vType.createProperty("source", OType.STRING);
+                vType.createProperty("server_id", OType.STRING);
+                vType.createProperty("user_id", OType.STRING);
+                vType.createProperty("session_id", OType.STRING);
+                vType.createIndex("CisEvents.source", "NOTUNIQUE", "source");
+                vType.createIndex("CisEvents.server_id", "NOTUNIQUE", "server_id");
+                vType.createIndex("CisEvents.user_id", "NOTUNIQUE", "user_id");
+                vType.createIndex("CisEvents.session_id", "NOTUNIQUE", "session_id");
+                
             }
             
             if (!schema.existsClass("ActionEvent")) {
                 vType = graph.createVertexType("ActionEvent");
                 vType.createProperty("key", OType.STRING);
                 vType.createProperty("command", OType.STRING);
+                vType.createProperty("view", OType.STRING);
+                vType.createIndex("ActionEvent.key", "NOTUNIQUE", "key");
+                vType.createIndex("ActionEvent.command", "NOTUNIQUE", "command");
             }
             
             if (!schema.existsClass("KeyBoardEvent")) {
                 vType = graph.createVertexType("KeyBoardEvent");
                 vType.createProperty("command", OType.STRING);
                 vType.createProperty("target", OType.STRING);
+                vType.createIndex("KeyBoardEvent.command", "NOTUNIQUE", "command");
             }
             
             if (!schema.existsClass("ViewEvent")) {
                 vType = graph.createVertexType("ViewEvent");
                 vType.createProperty("name", OType.STRING);
                 vType.createProperty("event", OType.STRING);
+                vType.createIndex("ViewEvent.event", "FULLTEXT", "event");
             }
             
             if (!schema.existsClass("DomainEvent")) {
                 vType = graph.createVertexType("DomainEvent");
                 vType.createProperty("domain_type", OType.STRING);
+                vType.createIndex("DomainEvent.type", "NOTUNIQUE", "domain_type");
             }
             
             if (!schema.existsClass("FieldEvent")) {
@@ -369,6 +384,7 @@ public class DatabaseService {
                 vType = graph.createVertexType("ErrorEvent");
                 vType.createProperty("err_type", OType.STRING);
                 vType.createProperty("message", OType.STRING);
+                vType.createProperty("trace", OType.STRING);
             }
             
             if (!schema.existsClass("ConfigurationEvent")) {
@@ -380,12 +396,22 @@ public class DatabaseService {
                 vType = graph.createVertexType("WindowEvent");
                 vType.createProperty("length", OType.INTEGER);
                 vType.createProperty("height", OType.INTEGER);
+                vType.createProperty("view", OType.STRING);
             }
             
             if (!schema.existsClass("EnvironmentEvent")) {
                 vType = graph.createVertexType("EnvironmentEvent");
                 vType.createProperty("os", OType.STRING);
                 vType.createProperty("screen_x", OType.INTEGER);
+                vType.createProperty("screen_y", OType.INTEGER);
+                vType.createProperty("app_x", OType.INTEGER);
+                vType.createProperty("app_y", OType.INTEGER);
+                vType.createProperty("browser_type", OType.STRING);
+                vType.createProperty("browser_version", OType.STRING);
+                vType.createProperty("cpu_type", OType.STRING);
+                vType.createProperty("cpu_clock", OType.DOUBLE);
+                vType.createProperty("cpu_cores", OType.INTEGER);
+                vType.createProperty("mem", OType.INTEGER);
             }
             
             if (!schema.existsClass("Pattern")) {
@@ -398,18 +424,50 @@ public class DatabaseService {
                 vType = graph.createVertexType("ErrorPattern");
                 vType.createProperty("pattern_type", OType.STRING);
                 vType.createProperty("association_count", OType.INTEGER);
+                vType.createProperty("error_trace_checksum", OType.STRING);
+                vType.createIndex("ErrorPattern.errortracechecksum", "FULLTEXT", "error_trace_checksum");
             }
             
             if (!schema.existsClass("FilterCriteria")) {
                 vType = graph.createVertexType("FilterCriteria");
+                vType.createProperty("uName", OType.STRING);
+                vType.createProperty("userId", OType.STRING);
+                vType.createProperty("sessionId", OType.STRING);
+                vType.createProperty("source", OType.STRING);
+                vType.createProperty("serverId", OType.STRING);
+                vType.createProperty("domainId", OType.STRING);
+                vType.createProperty("filtername", OType.STRING);
+                vType.createProperty("fromDate", OType.STRING);
+                vType.createProperty("toDate", OType.STRING);
+                vType.createProperty("timestamp", OType.STRING);
+                vType.createIndex("FilterCriteria.uName", "FULLTEXT", "uName");
+            }
+            
+            if (!schema.existsClass("Metric_Event")) {
+                eType = graph.createEdgeType("Metric_Event");
+                eType.createProperty("type", OType.STRING);
+                // Use FullText index in query through CONTAINSTEXT operator
+                eType.createIndex("MetricEvent.type", "FULLTEXT", "type");
+            }
+            
+            if (!schema.existsClass("Session_Domain")) {
+                eType = graph.createEdgeType("Metric_Event");
             }
             
             if (!schema.existsClass("Session_Pattern")) {
                 eType = graph.createEdgeType("Session_Pattern");
             }
             
+            if (!schema.existsClass("Session_ErrorPattern")) {
+                eType = graph.createEdgeType("Session_ErrorPattern");
+            }
+            
             if (!schema.existsClass("AccessToken")) {
                 vType = graph.createVertexType("AccessToken");
+                vType.createProperty("user_name", OType.STRING);
+                vType.createProperty("login_time", OType.STRING);
+                vType.createProperty("access_token", OType.STRING);
+                vType.createIndex("AccessToken.userName", "FULLTEXT", "user_name");
             }
             
         } catch (Exception e) {
@@ -422,5 +480,10 @@ public class DatabaseService {
     }
     public static void main(String[] args) {
         setUp();   
+    }
+    public void deleteTablesContent(String name) {
+        
+        //new com.metron.orientdb.OrientRest().postSql("truncate class "+ name +" unsafe cascade");
+        new com.metron.orientdb.OrientRest().postSql("delete vertex "+ name);
     }
 }

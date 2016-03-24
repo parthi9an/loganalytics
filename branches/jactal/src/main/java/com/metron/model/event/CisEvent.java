@@ -37,6 +37,8 @@ public abstract class CisEvent extends BaseModel {
     private Map<String, Object> attributes = null;
     private Map<String, Object> metricvalueattributes = null;
     protected Map<String, String> mappingEventkeys;
+    
+    protected boolean insertToPostgres;
 
     public CisEvent() {
         this.attributes = new HashMap<String, Object>();
@@ -46,6 +48,7 @@ public abstract class CisEvent extends BaseModel {
 
         this.mappingEventkeys = new HashMap<String, String>();
         mappingEventkeys = CisEventKeyMappings.getInstance().getEventMapping("RawEvent");
+        insertToPostgres = Boolean.parseBoolean(AppConfig.getInstance().getString("postgres.dump"));
 
         this.attributes = new HashMap<String, Object>();
         this.metricvalueattributes = new HashMap<String, Object>();
@@ -105,7 +108,7 @@ public abstract class CisEvent extends BaseModel {
         return edgeObject;
     }
 
-    public abstract void process() throws ClassNotFoundException, SQLException;
+    public abstract void process() throws SQLException;
 
     public Map<String, Object> getAttributes() {
         return attributes;

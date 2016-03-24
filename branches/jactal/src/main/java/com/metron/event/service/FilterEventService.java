@@ -17,6 +17,7 @@ public class FilterEventService extends BaseEventService {
     public JSONObject saveFilterCriteria(String filter) {
 
         JSONObject result = new JSONObject();
+        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
         try {
             JSONObject filterObj = new JSONObject(filter);
             HashMap<String, Object> filterProps = new HashMap<String, Object>();
@@ -28,7 +29,6 @@ public class FilterEventService extends BaseEventService {
             }
             filterProps.put("timestamp", new Date().getTime());
 
-            OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
             if (new FilterCritera(graph).filterExists(filterProps.get("filtername"),
                     filterProps.get("uName")) != null) {
                 result.put("status", "Failed");
@@ -47,6 +47,7 @@ public class FilterEventService extends BaseEventService {
             }
         }
 
+        graph.shutdown();
         return result;
     }
 

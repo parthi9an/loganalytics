@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class KeyboardEventService extends BaseEventService{
     
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'keyb'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'keyb'");
     }
 
     public JSONObject getcommandCount(String sessionId, String serverId, String userId, String source,String fromDate, String toDate) {
@@ -15,7 +15,7 @@ public class KeyboardEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='keyb'");
+        whereClause.append("type containstext 'keyb'");
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
         }

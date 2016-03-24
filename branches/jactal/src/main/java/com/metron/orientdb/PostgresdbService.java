@@ -114,4 +114,16 @@ public class PostgresdbService {
         st.executeUpdate(qs);
     }
 
+    public void deleteTablesContent(String table) {
+         
+        try {
+            Statement st = JdbcManager.getInstance().getStatement();
+            st.executeUpdate("truncate "+ table + " cascade");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

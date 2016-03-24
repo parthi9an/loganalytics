@@ -37,7 +37,7 @@ public class JmsService implements MessageListener {
      * @throws SQLException 
      * @throws ClassNotFoundException 
      */
-    private void saveEvent(String msg) throws JSONException, ClassNotFoundException, SQLException {
+    private void saveEvent(String msg) throws JSONException, SQLException {
 
         JSONObject jo = new JSONObject(msg);
 
