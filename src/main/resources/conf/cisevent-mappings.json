@@ -9,5 +9,8 @@
     "EnvironmentEvent": ["os", "screen_x", "screen_y",
                     "app_x", "app_y", "browser_type", "browser_version",
                     "cpu_type", "cpu_clock", "cpu_cores", "mem"],
-    "DomainEvent": ["domain_type"]
+    "DomainEvent": ["domain_type"],
+    "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","session"],
+    "OrientDBClasses": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","DomainEvent","Pattern",
+    					"CisEvents","ErrorPattern","AccessToken","FilterCriteria","TimeWindow1","TimeWindow5","TimeWindow60","TimeWindow1440"]
 }

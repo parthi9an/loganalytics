@@ -15,50 +15,64 @@ import com.metron.postgres.JdbcManager;
 public class PersistEvent {
     
     public void save(Map<String, Object> attributes, Map<String, Object> metricValueAttributes,
-            String tableName) throws ClassNotFoundException, SQLException {
-        
-        metricValueAttributes.put("timestamp", new Timestamp((Long)attributes.get("timestamp")));
-                        
+            String tableName) throws SQLException {
+
+        metricValueAttributes.put("timestamp", new Timestamp((Long) attributes.get("timestamp")));
+
         Map<String, Object> sessionprops = new HashMap<String, Object>();
-        
+
         sessionprops.put("session_id", attributes.get("session_id"));
         sessionprops.put("source", attributes.get("source"));
         sessionprops.put("server_id", attributes.get("server_id"));
         sessionprops.put("user_id", attributes.get("user_id"));
         sessionprops.put("domain_type", attributes.get("domain_type"));
-        
-        int id = getSessionId(sessionprops,"session");
-        if(id == 0){
-            id = insertdata(sessionprops,"session");
-        }   
-        
-        //Inserting Foreign Key
+
+        int id = getSessionId(sessionprops, "session");
+        if (id == 0) {
+            id = insertdata(sessionprops, "session");
+        }
+
+        // Inserting Foreign Key
         metricValueAttributes.put("sid", id);
-        
-        insertdata(metricValueAttributes,tableName);
+
+        insertdata(metricValueAttributes, tableName);
     }
     
-    private int getSessionId(Map<String, Object> sessionprops, String string) throws ClassNotFoundException, SQLException {
-        
-        Connection c = JdbcManager.getInstance().getConnection();
-        StringBuilder sql = new StringBuilder("select id from session where ");
-        for (Iterator<Entry<String, Object>> iter = sessionprops.entrySet().iterator(); iter
-                .hasNext();) {
-            Entry<String, Object> pair = iter.next();
-            sql.append(pair.getKey());
-            sql.append("= '");
-            sql.append(pair.getValue());
-            sql.append("'");
+    private int getSessionId(Map<String, Object> sessionprops, String string) throws SQLException {
 
-            if (iter.hasNext()) {
-                sql.append(" and ");
-            }
-        }
-        
+        Connection c = null;
         int rowid = 0;
-        PreparedStatement preparedStmt = c.prepareStatement(sql.toString());
-        ResultSet rs = preparedStmt.executeQuery();
-        while (rs.next()) {rowid= rs.getInt("id");}
+        PreparedStatement preparedStmt = null;
+        try {
+            c = JdbcManager.getInstance().getConnection();
+
+            StringBuilder sql = new StringBuilder("select id from session where ");
+            for (Iterator<Entry<String, Object>> iter = sessionprops.entrySet().iterator(); iter
+                    .hasNext();) {
+                Entry<String, Object> pair = iter.next();
+                sql.append(pair.getKey());
+                sql.append("= '");
+                sql.append(pair.getValue());
+                sql.append("'");
+
+                if (iter.hasNext()) {
+                    sql.append(" and ");
+                }
+            }
+
+            preparedStmt = c.prepareStatement(sql.toString());
+            ResultSet rs = preparedStmt.executeQuery();
+            while (rs.next()) {
+                rowid = rs.getInt("id");
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStmt != null)
+                preparedStmt.close();
+            if (c != null)
+                c.close();
+        }
         return rowid;
     }
 
@@ -71,43 +85,54 @@ public class PersistEvent {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public int insertdata(Map<String, Object> dataMap, String tableName) throws SQLException, ClassNotFoundException {
-        
-        Connection c = JdbcManager.getInstance().getConnection();
+    public int insertdata(Map<String, Object> dataMap, String tableName) throws SQLException {
+
+        Connection c = null;
         int rowid = 0;
-        //Constructing a query to insert data to associated Event Table
-        StringBuilder sql = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
-        StringBuilder placeholders = new StringBuilder();
+        PreparedStatement preparedStmt = null;
+        try {
+            c = JdbcManager.getInstance().getConnection();
 
-        for (Iterator<String> iter = dataMap.keySet().iterator(); iter.hasNext();) {
-            sql.append(iter.next());
-            placeholders.append("?");
+            // Constructing a query to insert data to associated Event Table
+            StringBuilder sql = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
+            StringBuilder placeholders = new StringBuilder();
 
-            if (iter.hasNext()) {
-                sql.append(",");
-                placeholders.append(",");
+            for (Iterator<String> iter = dataMap.keySet().iterator(); iter.hasNext();) {
+                sql.append(iter.next());
+                placeholders.append("?");
+
+                if (iter.hasNext()) {
+                    sql.append(",");
+                    placeholders.append(",");
+                }
             }
-        }
 
-        sql.append(") VALUES (").append(placeholders).append(")");
-        PreparedStatement preparedStmt = c.prepareStatement(sql.toString(),new String [] {"id"});
-        int i = 1;
+            sql.append(") VALUES (").append(placeholders).append(")");
+            preparedStmt = c.prepareStatement(sql.toString(), new String[]{"id"});
+            int i = 1;
 
-        for (Object value : dataMap.values()) {
-            if(value.getClass().equals(Integer.class)){
-                preparedStmt.setObject(i, (Integer)value);
-            }else if(value.getClass().equals(Timestamp.class)){
-                preparedStmt.setObject(i, (Timestamp)value);
+            for (Object value : dataMap.values()) {
+                if (value.getClass().equals(Integer.class)) {
+                    preparedStmt.setObject(i, (Integer) value);
+                } else if (value.getClass().equals(Timestamp.class)) {
+                    preparedStmt.setObject(i, (Timestamp) value);
+                } else
+                    preparedStmt.setObject(i, value);
+                i++;
             }
-            else
-                preparedStmt.setObject(i, value);
-            i++;
-        }
-        
-        preparedStmt.executeUpdate();
-        ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
-        if (null != generatedKeys && generatedKeys.next()) {
-             rowid = generatedKeys.getInt(1);
+
+            preparedStmt.executeUpdate();
+            ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
+            if (null != generatedKeys && generatedKeys.next()) {
+                rowid = generatedKeys.getInt(1);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStmt != null)
+                preparedStmt.close();
+            if (c != null)
+                c.close();
         }
         return rowid;
     }

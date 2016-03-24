@@ -13,7 +13,7 @@ public class ErrorEventService extends BaseEventService {
         JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
             QueryWhereBuffer whereClause = new QueryWhereBuffer();
-            whereClause.append("type ='error'");
+            whereClause.append("type containstext 'error'");
             if (sessionId != null) {
                 whereClause.append("out.session_id in " + sessionId);
             }
@@ -53,7 +53,7 @@ public class ErrorEventService extends BaseEventService {
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         
         if (errorTracechecksum != null) {
-            whereClause.append("in.error_trace_checksum ='" + errorTracechecksum + "'");
+            whereClause.append("in.error_trace_checksum containstext '" + errorTracechecksum + "'");
         }
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
@@ -105,7 +105,7 @@ public class ErrorEventService extends BaseEventService {
     }
 
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'error'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'error'");
     }
 
 }

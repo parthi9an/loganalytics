@@ -18,7 +18,7 @@ public class CisConfigurationEvent extends CisEvent {
     }
 
     @Override
-    public void process() throws ClassNotFoundException, SQLException {
+    public void process() throws SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
@@ -29,7 +29,8 @@ public class CisConfigurationEvent extends CisEvent {
         this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
-        new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
+        if(insertToPostgres)
+            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ConfigurationEvent");
         
     }
 

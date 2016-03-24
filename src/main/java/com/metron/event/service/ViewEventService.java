@@ -7,7 +7,7 @@ import com.metron.controller.QueryWhereBuffer;
 public class ViewEventService extends BaseEventService {
     
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'view'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'view'");
     }
 
     public JSONObject getAssociatedCount() {
@@ -19,7 +19,7 @@ public class ViewEventService extends BaseEventService {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='view'");
+        whereClause.append("type containstext 'view'");
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
         }
@@ -53,8 +53,8 @@ public class ViewEventService extends BaseEventService {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='view'");
-        whereClause.append("in.event ='close'");
+        whereClause.append("type containstext 'view'");
+        whereClause.append("in.event containstext 'close'");
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
         }

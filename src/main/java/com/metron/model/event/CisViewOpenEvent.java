@@ -10,7 +10,7 @@ public class CisViewOpenEvent extends CisViewEvent{
         super(eventData, metricData);
     }
     
-    public void process() throws ClassNotFoundException, SQLException {
+    public void process() throws SQLException {
         super.process();
     }    
 }

@@ -18,7 +18,7 @@ public class CisViewCloseEvent extends CisViewEvent {
         super(eventData, metricData);
     }
 
-    public void process() throws ClassNotFoundException, SQLException {
+    public void process() throws SQLException {
 
         this.saveCisEvent();
 
@@ -28,7 +28,8 @@ public class CisViewCloseEvent extends CisViewEvent {
         
         this.updateAssociations();
 
-        new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(), "ViewEvent");
+        if(insertToPostgres)
+            new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(), "ViewEvent");
 
     }
 

@@ -17,7 +17,7 @@ public class EnvironmentEventService extends BaseEventService{
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("type ='env'");
+        whereClause.append("type containstext 'env'");
         if (sessionId != null) {
             whereClause.append("out.session_id in " + sessionId);
         }
@@ -64,7 +64,7 @@ public class EnvironmentEventService extends BaseEventService{
     }
 
     public Long count() {
-        return getCount("select count(*) as count from Metric_Event where type = 'env'");
+        return getCount("select count(*) as count from Metric_Event where type containstext 'env'");
     }
 
 }

@@ -47,6 +47,7 @@ public class CisEventUtil {
 
         properties = getEventDetails(keys, props);
 
+        graph.shutdown();
         return properties;
     }
 
@@ -114,6 +115,7 @@ public class CisEventUtil {
                     .append(eventvertex.getProperty("os"));
         }
 
+        graph.shutdown();
         return paternclassdetails.toString();
     }
 
