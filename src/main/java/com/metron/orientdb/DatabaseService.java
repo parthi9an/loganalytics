@@ -435,7 +435,6 @@ public class DatabaseService {
                 vType.createProperty("sessionId", OType.STRING);
                 vType.createProperty("source", OType.STRING);
                 vType.createProperty("serverId", OType.STRING);
-                vType.createProperty("domainId", OType.STRING);
                 vType.createProperty("filtername", OType.STRING);
                 vType.createProperty("fromDate", OType.STRING);
                 vType.createProperty("toDate", OType.STRING);
