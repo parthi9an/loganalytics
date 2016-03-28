@@ -277,6 +277,30 @@ To deploy to tomcat
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>cleanUpDbs</id>
+			<activation>
+				<property>
+					<name>cleanUpDbs</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<argument>com.metron.orientdb.DatabasesClearService</argument>
+							</arguments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
