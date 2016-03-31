@@ -170,10 +170,14 @@ public class BaseModel {
                 .hasNext();) {
             Entry<String, Object> pair = iter.next();
             sql.append(pair.getKey());
-            sql.append("= '");
-            sql.append(pair.getValue());
-            sql.append("'");
-
+            if(pair.getValue() != null){
+                sql.append("= '");
+                sql.append(pair.getValue());
+                sql.append("'");
+            }else{
+                sql.append(" IS ");
+                sql.append(pair.getValue());
+            }
             if (iter.hasNext()) {
                 sql.append(" and ");
             }

@@ -1,6 +1,8 @@
 package com.metron.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.metron.orientdb.OrientUtils;
@@ -25,7 +27,15 @@ public class ActionEvent extends BaseModel {
 
     public ActionEvent(Map<String, Object> metricValueAttributes, OrientBaseGraph graph) {
         super(graph);
-        this.vertex = find(graph, metricValueAttributes);
+        List<String> keys = CisEventMappings.getInstance().getEventMapping(this.getClass().getSimpleName());
+        String key = null;
+        Map<String, Object> mva = new HashMap<String, Object>();
+        Iterator<String> itr = keys.iterator();
+        while(itr.hasNext()){
+            key = itr.next();
+            mva.put(key, (metricValueAttributes.get(key) != null ? metricValueAttributes.get(key) : null));
+        }
+        this.vertex = find(graph, mva);
         if (vertex == null) {
             this.vertex = graph.addVertex("class:ActionEvent");
             HashMap<String, Object> props = new HashMap<String, Object>();

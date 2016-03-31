@@ -365,6 +365,7 @@ public class DatabaseService {
                 vType = graph.createVertexType("ViewEvent");
                 vType.createProperty("name", OType.STRING);
                 vType.createProperty("event", OType.STRING);
+                vType.createIndex("ViewEvent.name", "NOTUNIQUE", "name");
                 vType.createIndex("ViewEvent.event", "FULLTEXT", "event");
             }
             
@@ -378,6 +379,7 @@ public class DatabaseService {
                 vType = graph.createVertexType("FieldEvent");
                 vType.createProperty("field", OType.STRING);
                 vType.createProperty("parent", OType.STRING);
+                vType.createIndex("FieldEvent.field", "NOTUNIQUE", "field");
             }
             
             if (!schema.existsClass("ErrorEvent")) {
@@ -385,11 +387,13 @@ public class DatabaseService {
                 vType.createProperty("err_type", OType.STRING);
                 vType.createProperty("message", OType.STRING);
                 vType.createProperty("trace", OType.STRING);
+                vType.createIndex("ErrorEvent.err_type", "NOTUNIQUE", "err_type");
             }
             
             if (!schema.existsClass("ConfigurationEvent")) {
                 vType = graph.createVertexType("ConfigurationEvent");
                 vType.createProperty("name", OType.STRING);
+                vType.createIndex("ConfigurationEvent.name", "NOTUNIQUE", "name");
             }
             
             if (!schema.existsClass("WindowEvent")) {
@@ -397,6 +401,7 @@ public class DatabaseService {
                 vType.createProperty("length", OType.INTEGER);
                 vType.createProperty("height", OType.INTEGER);
                 vType.createProperty("view", OType.STRING);
+                vType.createIndex("WindowEvent.length", "NOTUNIQUE", "length");
             }
             
             if (!schema.existsClass("EnvironmentEvent")) {
@@ -412,6 +417,7 @@ public class DatabaseService {
                 vType.createProperty("cpu_clock", OType.DOUBLE);
                 vType.createProperty("cpu_cores", OType.INTEGER);
                 vType.createProperty("mem", OType.INTEGER);
+                vType.createIndex("EnvironmentEvent.os", "NOTUNIQUE", "os");
             }
             
             if (!schema.existsClass("Pattern")) {
@@ -440,6 +446,7 @@ public class DatabaseService {
                 vType.createProperty("toDate", OType.STRING);
                 vType.createProperty("timestamp", OType.STRING);
                 vType.createIndex("FilterCriteria.uName", "FULLTEXT", "uName");
+                vType.createIndex("FilterCriteria.filtername", "NOTUNIQUE", "filtername");
             }
             
             if (!schema.existsClass("Metric_Event")) {
@@ -482,7 +489,6 @@ public class DatabaseService {
     }
     public void deleteTablesContent(String name) {
         
-        //new com.metron.orientdb.OrientRest().postSql("truncate class "+ name +" unsafe cascade");
         new com.metron.orientdb.OrientRest().postSql("delete vertex "+ name);
     }
 }
