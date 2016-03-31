@@ -37,8 +37,8 @@ public class AccessToken extends BaseModel {
 
     public boolean isValidToken(String uName, String accessToken) {
         
-        String token = new com.metron.orientdb.OrientRest().doSql("select *  from AccessToken where user_name containstext '" + uName
-                + "' and access_token containstext '" + accessToken + "'");
+        String token = new com.metron.orientdb.OrientRest().doSql("select *  from AccessToken where user_name = '" + uName
+                + "' and access_token = '" + accessToken + "'");
         try {
             if(new JSONObject(token).getJSONArray("result").length() > 0)
                 return true;

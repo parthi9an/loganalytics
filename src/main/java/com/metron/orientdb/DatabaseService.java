@@ -473,7 +473,7 @@ public class DatabaseService {
                 vType.createProperty("user_name", OType.STRING);
                 vType.createProperty("login_time", OType.STRING);
                 vType.createProperty("access_token", OType.STRING);
-                vType.createIndex("AccessToken.userName", "FULLTEXT", "user_name");
+                vType.createIndex("AccessToken.userName", "NOTUNIQUE", "user_name");
             }
             
         } catch (Exception e) {
