@@ -1,7 +1,9 @@
 package com.metron.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,13 +50,14 @@ public class AccessToken extends BaseModel {
         return false;
     }
 
-    public void insertData(String accessToken, String loginTime, String currUsr) throws JSONException {
+    public int insertData(String accessToken, String loginTime, String currUsr) throws JSONException, ClientProtocolException, IOException {
         
         JSONObject accessTokenData = new JSONObject();
         accessTokenData.put("access_token", accessToken);
         accessTokenData.put("login_time", loginTime);
         accessTokenData.put("user_name", currUsr);
-        new com.metron.orientdb.OrientRest().postSql("insert into accesstoken content "+accessTokenData);
+        return new com.metron.orientdb.OrientRest()
+                .postSql("insert into accesstoken content " + accessTokenData);
     }
 
 }

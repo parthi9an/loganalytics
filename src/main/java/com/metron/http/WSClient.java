@@ -9,6 +9,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -59,40 +60,38 @@ public class WSClient {
 
 	}
 
-	public HttpResponseData post(String url, String username, String password) {
-        System.out.println("URL :"+url);
+	public HttpResponseData post(String url, String username, String password) throws ClientProtocolException, IOException {
+	    
+        System.out.println("URL :" + url);
         StringBuffer result = new StringBuffer();
         Header[] headers = null;
-        try {
-            HttpClient client = new DefaultHttpClient();
-            url = url.replace(" ", "%20");
-            HttpPost request = new HttpPost(url);
-            if (username != null && password != null)
-                //request.setHeader("Content-Type","application/x-www-form-urlencoded");
-                request.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(
-                        username, password), "application/x-www-form-urlencoded", false));
+        int responsecode = 0;
 
-            HttpResponse response;
+        HttpClient client = new DefaultHttpClient();
+        url = url.replace(" ", "%20");
+        HttpPost request = new HttpPost(url);
+        if (username != null && password != null)
+            // request.setHeader("Content-Type","application/x-www-form-urlencoded");
+            request.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(username,
+                    password), "application/x-www-form-urlencoded", false));
 
-            response = client.execute(request);
-            headers = response.getAllHeaders();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity()
-                    .getContent()));
+        HttpResponse response;
 
-            result = new StringBuffer();
-            String line = "";
+        response = client.execute(request);
+        headers = response.getAllHeaders();
+        responsecode = response.getStatusLine().getStatusCode();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity()
+                .getContent()));
 
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
+        result = new StringBuffer();
+        String line = "";
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
         }
-//      System.out.println(" ---- URL " + url);
-        HttpResponseData responseData = new HttpResponseData(result.toString(), headers);
+        // System.out.println(" ---- URL " + url);
+        HttpResponseData responseData = new HttpResponseData(result.toString(), headers,
+                responsecode);
         return responseData;
 
     }

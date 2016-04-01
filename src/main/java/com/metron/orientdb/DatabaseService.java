@@ -1,5 +1,9 @@
 package com.metron.orientdb;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+
 import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
@@ -487,7 +491,7 @@ public class DatabaseService {
     public static void main(String[] args) {
         setUp();   
     }
-    public void deleteTablesContent(String name) {
+    public void deleteTablesContent(String name) throws ClientProtocolException, IOException {
         
         new com.metron.orientdb.OrientRest().postSql("delete vertex "+ name);
     }
