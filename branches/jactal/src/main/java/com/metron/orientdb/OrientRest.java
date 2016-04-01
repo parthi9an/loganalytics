@@ -1,6 +1,9 @@
 package com.metron.orientdb;
 
+import java.io.IOException;
 import java.net.URLEncoder;
+
+import org.apache.http.client.ClientProtocolException;
 
 import com.metron.http.HttpResponseData;
 import com.metron.http.WSClient;
@@ -31,12 +34,12 @@ public class OrientRest {
         return data.toString();
     }
     
-    public String postSql(String sql) {
+    public int postSql(String sql) throws ClientProtocolException, IOException {
 
         return postSql(sql, null);
     }
     
-    public String postSql(String sql, Integer limit) {
+    public int postSql(String sql, Integer limit) throws ClientProtocolException, IOException {
 
         String userName = OrientDBGraphManager.getInstance().userName;
         String password = OrientDBGraphManager.getInstance().password;
@@ -48,7 +51,7 @@ public class OrientRest {
         WSClient client = new WSClient();
         HttpResponseData data = client.post(url, userName, password);
 
-        return data.toString();
+        return data.getResponseCode();
     }
 
     private static String _getRestUrl(String sql) {

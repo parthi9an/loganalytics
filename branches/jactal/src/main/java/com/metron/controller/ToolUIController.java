@@ -1,12 +1,15 @@
 package com.metron.controller;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -681,6 +684,7 @@ public class ToolUIController {
         
         JSONObject result = new JSONObject();
         String loginTime = Long.toString(new Date().getTime());
+        int responsecode = 0;
         try {
             JSONObject credentialsobj = new JSONObject(credentials);
             String currUsr, currPswd;
@@ -689,13 +693,27 @@ public class ToolUIController {
             AuthenticationService auth = new AuthenticationService();
             result = auth.authenticate(currUsr, currPswd);
 
-            if(result.getString("status").compareTo("Success") == 0){
-                //String accessToken = Base64.getEncoder().encodeToString((currUsr+":"+loginTime).getBytes("utf-8"));
-                String accessToken = new String(Base64.encodeBase64((currUsr+":"+loginTime).getBytes("utf-8")));
-                response.addHeader("Access-Token", accessToken);
-                /*OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-                new AccessToken(currUsr,loginTime,accessToken,graph);*/
-                new AccessToken().insertData(accessToken,loginTime,currUsr);
+            if (result.getString("status").compareTo("Success") == 0) {
+                // String accessToken =
+                // Base64.getEncoder().encodeToString((currUsr+":"+loginTime).getBytes("utf-8"));
+                String accessToken = new String(Base64.encodeBase64((currUsr + ":" + loginTime)
+                        .getBytes("utf-8")));
+                
+                try {
+                    responsecode = new AccessToken().insertData(accessToken, loginTime, currUsr);
+                } catch (ClientProtocolException e) {
+                    result.put("status", "Failed");
+                    result.put("message", e.getMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    result.put("status", "Failed");
+                    result.put("message", "OrientDB Connection Refused");
+                    result.put("info", e.getMessage());
+                    e.printStackTrace();
+                }
+                if (responsecode == HttpURLConnection.HTTP_OK) {
+                    response.addHeader("Access-Token", accessToken);
+                }
             }
 
         } catch (JSONException e) {
