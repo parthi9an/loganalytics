@@ -10,7 +10,7 @@ public class SessionEventService extends BaseEventService{
         return getCount("select count(distinct(session_id)) as count from CisEvents");
     }
 
-    public JSONObject getSessionNames(String serverId, String userId, String source) {
+    public JSONObject getSessionNames(String serverId, String userId, String source, String version) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
@@ -25,6 +25,9 @@ public class SessionEventService extends BaseEventService{
         if (source != null) {
             whereClause.append("source in " + source);
         }
+        if (version != null) {
+            whereClause.append("version in " + version);
+        }
 
         query.append("select distinct(session_id) as name from CisEvents"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
@@ -34,7 +37,7 @@ public class SessionEventService extends BaseEventService{
         return result;
     }
 
-    public JSONObject getCountOfSessions(String serverId, String userId, String source, String fromDate, String toDate) {
+    public JSONObject getCountOfSessions(String serverId, String userId, String source, String version, String fromDate, String toDate) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         StringBuffer subquery = new StringBuffer();
@@ -50,6 +53,9 @@ public class SessionEventService extends BaseEventService{
         if (source != null) {
             whereClause.append("source in " + source);
         }
+        if (version != null) {
+            whereClause.append("version in " + version);
+        }
         if (fromDate != null) {
             subwhereClause.append("timestamp >= '" + fromDate + "' ");
         }
@@ -58,7 +64,7 @@ public class SessionEventService extends BaseEventService{
         }
 
         //String sql = "select session_id as name,count(*) as count from CisEvents group by session_id";
-        subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source, out.session_id as session_id from Metric_Event group by out"
+        subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source,out.version as version,out.session_id as session_id from Metric_Event group by out"
                 + ((!subwhereClause.toString().equals("")) ? " Where " + subwhereClause.toString() : ""));
 
         query.append("select session_id as name,count(*) as count from (").append(subquery.toString()).append(") group by session_id"

@@ -8,30 +8,12 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ErrorEventService extends BaseEventService {
 
-    public JSONArray getExceptionCount(String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
+    public JSONArray getExceptionCount(String sessionId,String serverId, String userId, String source, String version, String fromDate, String toDate) {
         
         JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
-            QueryWhereBuffer whereClause = new QueryWhereBuffer();
+            QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
             whereClause.append("type containstext 'error'");
-            if (sessionId != null) {
-                whereClause.append("out.session_id in " + sessionId);
-            }
-            if (source != null) {
-                whereClause.append("out.source in " + source);
-            }
-            if (userId != null) {
-                whereClause.append("out.user_id in " + userId);
-            }
-            if (serverId != null) {
-                whereClause.append("out.server_id in " + serverId);
-            }
-            if (fromDate != null) {
-                whereClause.append("timestamp >= '" + fromDate + "' ");
-            }
-            if (toDate != null) {
-                whereClause.append("timestamp <= '" + toDate + "' ");
-            }
 
             query.append("select in.message as message,in.trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
                     + ((!whereClause.toString().equals(""))
@@ -43,35 +25,17 @@ public class ErrorEventService extends BaseEventService {
         return result;
     }
 
-    public JSONArray getPatterns(String errorTracechecksum, String sessionId,String serverId, String userId, String source, String fromDate, String toDate) {
+    public JSONArray getPatterns(String errorTracechecksum, String sessionId,String serverId, String userId, String source,String version, String fromDate, String toDate) {
         
         //String sql = "select pattern_type as pattern ,association_count as count from ErrorPattern order by association_count DESC";
         
         JSONArray result = new JSONArray();
         
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = new QueryWhereBuffer();
+        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
         
         if (errorTracechecksum != null) {
             whereClause.append("in.error_trace_checksum containstext '" + errorTracechecksum + "'");
-        }
-        if (sessionId != null) {
-            whereClause.append("out.session_id in " + sessionId);
-        }
-        if (userId != null) {
-            whereClause.append("out.user_id in " + userId);
-        }
-        if (serverId != null) {
-            whereClause.append("out.server_id in " + serverId);
-        }
-        if (source != null) {
-            whereClause.append("out.source in " + source);
-        }
-        if (fromDate != null) {
-            whereClause.append("timestamp >= '" + fromDate + "' ");
-        }
-        if (toDate != null) {
-            whereClause.append("timestamp <= '" + toDate + "' ");
         }
 
         query.append("select in.pattern_type as pattern ,count(*) as count from Session_ErrorPattern group by in.pattern_type order by count Desc"

@@ -10,7 +10,9 @@
                     "app_x", "app_y", "browser_type", "browser_version",
                     "cpu_type", "cpu_clock", "cpu_cores", "mem"],
     "DomainEvent": ["domain_type"],
-    "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","session"],
+    "WindowScrollEvent": ["orientation","direction","context"],
+    "RawMetricEvent": ["source","version","server_id","user_id","session_id"],
+    "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","WindowScrollEvent","session"],
     "OrientDBClasses": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","DomainEvent","Pattern",
-    					"CisEvents","ErrorPattern","AccessToken","FilterCriteria","TimeWindow1","TimeWindow5","TimeWindow60","TimeWindow1440"]
+    					"CisEvents","ErrorPattern","AccessToken","FilterCriteria","WindowScrollEvent","TimeWindow1","TimeWindow5","TimeWindow60","TimeWindow1440"]
 }

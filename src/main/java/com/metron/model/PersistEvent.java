@@ -26,6 +26,7 @@ public class PersistEvent {
         sessionprops.put("server_id", attributes.get("server_id"));
         sessionprops.put("user_id", attributes.get("user_id"));
         sessionprops.put("domain_type", attributes.get("domain_type"));
+        sessionprops.put("version", (attributes.get("version") != null ? attributes.get("version") : null));
 
         int id = getSessionId(sessionprops, "session");
         if (id == 0) {
@@ -51,9 +52,14 @@ public class PersistEvent {
                     .hasNext();) {
                 Entry<String, Object> pair = iter.next();
                 sql.append(pair.getKey());
-                sql.append("= '");
-                sql.append(pair.getValue());
-                sql.append("'");
+                if(pair.getValue() != null){
+                    sql.append("= '");
+                    sql.append(pair.getValue());
+                    sql.append("'");
+                }else{
+                    sql.append(" IS ");
+                    sql.append(pair.getValue());
+                }
 
                 if (iter.hasNext()) {
                     sql.append(" and ");
@@ -112,7 +118,9 @@ public class PersistEvent {
             int i = 1;
 
             for (Object value : dataMap.values()) {
-                if (value.getClass().equals(Integer.class)) {
+                if (value == null) {
+                    preparedStmt.setNull(i,java.sql.Types.VARCHAR);
+                } else if (value.getClass().equals(Integer.class)) {
                     preparedStmt.setObject(i, (Integer) value);
                 } else if (value.getClass().equals(Timestamp.class)) {
                     preparedStmt.setObject(i, (Timestamp) value);

@@ -7,30 +7,11 @@ import com.metron.controller.QueryWhereBuffer;
 public class DomainEventService extends BaseEventService {
 
     public JSONObject getCountOfLoginUserByLoginType(String sessionId, String serverId,
-            String userId, String source, String fromDate, String toDate) {
+            String userId, String source, String version, String fromDate, String toDate) {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = new QueryWhereBuffer();
-
-        if (sessionId != null) {
-            whereClause.append("out.session_id in " + sessionId);
-        }
-        if (userId != null) {
-            whereClause.append("out.user_id in " + userId);
-        }
-        if (serverId != null) {
-            whereClause.append("out.server_id in " + serverId);
-        }
-        if (source != null) {
-            whereClause.append("out.source in " + source);
-        }
-        if (fromDate != null) {
-            whereClause.append("timestamp >= '" + fromDate + "' ");
-        }
-        if (toDate != null) {
-            whereClause.append("timestamp <= '" + toDate + "' ");
-        }
+        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
 
         query.append("select count(*) as count,in.domain_type as name from Session_Domain group by in.domain_type"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
@@ -40,7 +21,7 @@ public class DomainEventService extends BaseEventService {
         return result;
     }
 
-    public JSONObject getDomainNames(String source, String sessionId, String serverId) {
+    public JSONObject getDomainNames(String source, String version, String sessionId, String serverId) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
@@ -54,6 +35,9 @@ public class DomainEventService extends BaseEventService {
         if (source != null) {
             whereClause.append("source in " + source);
         }
+        if (version != null) {
+            whereClause.append("version in " + version);
+        }
 
         query.append("select distinct(user_id) as name from CisEvents"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
@@ -64,7 +48,7 @@ public class DomainEventService extends BaseEventService {
 
     }
 
-    public JSONObject getCountOfUsers(String serverId, String sessionId, String source, String fromDate, String toDate) {
+    public JSONObject getCountOfUsers(String serverId, String sessionId, String source, String version, String fromDate, String toDate) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         StringBuffer subquery = new StringBuffer();
@@ -80,6 +64,9 @@ public class DomainEventService extends BaseEventService {
         if (source != null) {
             whereClause.append("source in " + source);
         }
+        if (version != null) {
+            whereClause.append("version in " + version);
+        }
         if (fromDate != null) {
             subwhereClause.append("timestamp >= '" + fromDate + "' ");
         }
@@ -88,7 +75,7 @@ public class DomainEventService extends BaseEventService {
         }
 
         //String sql = "select user_id as name,count(*) as count from CisEvents group by user_id";
-        subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source, out.session_id as session_id from Metric_Event group by out"
+        subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source,out.version as version, out.session_id as session_id from Metric_Event group by out"
                 + ((!subwhereClause.toString().equals("")) ? " Where " + subwhereClause.toString() : ""));
 
         query.append("select user_id as name,count(*) as count from (").append(subquery.toString()).append(") group by user_id"

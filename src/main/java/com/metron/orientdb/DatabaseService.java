@@ -342,6 +342,7 @@ public class DatabaseService {
                 vType.createProperty("server_id", OType.STRING);
                 vType.createProperty("user_id", OType.STRING);
                 vType.createProperty("session_id", OType.STRING);
+                vType.createProperty("version", OType.STRING);
                 vType.createIndex("CisEvents.source", "NOTUNIQUE", "source");
                 vType.createIndex("CisEvents.server_id", "NOTUNIQUE", "server_id");
                 vType.createIndex("CisEvents.user_id", "NOTUNIQUE", "user_id");
@@ -408,6 +409,14 @@ public class DatabaseService {
                 vType.createIndex("WindowEvent.length", "NOTUNIQUE", "length");
             }
             
+            if (!schema.existsClass("WindowScrollEvent")) {
+                vType = graph.createVertexType("WindowScrollEvent");
+                vType.createProperty("orientation", OType.STRING);
+                vType.createProperty("direction", OType.STRING);
+                vType.createProperty("context", OType.STRING);
+                vType.createIndex("WindowScrollEvent.context", "NOTUNIQUE", "context");
+            }
+            
             if (!schema.existsClass("EnvironmentEvent")) {
                 vType = graph.createVertexType("EnvironmentEvent");
                 vType.createProperty("os", OType.STRING);
@@ -444,12 +453,13 @@ public class DatabaseService {
                 vType.createProperty("userId", OType.STRING);
                 vType.createProperty("sessionId", OType.STRING);
                 vType.createProperty("source", OType.STRING);
+                vType.createProperty("version", OType.STRING);
                 vType.createProperty("serverId", OType.STRING);
                 vType.createProperty("filtername", OType.STRING);
                 vType.createProperty("fromDate", OType.STRING);
                 vType.createProperty("toDate", OType.STRING);
                 vType.createProperty("timestamp", OType.STRING);
-                vType.createIndex("FilterCriteria.uName", "FULLTEXT", "uName");
+                vType.createIndex("FilterCriteria.uName", "NOTUNIQUE", "uName");
                 vType.createIndex("FilterCriteria.filtername", "NOTUNIQUE", "filtername");
             }
             
