@@ -17,7 +17,7 @@ public class PostgresdbService {
         }   
     }
 
-    private static void setUpDb() throws ClassNotFoundException, SQLException {
+    public static void setUpDb() throws ClassNotFoundException, SQLException {
                 
         Statement st = JdbcManager.getInstance().getStatement();
         
@@ -27,6 +27,7 @@ public class PostgresdbService {
                 " user_id text ," +
                 " source text, " +
                 " domain_type text, " +
+                " version text, " +
                 " server_id text)";
         st.executeUpdate(qs);
         
@@ -112,17 +113,36 @@ public class PostgresdbService {
                 " sid INT, "+
                 "CONSTRAINT windowevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
+        
+        qs = "CREATE TABLE IF NOT EXISTS WindowScrollEvent(" +
+                " id SERIAL NOT NULL PRIMARY KEY," +
+                " orientation text," +
+                " direction text," +
+                " context text ," +
+                " timestamp timestamp without time zone, "+
+                " sid INT, "+
+                "CONSTRAINT windowscrollevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+        st.executeUpdate(qs);
+        
+        if(st != null){
+            st.close();
+        }
     }
 
-    public void deleteTablesContent(String table) {
+    public void deleteTablesContent(String table) throws SQLException {
          
+        Statement st = null;
         try {
-            Statement st = JdbcManager.getInstance().getStatement();
-            st.executeUpdate("truncate "+ table + " cascade");
+            st = JdbcManager.getInstance().getStatement();
+            st.executeUpdate("truncate "+ table + " restart identity cascade");
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            if(st != null){
+                st.close();
+            }
         }
     }
 

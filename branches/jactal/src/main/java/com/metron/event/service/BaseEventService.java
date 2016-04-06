@@ -148,29 +148,11 @@ public class BaseEventService {
      * @param source 
      * @return list of events along with event type, timestamp and event details
      */
-    public JSONArray getAllEvents(String sessionId, String serverId, String userId,String source, String fromDate, String toDate, String limit) {
+    public JSONArray getAllEvents(String sessionId, String serverId, String userId,String source,String version, String fromDate, String toDate, String limit) {
         
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = new QueryWhereBuffer();
 
-        if (sessionId != null) {
-            whereClause.append("out.session_id in " + sessionId);
-        }
-        if (userId != null) {
-            whereClause.append("out.user_id in " + userId);
-        }
-        if (serverId != null) {
-            whereClause.append("out.server_id in " + serverId);
-        }
-        if (source != null) {
-            whereClause.append("out.source in " + source);
-        }
-        if (fromDate != null) {
-            whereClause.append("timestamp >= '" + fromDate + "' ");
-        }
-        if (toDate != null) {
-            whereClause.append("timestamp <= '" + toDate + "' ");
-        }
+        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
 
         query.append("select * from Metric_Event"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
@@ -200,6 +182,47 @@ public class BaseEventService {
             e1.printStackTrace();
         }    
         return result;
+    }
+
+    /**
+     * Constructs filter criteria for Metric_Event,Session_Pattern,Session_ErrorPattern,Session_Domain edge's
+     * @param sessionId
+     * @param serverId
+     * @param userId
+     * @param source
+     * @param version
+     * @param fromDate
+     * @param toDate
+     * @return QueryWhereBuffer
+     */
+    public QueryWhereBuffer edgeFilter(String sessionId, String serverId, String userId,
+            String source, String version, String fromDate, String toDate) {
+        
+        QueryWhereBuffer whereClause = new QueryWhereBuffer();
+        
+        if (sessionId != null) {
+            whereClause.append("out.session_id in " + sessionId);
+        }
+        if (userId != null) {
+            whereClause.append("out.user_id in " + userId);
+        }
+        if (serverId != null) {
+            whereClause.append("out.server_id in " + serverId);
+        }
+        if (source != null) {
+            whereClause.append("out.source in " + source);
+        }
+        if (version != null) {
+            whereClause.append("out.version in " + version);
+        }
+        if (fromDate != null) {
+            whereClause.append("timestamp >= '" + fromDate + "' ");
+        }
+        if (toDate != null) {
+            whereClause.append("timestamp <= '" + toDate + "' ");
+        }
+        
+        return whereClause;
     }
 
     public JSONObject getEventDetails(String rid) {

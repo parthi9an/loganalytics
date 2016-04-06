@@ -10,30 +10,12 @@ public class KeyboardEventService extends BaseEventService{
         return getCount("select count(*) as count from Metric_Event where type containstext 'keyb'");
     }
 
-    public JSONObject getcommandCount(String sessionId, String serverId, String userId, String source,String fromDate, String toDate) {
+    public JSONObject getcommandCount(String sessionId, String serverId, String userId, String source,String version, String fromDate, String toDate) {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = new QueryWhereBuffer();
+        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
         whereClause.append("type containstext 'keyb'");
-        if (sessionId != null) {
-            whereClause.append("out.session_id in " + sessionId);
-        }
-        if (userId != null) {
-            whereClause.append("out.user_id in " + userId);
-        }
-        if (serverId != null) {
-            whereClause.append("out.server_id in " + serverId);
-        }
-        if (source != null) {
-            whereClause.append("out.source in " + source);
-        }
-        if (fromDate != null) {
-            whereClause.append("timestamp >= '" + fromDate + "' ");
-        }
-        if (toDate != null) {
-            whereClause.append("timestamp <= '" + toDate + "' ");
-        }
 
         query.append("select in.command as name, count(*) as count from Metric_Event group by in.command"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));

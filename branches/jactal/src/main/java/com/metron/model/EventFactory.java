@@ -18,6 +18,7 @@ import com.metron.model.event.CisKeyboardEvent;
 import com.metron.model.event.CisViewCloseEvent;
 import com.metron.model.event.CisViewOpenEvent;
 import com.metron.model.event.CisWindowEvent;
+import com.metron.model.event.CisWindowScrollEvent;
 import com.metron.model.event.Event;
 import com.metron.model.event.HostStatus;
 import com.metron.model.event.RequestCancel;
@@ -273,6 +274,8 @@ public class EventFactory {
             return new CisConfigurationEvent(event,value);
         } else if(type.compareToIgnoreCase("window") == 0){
             return new CisWindowEvent(event,value);
+        } else if(type.compareToIgnoreCase("scroll") == 0){
+            return new CisWindowScrollEvent(event,value);
         }
         
         return null;
