@@ -15,10 +15,13 @@ import org.slf4j.LoggerFactory;
 import com.metron.AppConfig;
 import com.metron.model.BaseModel;
 import com.metron.model.CisEventKeyMappings;
+import com.metron.model.ContextType;
 import com.metron.model.DomainEvent;
 import com.metron.model.Pattern;
+import com.metron.model.PersistEvent;
 import com.metron.model.RawMetricEvent;
 import com.metron.model.TimeWindow;
+import com.metron.model.ViewContext;
 import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
@@ -36,6 +39,8 @@ public abstract class CisEvent extends BaseModel {
 
     private Map<String, Object> attributes = null;
     private Map<String, Object> metricvalueattributes = null;
+    private Map<String, Object> contextType = null;
+    private Map<String, Object> contextattributes = null;
     protected Map<String, String> mappingEventkeys;
     
     protected boolean insertToPostgres;
@@ -55,13 +60,30 @@ public abstract class CisEvent extends BaseModel {
         parseJson(eventData, attributes);
         parseJson(metricValueData, metricvalueattributes);
     }
+    
+    public CisEvent(JSONObject eventData, JSONObject metricValueData, JSONObject contexttype, JSONObject context) {
+
+        this.mappingEventkeys = new HashMap<String, String>();
+        mappingEventkeys = CisEventKeyMappings.getInstance().getEventMapping("RawEvent");
+        insertToPostgres = Boolean.parseBoolean(AppConfig.getInstance().getString("postgres.dump"));
+
+        this.attributes = new HashMap<String, Object>();
+        this.metricvalueattributes = new HashMap<String, Object>();
+        this.contextType = new HashMap<String, Object>();
+        this.contextattributes = new HashMap<String, Object>();
+        parseJson(eventData, attributes);
+        parseJson(metricValueData, metricvalueattributes);
+        parseJson(contexttype, contextType);
+        parseJson(context, contextattributes);
+    }
 
     private void parseJson(JSONObject jsondata, Map<String, Object> persistTo) {
         Iterator<?> keys = jsondata.keys();
         try {
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                if(jsondata.get(key).getClass().getSimpleName().compareToIgnoreCase("JSONArray") == 0){
+                if(jsondata.get(key).getClass().getSimpleName().compareToIgnoreCase("JSONArray") == 0 ||
+                        jsondata.get(key).getClass().getSimpleName().compareToIgnoreCase("JSONObject") == 0){
                     //since orientdb throwing OSerializationException while storing Json
                     persistTo.put(key, jsondata.get(key).toString());
                 }else
@@ -107,6 +129,33 @@ public abstract class CisEvent extends BaseModel {
         }
         return edgeObject;
     }
+    
+    public void getcontextType() {
+        
+        // save view context
+        ViewContext viewcontext = new ViewContext(this.getContextattributes(), this.getGraph());
+
+        this.getContextType().put("context", viewcontext.vertex.getId());
+        // save contexttype along with viewcontext vertex
+        ContextType contexttype = new ContextType(this.getContextType(), this.getGraph());
+
+        // save context type vertex id into associates event vertex
+        this.getMetricValueAttributes().put("context", contexttype.vertex.getId());
+    }
+    
+    public void persistToPostgres(String tableName) throws SQLException {
+        
+        if (insertToPostgres) {
+            if (this.getContextattributes() != null) {
+                this.getContextType().remove("context");
+                this.getMetricValueAttributes().remove("context");
+                new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
+                        this.getContextType(), this.getContextattributes(), tableName);
+            } else
+                new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
+                        tableName);
+        }
+    }
 
     public abstract void process() throws SQLException;
 
@@ -118,6 +167,14 @@ public abstract class CisEvent extends BaseModel {
         return metricvalueattributes;
     }
 
+    public Map<String, Object> getContextType() {
+        return contextType;
+    }
+    
+    public Map<String, Object> getContextattributes() {
+        return contextattributes;
+    }
+    
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }

@@ -45,6 +45,8 @@ public class CisEventUtil {
             keys = CisEventMappings.getInstance().getEventMapping("EnvironmentEvent");
         } else if (eventName.compareTo("WindowScrollEvent") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("WindowScrollEvent");
+        } else if (eventName.compareTo("ContextType") == 0) {
+            keys = CisEventMappings.getInstance().getEventMapping("ContextType");
         }
 
         properties = getEventDetails(keys, props);
@@ -111,7 +113,7 @@ public class CisEventUtil {
                     .append(eventvertex.getProperty("name"));
         } else if (eventvertex.getLabel().compareTo("WindowEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
-                    .append(eventvertex.getProperty("view"));
+                    .append(eventvertex.getProperty("length"));
         } else if (eventvertex.getLabel().compareTo("EnvironmentEvent") == 0) {
             paternclassdetails.append(eventvertex.getLabel()).append(";")
                     .append(eventvertex.getProperty("os"));

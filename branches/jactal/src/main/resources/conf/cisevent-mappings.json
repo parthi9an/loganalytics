@@ -1,18 +1,20 @@
 {
-    "ActionEvent": ["key","command","view"],
-    "KeyBoardEvent": ["command","target"],
+    "ActionEvent": ["key","command","context"],
+    "KeyBoardEvent": ["command","context"],
     "ViewEvent": ["name","event"],
-    "FieldEvent": ["field","parent"],
-    "ErrorEvent": ["err_type","message","trace"],
+    "FieldEvent": ["field","context"],
+    "ErrorEvent": ["err_type","message","trace","context"],
     "ConfigurationEvent": ["name"],
-    "WindowEvent": ["length","height","view"],
+    "WindowEvent": ["length","height","context"],
     "EnvironmentEvent": ["os", "screen_x", "screen_y",
                     "app_x", "app_y", "browser_type", "browser_version",
                     "cpu_type", "cpu_clock", "cpu_cores", "mem"],
     "DomainEvent": ["domain_type"],
     "WindowScrollEvent": ["orientation","direction","context"],
+    "ContextType": ["type","context"],
     "RawMetricEvent": ["source","version","server_id","user_id","session_id"],
-    "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","WindowScrollEvent","session"],
-    "OrientDBClasses": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","DomainEvent","Pattern",
-    					"CisEvents","ErrorPattern","AccessToken","FilterCriteria","WindowScrollEvent","TimeWindow1","TimeWindow5","TimeWindow60","TimeWindow1440"]
+    "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","WindowScrollEvent",
+    					"ViewContext","ContextType","CisEvent"],
+    "OrientDBClasses": ["CisEvents","ContextType","ViewContext","ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent",
+    					"WindowEvent","DomainEvent","Pattern","ErrorPattern","AccessToken","FilterCriteria","WindowScrollEvent","TimeWindow1","TimeWindow5","TimeWindow60","TimeWindow1440"]
 }

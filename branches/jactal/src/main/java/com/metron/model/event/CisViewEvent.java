@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import com.metron.model.PersistEvent;
 import com.metron.model.ViewEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 
@@ -29,9 +28,7 @@ public class CisViewEvent extends CisEvent {
         this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
-        if(insertToPostgres)
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"ViewEvent");
-         
+        this.persistToPostgres("ViewEvent");
     }
 
     private void updateAssociations() {
