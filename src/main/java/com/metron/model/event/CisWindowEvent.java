@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import com.metron.model.PersistEvent;
 import com.metron.model.WindowEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 
@@ -17,11 +16,20 @@ public class CisWindowEvent extends CisEvent {
     
     }
 
+    public CisWindowEvent(JSONObject eventData, JSONObject metricData, JSONObject contextType,
+            JSONObject context) {
+        super(eventData,metricData,contextType,context);
+    }
+
     @Override
     public void process() throws SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
+        
+        if (this.getContextattributes() != null) {
+            this.getcontextType();
+        }
         
         // save metric event attributes (i.e window event) - window_length, window_height, window_view
         windowevent = new WindowEvent(this.getMetricValueAttributes(), this.getGraph());
@@ -29,9 +37,7 @@ public class CisWindowEvent extends CisEvent {
         this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
-        if(insertToPostgres)
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"WindowEvent");
-       
+        this.persistToPostgres("WindowEvent");
     }
 
     private void updateAssociations() {

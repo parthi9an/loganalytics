@@ -21,7 +21,7 @@ public class PostgresdbService {
                 
         Statement st = JdbcManager.getInstance().getStatement();
         
-        String qs = "CREATE TABLE IF NOT EXISTS session(" +
+        String qs = "CREATE TABLE IF NOT EXISTS CisEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " session_id text," +
                 " user_id text ," +
@@ -31,23 +31,39 @@ public class PostgresdbService {
                 " server_id text)";
         st.executeUpdate(qs);
         
+        qs = "CREATE TABLE IF NOT EXISTS ViewContext(" +
+                " id SERIAL NOT NULL PRIMARY KEY," +
+                " editor text," +
+                " view text ," +
+                " element text, " +
+                " source text)";
+        st.executeUpdate(qs);
+        
+        qs = "CREATE TABLE IF NOT EXISTS ContextType(" +
+                " id SERIAL NOT NULL PRIMARY KEY," +
+                " type text," +
+                " viewcontextid INT)";
+        st.executeUpdate(qs);
+        
         qs = "CREATE TABLE IF NOT EXISTS ActionEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " key text," +
                 " command text ," +
-                " view text, " +
+                " contexttypeid INT, " +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT actionevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT actionevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT actionevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS KeyboardEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " command text," +
-                " target text ," +
+                " contexttypeid INT ," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT keyboardevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT keyboardevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT keyboardevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS ViewEvent(" +
@@ -56,16 +72,17 @@ public class PostgresdbService {
                 " event text ," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT viewevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT viewevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS FieldEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " field text," +
-                " parent text ," +
+                " contexttypeid INT ," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT fieldevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT fieldevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT fieldevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS ErrorEvent(" +
@@ -73,9 +90,11 @@ public class PostgresdbService {
                 " err_type text," +
                 " message text ," +
                 " trace text ," +
+                " contexttypeid INT ," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT errorevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT errorevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT errorevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS EnvironmentEvent(" +
@@ -93,7 +112,7 @@ public class PostgresdbService {
                 " mem int," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT environmentevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT environmentevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS ConfigurationEvent(" +
@@ -101,27 +120,29 @@ public class PostgresdbService {
                 " name text," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT configurationevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT configurationevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS WindowEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " length int," +
                 " height int ," +
-                " view text ," +
+                " contexttypeid INT ," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT windowevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT windowevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT windowevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS WindowScrollEvent(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " orientation text," +
                 " direction text," +
-                " context text ," +
+                " contexttypeid INT," +
                 " timestamp timestamp without time zone, "+
                 " sid INT, "+
-                "CONSTRAINT windowscrollevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.session (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
+                "CONSTRAINT windowscrollevent_contexttypeid_fkey FOREIGN KEY (contexttypeid) REFERENCES public.contexttype (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT windowscrollevent_sid_fkey FOREIGN KEY (sid) REFERENCES public.cisevent (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         if(st != null){

@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import com.metron.model.PersistEvent;
 import com.metron.model.WindowScrollEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 
@@ -16,30 +15,36 @@ public class CisWindowScrollEvent extends CisEvent {
         super(eventData,metricData);
     }
 
+    public CisWindowScrollEvent(JSONObject eventData, JSONObject metricData, JSONObject contextType, JSONObject context) {
+        super(eventData,metricData,contextType,context);
+    }
+
     @Override
     public void process() throws SQLException {
 
         this.saveCisEvent(); 
         
+        if (this.getContextattributes() != null) {
+            this.getcontextType();
+        }
         // save metric event attributes (i.e window scroll event) - orientation, direction, view
         windowscrollevent = new WindowScrollEvent(this.getMetricValueAttributes(), this.getGraph());
-         
+        
         this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
-        if(insertToPostgres)
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"WindowScrollEvent");
+        this.persistToPostgres("WindowScrollEvent");
     }
     
-private void updateAssociations() {
-        
+    private void updateAssociations() {
+
         this.associateRawMetricEvent(windowscrollevent);
         this.associateTimeWindow();
         this.updatePatterns();
         this.associatePatternRawMetricEvent();
         this.associateDomainRawMetricEvent();
     }
-    
+
     private void associateTimeWindow() {
         
      // ONE MIN Window

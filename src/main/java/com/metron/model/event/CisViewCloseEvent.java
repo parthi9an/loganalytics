@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.metron.model.PersistEvent;
 import com.metron.model.ViewEvent;
 import com.metron.util.Utils;
 
@@ -28,9 +27,7 @@ public class CisViewCloseEvent extends CisViewEvent {
         
         this.updateAssociations();
 
-        if(insertToPostgres)
-            new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(), "ViewEvent");
-
+        this.persistToPostgres("ViewEvent");
     }
 
     private void updateAssociations() {

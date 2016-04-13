@@ -28,9 +28,9 @@ public class PersistEvent {
         sessionprops.put("domain_type", attributes.get("domain_type"));
         sessionprops.put("version", (attributes.get("version") != null ? attributes.get("version") : null));
 
-        int id = getSessionId(sessionprops, "session");
+        int id = getRowId(sessionprops, "CisEvent");
         if (id == 0) {
-            id = insertdata(sessionprops, "session");
+            id = insertdata(sessionprops, "CisEvent");
         }
 
         // Inserting Foreign Key
@@ -39,7 +39,7 @@ public class PersistEvent {
         insertdata(metricValueAttributes, tableName);
     }
     
-    private int getSessionId(Map<String, Object> sessionprops, String string) throws SQLException {
+    private int getRowId(Map<String, Object> sessionprops, String tableName) throws SQLException {
 
         Connection c = null;
         int rowid = 0;
@@ -47,7 +47,7 @@ public class PersistEvent {
         try {
             c = JdbcManager.getInstance().getConnection();
 
-            StringBuilder sql = new StringBuilder("select id from session where ");
+            StringBuilder sql = new StringBuilder("select id from "+ tableName +" where ");
             for (Iterator<Entry<String, Object>> iter = sessionprops.entrySet().iterator(); iter
                     .hasNext();) {
                 Entry<String, Object> pair = iter.next();
@@ -143,6 +143,24 @@ public class PersistEvent {
                 c.close();
         }
         return rowid;
+    }
+
+    public void save(Map<String, Object> attributes, Map<String, Object> metricValueAttributes,
+            Map<String, Object> contextType, Map<String, Object> contextAttributes, String tableName) throws SQLException {
+        
+        int viewContextId = getRowId(contextAttributes, "ViewContext");
+        if (viewContextId == 0) {
+            viewContextId = insertdata(contextAttributes, "ViewContext");
+        }
+        contextType.put("viewcontextid", viewContextId);
+        
+        int contextTypeId = getRowId(contextType, "ContextType");
+        if (contextTypeId == 0) {
+            contextTypeId = insertdata(contextType, "ContextType");
+        }
+        metricValueAttributes.put("contexttypeid", contextTypeId);
+        
+        save(attributes, metricValueAttributes, tableName);
     }
     
 }

@@ -354,7 +354,6 @@ public class DatabaseService {
                 vType = graph.createVertexType("ActionEvent");
                 vType.createProperty("key", OType.STRING);
                 vType.createProperty("command", OType.STRING);
-                vType.createProperty("view", OType.STRING);
                 vType.createIndex("ActionEvent.key", "NOTUNIQUE", "key");
                 vType.createIndex("ActionEvent.command", "NOTUNIQUE", "command");
             }
@@ -362,7 +361,6 @@ public class DatabaseService {
             if (!schema.existsClass("KeyBoardEvent")) {
                 vType = graph.createVertexType("KeyBoardEvent");
                 vType.createProperty("command", OType.STRING);
-                vType.createProperty("target", OType.STRING);
                 vType.createIndex("KeyBoardEvent.command", "NOTUNIQUE", "command");
             }
             
@@ -383,7 +381,6 @@ public class DatabaseService {
             if (!schema.existsClass("FieldEvent")) {
                 vType = graph.createVertexType("FieldEvent");
                 vType.createProperty("field", OType.STRING);
-                vType.createProperty("parent", OType.STRING);
                 vType.createIndex("FieldEvent.field", "NOTUNIQUE", "field");
             }
             
@@ -405,7 +402,6 @@ public class DatabaseService {
                 vType = graph.createVertexType("WindowEvent");
                 vType.createProperty("length", OType.INTEGER);
                 vType.createProperty("height", OType.INTEGER);
-                vType.createProperty("view", OType.STRING);
                 vType.createIndex("WindowEvent.length", "NOTUNIQUE", "length");
             }
             
@@ -413,8 +409,21 @@ public class DatabaseService {
                 vType = graph.createVertexType("WindowScrollEvent");
                 vType.createProperty("orientation", OType.STRING);
                 vType.createProperty("direction", OType.STRING);
-                vType.createProperty("context", OType.STRING);
-                vType.createIndex("WindowScrollEvent.context", "NOTUNIQUE", "context");
+                vType.createIndex("WindowScrollEvent.orientation", "NOTUNIQUE", "orientation");
+                vType.createIndex("WindowScrollEvent.direction", "NOTUNIQUE", "direction");
+            }
+            
+            if (!schema.existsClass("ViewContext")) {
+                vType = graph.createVertexType("ViewContext");
+                vType.createProperty("view", OType.STRING);
+                vType.createProperty("element", OType.STRING);
+                vType.createIndex("ViewContext.view", "NOTUNIQUE", "view");
+            }
+            
+            if (!schema.existsClass("ContextType")) {
+                vType = graph.createVertexType("ContextType");
+                vType.createProperty("type", OType.STRING);
+                vType.createIndex("ContextType.type", "NOTUNIQUE", "type");
             }
             
             if (!schema.existsClass("EnvironmentEvent")) {

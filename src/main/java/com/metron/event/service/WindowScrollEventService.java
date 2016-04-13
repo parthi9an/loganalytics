@@ -14,7 +14,7 @@ public class WindowScrollEventService extends BaseEventService {
         QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
         whereClause.append("type containstext 'scroll'");
 
-        query.append("select count(*) as count,in.context as name from Metric_Event group by in.context"
+        query.append("select count(*) as count,in.context.context.view as name from Metric_Event group by in.context.context.view"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
         result = this.getAssociatedCount(query.toString());

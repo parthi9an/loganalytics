@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import org.json.JSONObject;
 
 import com.metron.model.EnvironmentEvent;
-import com.metron.model.PersistEvent;
 import com.metron.util.TimeWindowUtil.DURATION;
 
 public class CisEnvironmentEvent extends CisEvent {
@@ -29,9 +28,7 @@ public class CisEnvironmentEvent extends CisEvent {
         this.updateAssociations();
         
         //Save data to Relational DB (Postgres)
-        if(insertToPostgres)
-            new PersistEvent().save(this.getAttributes(),this.getMetricValueAttributes(),"EnvironmentEvent");
-       
+        this.persistToPostgres("EnvironmentEvent");
     }
 
     private void updateAssociations() {
