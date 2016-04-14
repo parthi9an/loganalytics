@@ -1,8 +1,9 @@
 package com.metron.util;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,12 +15,15 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 public class CisEventUtil {
 
     public JSONObject getdetails(String rid) throws JSONException {
-        // String sql = "select * from " + rid;
-        // String data = new com.metron.orientdb.OrientRest().doSql(sql);
-
-        OrientBaseGraph graph = OrientDBGraphManager.getInstance().getNonTx();
-        OrientVertex eventvertex = graph.getVertex(rid);
-        Map<String, Object> props = eventvertex.getProperties();
+        
+        String sql = "select * from " + rid;
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONObject result = new JSONObject(data.toString());
+        JSONArray resultArr = result.getJSONArray("result");
+        JSONObject props = new JSONObject();
+        for(int j = 0; j < resultArr.length(); j++){
+            props = resultArr.getJSONObject(j);
+        }
 
         List<String> keys = null;
         JSONObject properties = new JSONObject();
@@ -47,22 +51,31 @@ public class CisEventUtil {
             keys = CisEventMappings.getInstance().getEventMapping("WindowScrollEvent");
         } else if (eventName.compareTo("ContextType") == 0) {
             keys = CisEventMappings.getInstance().getEventMapping("ContextType");
+        } else if (eventName.compareTo("ViewContext") == 0) {
+            keys = CisEventMappings.getInstance().getEventMapping("ViewContext");
         }
 
         properties = getEventDetails(keys, props);
 
-        graph.shutdown();
         return properties;
     }
-
-    private JSONObject getEventDetails(List<String> keys, Map<String, Object> props) throws JSONException {
+    
+    private JSONObject getEventDetails(List<String> keys, JSONObject props) throws JSONException {
 
         JSONObject properties = new JSONObject();
-        for (String key : keys) {
-            if (props.containsKey(key)) {
-                properties.put(key, props.get(key));
+        
+        Iterator<String> iterator = keys.iterator();
+
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            if (props.has(key)) {
+                if(key.compareToIgnoreCase("context") == 0)
+                    properties.put(key, getdetails(props.get(key).toString()));
+                else
+                    properties.put(key, props.get(key));
             }
         }
+        
         return properties;
     }
 

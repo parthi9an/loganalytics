@@ -36,13 +36,17 @@ public class PostgresdbService {
                 " editor text," +
                 " view text ," +
                 " element text, " +
-                " source text)";
+                " name text, " +
+                " contexttypeid INT)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS ContextType(" +
                 " id SERIAL NOT NULL PRIMARY KEY," +
                 " type text," +
-                " viewcontextid INT)";
+                " dialogsourceid INT," +
+                " viewcontextid INT ," +
+                "CONSTRAINT contexttype_dialogsourceid_fkey FOREIGN KEY (dialogsourceid) REFERENCES public.viewcontext (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,"
+                + "CONSTRAINT contexttype_viewcontextid_fkey FOREIGN KEY (viewcontextid) REFERENCES public.viewcontext (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION)";
         st.executeUpdate(qs);
         
         qs = "CREATE TABLE IF NOT EXISTS ActionEvent(" +

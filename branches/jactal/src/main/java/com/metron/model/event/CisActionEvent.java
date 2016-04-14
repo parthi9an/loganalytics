@@ -21,14 +21,19 @@ public class CisActionEvent extends CisEvent {
         super(eventData,metricData,contextType,context);
     }
 
+    public CisActionEvent(JSONObject eventData, JSONObject metricData, JSONObject contextType,
+            JSONObject context, JSONObject dialogContextType, JSONObject dialogContext) {
+        super(eventData,metricData,contextType,context,dialogContextType,dialogContext);
+    }
+    
     @Override
     public void process() throws SQLException {
         
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent();
         
-        if (this.getContextattributes() != null) {
-            this.getcontextType();
+        if (! this.getContextattributes().isEmpty()) {
+            this.insertcontextType();
         }
         
         // save metric event attributes (i.e Action event) - action_key, action_command, action_view

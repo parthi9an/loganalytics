@@ -268,16 +268,22 @@ public class EventFactory {
             }
         }
         
-        if(type.compareToIgnoreCase("action") == 0){
-            if (hasContext){
-                return new CisActionEvent(event,value,contexttype,context);
+        //parsing the dialog context (a type of context) if exists
+        JSONObject dialogcontext = null;
+        JSONObject dialogcontexttype = null;
+        if (hasContext && context.has("source")){
+            dialogcontexttype = (JSONObject)context.get("source");
+            context.remove("source");
+            if(dialogcontexttype.has("context")){
+                dialogcontext = (JSONObject)dialogcontexttype.get("context");
+                dialogcontexttype.remove("context");
             }
-            return new CisActionEvent(event,value);
+        }
+        
+        if (type.compareToIgnoreCase("action") == 0) {
+            return new CisActionEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         } else if(type.compareToIgnoreCase("keyb") == 0){
-            if (hasContext){
-                return new CisKeyboardEvent(event,value,contexttype,context);
-            }
-            return new CisKeyboardEvent(event,value);
+            return new CisKeyboardEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         } else if(type.compareToIgnoreCase("view") == 0){
             if(value.get("event").toString().compareToIgnoreCase("open") == 0){
                 return new CisViewOpenEvent(event,value);
@@ -285,29 +291,17 @@ public class EventFactory {
                 return new CisViewCloseEvent(event,value);
             }
         } else if(type.compareToIgnoreCase("field") == 0){
-            if (hasContext){
-                return new CisFieldEvent(event,value,contexttype,context);
-            }
-            return new CisFieldEvent(event,value);
+            return new CisFieldEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         } else if(type.compareToIgnoreCase("error") == 0){
-            if (hasContext){
-                return new CisErrorEvent(event,value,contexttype,context);
-            }
-            return new CisErrorEvent(event,value);
+            return new CisErrorEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         } else if(type.compareToIgnoreCase("env") == 0){
             return new CisEnvironmentEvent(event,value);
         } else if(type.compareToIgnoreCase("config") == 0){
             return new CisConfigurationEvent(event,value);
         } else if(type.compareToIgnoreCase("window") == 0){
-            if (hasContext){
-                return new CisWindowEvent(event,value,contexttype,context);
-            }
-            return new CisWindowEvent(event,value);
+            return new CisWindowEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         } else if(type.compareToIgnoreCase("scroll") == 0){
-            if (hasContext){
-                return new CisWindowScrollEvent(event,value,contexttype,context);
-            }
-            return new CisWindowScrollEvent(event,value);
+            return new CisWindowScrollEvent(event, value, contexttype, context, dialogcontexttype, dialogcontext);
         }
         
         return null;
