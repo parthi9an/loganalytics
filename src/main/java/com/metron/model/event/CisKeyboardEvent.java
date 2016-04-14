@@ -20,6 +20,11 @@ public class CisKeyboardEvent extends CisEvent {
             JSONObject context) {
         super(eventData,metricData,contextType,context);
     }
+    
+    public CisKeyboardEvent(JSONObject eventData, JSONObject metricData, JSONObject contextType,
+            JSONObject context, JSONObject dialogContextType, JSONObject dialogContext) {
+        super(eventData,metricData,contextType,context,dialogContextType,dialogContext);
+    }
 
     @Override
     public void process() throws SQLException {
@@ -27,8 +32,8 @@ public class CisKeyboardEvent extends CisEvent {
         // save generic metric attribues - metric_type, metric_timestamp, metric_session_id
         this.saveCisEvent(); 
         
-        if (this.getContextattributes() != null) {
-            this.getcontextType();
+        if (! this.getContextattributes().isEmpty()) {
+            this.insertcontextType();
         }
         
         // save metric event attributes (i.e Action event) - key_command, key_target

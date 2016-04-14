@@ -19,13 +19,18 @@ public class CisWindowScrollEvent extends CisEvent {
         super(eventData,metricData,contextType,context);
     }
 
+    public CisWindowScrollEvent(JSONObject eventData, JSONObject metricData, JSONObject contextType,
+            JSONObject context, JSONObject dialogContextType, JSONObject dialogContext) {
+        super(eventData,metricData,contextType,context,dialogContextType,dialogContext);
+    }
+
     @Override
     public void process() throws SQLException {
 
         this.saveCisEvent(); 
         
-        if (this.getContextattributes() != null) {
-            this.getcontextType();
+        if (! this.getContextattributes().isEmpty()) {
+            this.insertcontextType();
         }
         // save metric event attributes (i.e window scroll event) - orientation, direction, view
         windowscrollevent = new WindowScrollEvent(this.getMetricValueAttributes(), this.getGraph());

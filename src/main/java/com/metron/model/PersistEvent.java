@@ -162,5 +162,25 @@ public class PersistEvent {
         
         save(attributes, metricValueAttributes, tableName);
     }
+
+    public void save(Map<String, Object> attributes, Map<String, Object> metricValueAttributes,
+            Map<String, Object> contextType, Map<String, Object> contextAttributes,
+            Map<String, Object> dialogContextType, Map<String, Object> dialogContextAttributes,
+            String tableName) throws SQLException {
+        
+        int dialogViewContextId = getRowId(dialogContextAttributes, "ViewContext");
+        if (dialogViewContextId == 0) {
+            dialogViewContextId = insertdata(dialogContextAttributes, "ViewContext");
+        }
+        dialogContextType.put("dialogsourceid", dialogViewContextId);
+        
+        int dialogContextTypeId = getRowId(dialogContextType, "ContextType");
+        if (dialogContextTypeId == 0) {
+            dialogContextTypeId = insertdata(dialogContextType, "ContextType");
+        }
+        contextAttributes.put("contexttypeid", dialogContextTypeId);
+        
+        save(attributes, metricValueAttributes, contextType, contextAttributes, tableName);
+    }
     
 }

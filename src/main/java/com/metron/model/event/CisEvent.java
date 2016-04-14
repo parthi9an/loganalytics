@@ -39,8 +39,10 @@ public abstract class CisEvent extends BaseModel {
 
     private Map<String, Object> attributes = null;
     private Map<String, Object> metricvalueattributes = null;
-    private Map<String, Object> contextType = null;
+    private Map<String, Object> contexttype = null;
     private Map<String, Object> contextattributes = null;
+    private Map<String, Object> dialogcontexttype = null;
+    private Map<String, Object> dialogcontextattributes = null;
     protected Map<String, String> mappingEventkeys;
     
     protected boolean insertToPostgres;
@@ -61,36 +63,44 @@ public abstract class CisEvent extends BaseModel {
         parseJson(metricValueData, metricvalueattributes);
     }
     
-    public CisEvent(JSONObject eventData, JSONObject metricValueData, JSONObject contexttype, JSONObject context) {
+    public CisEvent(JSONObject eventData, JSONObject metricValueData, JSONObject contextType, JSONObject context) {
 
-        this.mappingEventkeys = new HashMap<String, String>();
-        mappingEventkeys = CisEventKeyMappings.getInstance().getEventMapping("RawEvent");
-        insertToPostgres = Boolean.parseBoolean(AppConfig.getInstance().getString("postgres.dump"));
-
-        this.attributes = new HashMap<String, Object>();
-        this.metricvalueattributes = new HashMap<String, Object>();
-        this.contextType = new HashMap<String, Object>();
+        this(eventData,metricValueData);
+        this.contexttype = new HashMap<String, Object>();
         this.contextattributes = new HashMap<String, Object>();
-        parseJson(eventData, attributes);
-        parseJson(metricValueData, metricvalueattributes);
-        parseJson(contexttype, contextType);
+        parseJson(contextType, contexttype);
         parseJson(context, contextattributes);
     }
 
+    public CisEvent(JSONObject eventData, JSONObject metricValueData, JSONObject contexttype,
+            JSONObject context, JSONObject dialogContextType, JSONObject dialogContext) {
+        
+        this(eventData,metricValueData,contexttype,context);
+        this.dialogcontexttype = new HashMap<String, Object>();
+        this.dialogcontextattributes = new HashMap<String, Object>();
+        parseJson(dialogContextType, dialogcontexttype);
+        parseJson(dialogContext, dialogcontextattributes);
+    }
+
     private void parseJson(JSONObject jsondata, Map<String, Object> persistTo) {
-        Iterator<?> keys = jsondata.keys();
-        try {
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                if(jsondata.get(key).getClass().getSimpleName().compareToIgnoreCase("JSONArray") == 0 ||
-                        jsondata.get(key).getClass().getSimpleName().compareToIgnoreCase("JSONObject") == 0){
-                    //since orientdb throwing OSerializationException while storing Json
-                    persistTo.put(key, jsondata.get(key).toString());
-                }else
-                    persistTo.put(key, jsondata.get(key));
+        if (jsondata != null) {
+            Iterator<?> keys = jsondata.keys();
+            try {
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    if (jsondata.get(key).getClass().getSimpleName()
+                            .compareToIgnoreCase("JSONArray") == 0
+                            || jsondata.get(key).getClass().getSimpleName()
+                                    .compareToIgnoreCase("JSONObject") == 0) {
+                        // since orientdb throwing OSerializationException while
+                        // storing Json
+                        persistTo.put(key, jsondata.get(key).toString());
+                    } else
+                        persistTo.put(key, jsondata.get(key));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
@@ -130,7 +140,18 @@ public abstract class CisEvent extends BaseModel {
         return edgeObject;
     }
     
-    public void getcontextType() {
+    public void insertcontextType() {
+        
+        if(! dialogcontexttype.isEmpty()){
+            
+            ViewContext dialogviewcontext = new ViewContext(this.getDialogcontextattributes(), this.getGraph());
+            
+            this.getDialogcontexttype().put("source", dialogviewcontext.vertex.getId());
+            
+            ContextType dialogcontexttype = new ContextType(this.getDialogcontexttype(), this.getGraph());
+            
+            this.getContextattributes().put("context", dialogcontexttype.vertex.getId());
+        }
         
         // save view context
         ViewContext viewcontext = new ViewContext(this.getContextattributes(), this.getGraph());
@@ -146,11 +167,23 @@ public abstract class CisEvent extends BaseModel {
     public void persistToPostgres(String tableName) throws SQLException {
         
         if (insertToPostgres) {
-            if (this.getContextattributes() != null) {
-                this.getContextType().remove("context");
-                this.getMetricValueAttributes().remove("context");
-                new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
-                        this.getContextType(), this.getContextattributes(), tableName);
+            if (this.getDialogcontextattributes() != null && this.getContextattributes() != null) {
+                if (!this.getDialogcontextattributes().isEmpty()
+                        && !this.getContextattributes().isEmpty()) {
+                    this.getDialogcontexttype().remove("source");
+                    this.getContextattributes().remove("context");
+                    this.getContextType().remove("context");
+                    this.getMetricValueAttributes().remove("context");
+                    new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
+                            this.getContextType(), this.getContextattributes(),
+                            this.getDialogcontexttype(), this.getDialogcontextattributes(),
+                            tableName);
+                } else if (!this.getContextattributes().isEmpty()) {
+                    this.getContextType().remove("context");
+                    this.getMetricValueAttributes().remove("context");
+                    new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
+                            this.getContextType(), this.getContextattributes(), tableName);
+                }
             } else
                 new PersistEvent().save(this.getAttributes(), this.getMetricValueAttributes(),
                         tableName);
@@ -168,13 +201,21 @@ public abstract class CisEvent extends BaseModel {
     }
 
     public Map<String, Object> getContextType() {
-        return contextType;
+        return contexttype;
     }
     
     public Map<String, Object> getContextattributes() {
         return contextattributes;
     }
     
+    public Map<String, Object> getDialogcontexttype() {
+        return dialogcontexttype;
+    }
+
+    public Map<String, Object> getDialogcontextattributes() {
+        return dialogcontextattributes;
+    }
+
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }

@@ -12,6 +12,7 @@
     "DomainEvent": ["domain_type"],
     "WindowScrollEvent": ["orientation","direction","context"],
     "ContextType": ["type","context"],
+    "ViewContext": ["view","element","editor","source","name"],
     "RawMetricEvent": ["source","version","server_id","user_id","session_id"],
     "PostgresTables": ["ActionEvent","KeyboardEvent","ViewEvent","FieldEvent","ErrorEvent","EnvironmentEvent","ConfigurationEvent","WindowEvent","WindowScrollEvent",
     					"ViewContext","ContextType","CisEvent"],
