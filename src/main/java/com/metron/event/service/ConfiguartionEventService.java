@@ -6,11 +6,17 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ConfiguartionEventService extends BaseEventService{
 
-    public JSONObject getOverridenConfigCount(String sessionId,String serverId, String userId, String source, String version, String fromDate, String toDate) {
+    public ConfiguartionEventService(String filter) {
+        super(filter);
+    }
+
+    public ConfiguartionEventService() {}
+
+    public JSONObject getOverridenConfigCount() {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter();
         whereClause.append("type containstext 'config'");
 
         query.append("select count(*) as count,in.name as name from Metric_Event group by in.name"

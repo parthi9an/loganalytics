@@ -6,6 +6,12 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ViewEventService extends BaseEventService {
     
+    public ViewEventService(String filter) {
+        super(filter);
+    }
+
+    public ViewEventService() {}
+    
     public Long count() {
         return getCount("select count(*) as count from Metric_Event where type containstext 'view'");
     }
@@ -14,11 +20,11 @@ public class ViewEventService extends BaseEventService {
         return getAssociatedCount("select in.name as name , count(*) as count from Metric_View group by in.name");
     }
 
-    public JSONObject getViewcount(String sessionId,String serverId, String userId, String source, String version, String fromDate, String toDate) {
+    public JSONObject getViewcount() {
 
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter();
         whereClause.append("type containstext 'view'");
 
         query.append("select in.name as name , count(*) as count from Metric_Event group by in.name"
@@ -30,11 +36,11 @@ public class ViewEventService extends BaseEventService {
 
     }
 
-    public JSONObject getViewActivityDuration(String sessionId,String serverId, String userId, String source,String version, String fromDate, String toDate) {
+    public JSONObject getViewActivityDuration() {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter();
         whereClause.append("type containstext 'view'");
         whereClause.append("in.event containstext 'close'");
         

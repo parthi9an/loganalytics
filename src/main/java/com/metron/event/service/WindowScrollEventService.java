@@ -6,17 +6,49 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class WindowScrollEventService extends BaseEventService {
 
-    public JSONObject getCountOfScrollWindows(String sessionId, String serverId, String userId,
-            String source, String version, String fromDate, String toDate) {
+    public WindowScrollEventService(String filter) {
+        super(filter);
+    }
+    
+    public WindowScrollEventService() {}
+
+    public JSONObject getCountOfScrollWindows() {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        StringBuffer query1 = new StringBuffer();
+        StringBuffer query2 = new StringBuffer();
+        QueryWhereBuffer whereClause = this.edgeFilter();
+        QueryWhereBuffer whereClause1 = this.edgeFilter();
         whereClause.append("type containstext 'scroll'");
+        whereClause1.append("type containstext 'scroll'");
 
+        if (getFilterProps("context_type") != null && ! isFilterPropValueEmpty("context_type")) {
+            
+            //If Context Type contains Dialog, invoke two queries one for dialog type and another for manager,modeler,discovery types & union the results 
+            if((Boolean) isContextTypeDialog("context_type").get("isContextType")) {
+                
+                whereClause.append("in.context.type in " + isContextTypeDialog("context_type").get("ContextType"));
+                query1.append("select count(*) as count,in.context.context.view as name from Metric_Event group by in.context.context.view"
+                        + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+                
+                whereClause1.append("in.context.type = 'dialog'");
+                query2.append("select count(*) as count,in.context.context.context.source.view as name from Metric_Event group by in.context.context.context.source.view"
+                        + ((!whereClause1.toString().equals("")) ? " Where " + whereClause1.toString() : ""));
+                
+                query.append("SELECT EXPAND( $c ) LET $a = (").append(query1).append("), $b = (").append(query2).append("), $c = UNIONALL( $a, $b )");
+                
+                result = this.getAssociatedCount(query.toString());
+
+                return result;
+            }
+            
+            whereClause.append("in.context.type in " + getFilterProps("context_type"));
+        }
+        
         query.append("select count(*) as count,in.context.context.view as name from Metric_Event group by in.context.context.view"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
-
+        
         result = this.getAssociatedCount(query.toString());
 
         return result;

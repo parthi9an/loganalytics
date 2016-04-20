@@ -7,8 +7,14 @@ import org.json.JSONObject;
 import com.metron.controller.QueryWhereBuffer;
 import com.metron.util.CisEventUtil;
 
-public class BaseEventService {
+public class BaseEventService extends FilterService {
     
+    public BaseEventService(String filter) {
+        super(filter);
+    }
+    
+    public BaseEventService() {}
+
     public Long getCount(String sql) {
         String data = new com.metron.orientdb.OrientRest().doSql(sql);
         long count = 0;
@@ -112,6 +118,20 @@ public class BaseEventService {
         return result;
     }
     
+    public JSONArray getNamesList(String sql) {
+        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        JSONArray names = new JSONArray();
+        try {
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++)
+                names.put(resultArr.getJSONObject(j).getString("name"));
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        return names;
+    }
+    
     /**
      * Return the frequently occurred patterns
      * @param sql
@@ -138,28 +158,21 @@ public class BaseEventService {
     }
 
     /**
-     * Retrieve all the events 
-     * @param sessionId
-     * @param fromDate
-     * @param toDate
-     * @param limit
-     * @param serverId 
-     * @param userId 
-     * @param source 
+     * Retrieve all the events
      * @return list of events along with event type, timestamp and event details
      */
-    public JSONArray getAllEvents(String sessionId, String serverId, String userId,String source,String version, String fromDate, String toDate, String limit) {
+    public JSONArray getAllEvents() {
         
         StringBuffer query = new StringBuffer();
 
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter(/*sessionId,serverId,userId,source,version,fromDate,toDate*/);
 
         query.append("select * from Metric_Event"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         
         String data = null;
-        if (limit != null) {
-            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),Integer.parseInt(limit));
+        if (this.getFilterProps("limit") != null) {
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),Integer.parseInt(this.getFilterProps("limit").toString()));
         }else{
             data = new com.metron.orientdb.OrientRest().doSql(query.toString());
         }
@@ -186,40 +199,32 @@ public class BaseEventService {
 
     /**
      * Constructs filter criteria for Metric_Event,Session_Pattern,Session_ErrorPattern,Session_Domain edge's
-     * @param sessionId
-     * @param serverId
-     * @param userId
-     * @param source
-     * @param version
-     * @param fromDate
-     * @param toDate
      * @return QueryWhereBuffer
      */
-    public QueryWhereBuffer edgeFilter(String sessionId, String serverId, String userId,
-            String source, String version, String fromDate, String toDate) {
+    public QueryWhereBuffer edgeFilter() {
         
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        
-        if (sessionId != null) {
-            whereClause.append("out.session_id in " + sessionId);
+                 
+        if (this.getFilterProps("source") != null && ! isFilterPropValueEmpty("source")) {
+            whereClause.append("out.source in " + this.getFilterProps("source"));
         }
-        if (userId != null) {
-            whereClause.append("out.user_id in " + userId);
+        if (this.getFilterProps("version") != null && ! isFilterPropValueEmpty("version")) {
+            whereClause.append("out.version in " + this.getFilterProps("version"));
         }
-        if (serverId != null) {
-            whereClause.append("out.server_id in " + serverId);
+        if (this.getFilterProps("server_id") != null && ! isFilterPropValueEmpty("server_id")) {
+            whereClause.append("out.server_id in " + this.getFilterProps("server_id"));
         }
-        if (source != null) {
-            whereClause.append("out.source in " + source);
+        if (this.getFilterProps("user_id") != null && ! isFilterPropValueEmpty("user_id")) {
+            whereClause.append("out.user_id in " + this.getFilterProps("user_id"));
         }
-        if (version != null) {
-            whereClause.append("out.version in " + version);
+        if (this.getFilterProps("session_id") != null && ! isFilterPropValueEmpty("session_id")) {
+            whereClause.append("out.session_id in " + this.getFilterProps("session_id"));
         }
-        if (fromDate != null) {
-            whereClause.append("timestamp >= '" + fromDate + "' ");
+        if (this.getFilterProps("fromDate") != null) {
+            whereClause.append("timestamp >= '" + this.getFilterProps("fromDate") + "' ");
         }
-        if (toDate != null) {
-            whereClause.append("timestamp <= '" + toDate + "' ");
+        if (this.getFilterProps("toDate") != null) {
+            whereClause.append("timestamp <= '" + this.getFilterProps("toDate") + "' ");
         }
         
         return whereClause;

@@ -6,6 +6,12 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class SessionEventService extends BaseEventService{
     
+    public SessionEventService(String filter) {
+        super(filter);
+    }
+    
+    public SessionEventService() {}
+
     public Long count() {
         return getCount("select count(distinct(session_id)) as count from CisEvents");
     }
@@ -37,30 +43,30 @@ public class SessionEventService extends BaseEventService{
         return result;
     }
 
-    public JSONObject getCountOfSessions(String serverId, String userId, String source, String version, String fromDate, String toDate) {
+    public JSONObject getCountOfSessions(/*String serverId, String userId, String source, String version, String fromDate, String toDate*/) {
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
         StringBuffer subquery = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
         QueryWhereBuffer subwhereClause = new QueryWhereBuffer();
         
-        if (userId != null) {
-            whereClause.append("user_id in " + userId);
+        if (this.getFilterProps("source") != null && ! isFilterPropValueEmpty("source")) {
+            whereClause.append("source in " + this.getFilterProps("source"));
         }
-        if (serverId != null) {
-            whereClause.append("server_id in " + serverId);
+        if (this.getFilterProps("version") != null && ! isFilterPropValueEmpty("version")) {
+            whereClause.append("version in " + this.getFilterProps("version"));
         }
-        if (source != null) {
-            whereClause.append("source in " + source);
+        if (this.getFilterProps("server_id") != null && ! isFilterPropValueEmpty("server_id")) {
+            whereClause.append("server_id in " + this.getFilterProps("server_id"));
         }
-        if (version != null) {
-            whereClause.append("version in " + version);
+        if (this.getFilterProps("user_id") != null && ! isFilterPropValueEmpty("user_id")) {
+            whereClause.append("user_id in " + this.getFilterProps("user_id"));
         }
-        if (fromDate != null) {
-            subwhereClause.append("timestamp >= '" + fromDate + "' ");
+        if (this.getFilterProps("fromDate") != null) {
+            subwhereClause.append("timestamp >= '" + this.getFilterProps("fromDate").toString() + "' ");
         }
-        if (toDate != null) {
-            subwhereClause.append("timestamp <= '" + toDate + "' ");
+        if (this.getFilterProps("toDate") != null) {
+            subwhereClause.append("timestamp <= '" + this.getFilterProps("toDate").toString() + "' ");
         }
 
         //String sql = "select session_id as name,count(*) as count from CisEvents group by session_id";

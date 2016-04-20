@@ -11,19 +11,30 @@ import com.metron.model.CisEventMappings;
 
 public class EnvironmentEventService extends BaseEventService{
 
-    public JSONObject getCountOfEnv(String property, String sessionId, String serverId, String userId,
-            String source, String version, String fromDate, String toDate) {
+    public EnvironmentEventService(String filter) {
+        super(filter);
+    }
+    
+    public EnvironmentEventService() {}
+
+    public JSONObject getCountOfEnv() throws JSONException {
         
         JSONObject result = new JSONObject();
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter();
         whereClause.append("type containstext 'env'");
 
-        query.append("select in."+property +" as name, count(*) as count from Metric_Event group by in."+property
-                + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+        if (this.getFilterProps("property") != null) {
+            String property = this.getFilterProps("property").toString();
+            query.append("select in."+property +" as name, count(*) as count from Metric_Event group by in."+property
+                    + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
 
-        result = this.getAssociatedCount(query.toString());
-
+            result = this.getAssociatedCount(query.toString());
+        } else {
+            result.put("status", "Failed");
+            result.put("message", "Choose a env property");
+        }
+        
         return result;
     }
 
