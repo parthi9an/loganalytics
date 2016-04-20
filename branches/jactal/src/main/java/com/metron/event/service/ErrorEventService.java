@@ -8,11 +8,17 @@ import com.metron.controller.QueryWhereBuffer;
 
 public class ErrorEventService extends BaseEventService {
 
-    public JSONArray getExceptionCount(String sessionId,String serverId, String userId, String source, String version, String fromDate, String toDate) {
+    public ErrorEventService(String filter) {
+        super(filter);
+    }
+    
+    public ErrorEventService() {}
+
+    public JSONArray getExceptionCount() {
         
         JSONArray result = new JSONArray();
             StringBuffer query = new StringBuffer();
-            QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+            QueryWhereBuffer whereClause = this.edgeFilter();
             whereClause.append("type containstext 'error'");
 
             query.append("select in.message as message,in.trace as trace,in.error_trace_checksum as checksum, count(*) as count from Metric_Event group by in.error_trace_checksum"
@@ -25,17 +31,19 @@ public class ErrorEventService extends BaseEventService {
         return result;
     }
 
-    public JSONArray getPatterns(String errorTracechecksum, String sessionId,String serverId, String userId, String source,String version, String fromDate, String toDate) {
+    public JSONArray getPatterns() {
         
         //String sql = "select pattern_type as pattern ,association_count as count from ErrorPattern order by association_count DESC";
         
         JSONArray result = new JSONArray();
         
         StringBuffer query = new StringBuffer();
-        QueryWhereBuffer whereClause = this.edgeFilter(sessionId,serverId,userId,source,version,fromDate,toDate);
+        QueryWhereBuffer whereClause = this.edgeFilter();
         
-        if (errorTracechecksum != null) {
-            whereClause.append("in.error_trace_checksum containstext '" + errorTracechecksum + "'");
+        if (this.getFilterProps("errorTracechecksum") != null) {
+            whereClause.append("in.error_trace_checksum containstext '" + this.getFilterProps("errorTracechecksum").toString() + "'");
+        } else {
+            return result.put("Failed");
         }
 
         query.append("select in.pattern_type as pattern ,count(*) as count from Session_ErrorPattern group by in.pattern_type order by count Desc"
