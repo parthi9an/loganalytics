@@ -39,7 +39,7 @@ public class BaseEventService extends FilterService {
             JSONArray resultArr = jsondata.getJSONArray("result");
             for(int j = 0; j < resultArr.length(); j++){
                 if(resultArr.getJSONObject(j).has("name"))
-                    name.put(resultArr.getJSONObject(j).getString("name"));
+                    name.put(resultArr.getJSONObject(j).get("name"));
                 if(resultArr.getJSONObject(j).has("count"))
                     count.put(resultArr.getJSONObject(j).getLong("count"));
             }
