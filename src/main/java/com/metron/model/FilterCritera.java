@@ -28,8 +28,8 @@ public class FilterCritera extends BaseModel {
 
         StringBuffer query = new StringBuffer();
         QueryWhereBuffer whereClause = new QueryWhereBuffer();
-        whereClause.append("uName containstext '" + uName + "'");
-        whereClause.append("filtername containstext '" + filtername + "'");
+        whereClause.append("uName = '" + uName + "'");
+        whereClause.append("filtername = '" + filtername + "'");
         query.append("select * from FilterCriteria order by timestamp desc"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         OrientVertex filter = OrientUtils.getVertex(this.getGraph(), query.toString());

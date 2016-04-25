@@ -32,7 +32,7 @@ public class FilterEventService extends BaseEventService {
 
             while (iterator.hasNext()) {
                 String key2 = iterator.next();
-                filterProps.put(key2, filterObj.getString(key2));
+                filterProps.put(key2, filterObj.get(key2).toString());
             }
             filterProps.put("timestamp", new Date().getTime());
 
