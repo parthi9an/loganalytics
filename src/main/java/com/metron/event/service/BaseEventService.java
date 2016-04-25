@@ -147,7 +147,7 @@ public class BaseEventService extends FilterService {
             for(int j = 0; j < resultArr.length(); j++){
                 JSONObject pattern = new JSONObject();
                 pattern.put("pattern",resultArr.getJSONObject(j).getString("pattern"));
-                pattern.put("association_count", resultArr.getJSONObject(j).getString("count"));
+                pattern.put("association_count", resultArr.getJSONObject(j).get("count"));
                 pattern.put("pattern_class", eventUtil.getEventClass(resultArr.getJSONObject(j).getString("pattern")));
                 result.put(pattern);
             }
