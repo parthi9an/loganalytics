@@ -166,9 +166,9 @@ public class BaseEventService extends FilterService {
         
         StringBuffer query = new StringBuffer();
 
-        QueryWhereBuffer whereClause = this.edgeFilter(/*sessionId,serverId,userId,source,version,fromDate,toDate*/);
+        QueryWhereBuffer whereClause = this.edgeFilter();
 
-        query.append("select * from Metric_Event"
+        query.append("select * from Metric_Event order by timestamp desc "
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         
         String data = null;

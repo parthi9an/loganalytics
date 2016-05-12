@@ -267,10 +267,6 @@ public abstract class CisEvent extends BaseModel {
             for (int j = 0; j < edgeObject.length(); j++) {
                 OrientEdge edge = this.getGraph().getEdge(edgeObject.get(j));
 
-                // Excluding session_pattern edge as it doesn't represent
-                // events.
-                if (edge.getLabel().compareToIgnoreCase("session_pattern") != 0) {
-
                     // Previous Event Timestamp
                     String preEventTimestamp = edge.getProperty(mappingEventkeys.get("timestamp"));
                     String currenttimestamp = this.getStringAttr(mappingEventkeys.get("timestamp"));
@@ -282,9 +278,8 @@ public abstract class CisEvent extends BaseModel {
 
                     if (diff1 < timewindow)
                         patern.append(((OrientVertex) edge.getProperty("in")).getId()).append("_");
-                }
             }
-            String patterType = patern.toString().substring(0, patern.toString().length() - 1);
+            String patterType = patern.substring(0, patern.length() - 1);
             pattern = new Pattern(patterType, this.getGraph());
 
         } catch (JSONException e) {

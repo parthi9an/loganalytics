@@ -475,12 +475,14 @@ public class DatabaseService {
             if (!schema.existsClass("Metric_Event")) {
                 eType = graph.createEdgeType("Metric_Event");
                 eType.createProperty("type", OType.STRING);
+                eType.createProperty("timestamp", OType.STRING);
                 // Use FullText index in query through CONTAINSTEXT operator
                 eType.createIndex("MetricEvent.type", "FULLTEXT", "type");
+                eType.createIndex("MetricEvent.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("Session_Domain")) {
-                eType = graph.createEdgeType("Metric_Event");
+                eType = graph.createEdgeType("Session_Domain");
             }
             
             if (!schema.existsClass("Session_Pattern")) {
