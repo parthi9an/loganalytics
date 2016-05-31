@@ -33,7 +33,6 @@ public class CisViewCloseEvent extends CisViewEvent {
     private void updateAssociations() {
 
         this.associateRawMetricEvent();
-        super.associateTimeWindow();
         this.updatePatterns();
         this.associatePatternRawMetricEvent();
         this.associateDomainRawMetricEvent();

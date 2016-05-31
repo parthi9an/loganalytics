@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
+import com.metron.model.BaseModel;
 import com.metron.model.EnvironmentEvent;
-import com.metron.util.TimeWindowUtil.DURATION;
 
 public class CisEnvironmentEvent extends CisEvent {
 
-    protected EnvironmentEvent envevent;
+    protected BaseModel envevent;
 
     public CisEnvironmentEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
@@ -25,39 +25,9 @@ public class CisEnvironmentEvent extends CisEvent {
         // save metric event attributes (i.e Environment event) - env_os, env_screen_length, env_screen_height
         envevent = new EnvironmentEvent(this.getMetricValueAttributes(),this.getGraph());
         
-        this.updateAssociations();
+        this.updateAssociations(envevent);
         
         //Save data to Relational DB (Postgres)
         this.persistToPostgres("EnvironmentEvent");
-    }
-
-    private void updateAssociations() {
-        
-        this.associateRawMetricEvent(envevent);
-        this.associateTimeWindow();
-        this.updatePatterns();
-        this.associatePatternRawMetricEvent();
-        this.associateDomainRawMetricEvent();
-    }
-
-    private void associateTimeWindow() {
-        
-     // ONE MIN Window
-        DURATION duration = DURATION.ONEMIN;
-        envevent.addEdge(this.getEventTimeWindow(duration), "EnvironmentEvent_" + duration.getTable());
-
-        // FIVE MIN Window
-        duration = DURATION.FIVEMIN;
-        envevent.addEdge(this.getEventTimeWindow(duration), "EnvironmentEvent_" + duration.getTable());
-
-        // ONE HOUR Window
-        duration = DURATION.ONEHOUR;
-        envevent.addEdge(this.getEventTimeWindow(duration), "EnvironmentEvent_" + duration.getTable());
-
-        // ONEDAY Window
-        duration = DURATION.ONEDAY;
-        envevent.addEdge(this.getEventTimeWindow(duration), "EnvironmentEvent_" + duration.getTable());
-
-        
     }
 }

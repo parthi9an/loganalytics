@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
+import com.metron.model.BaseModel;
 import com.metron.model.WindowEvent;
-import com.metron.util.TimeWindowUtil.DURATION;
 
 public class CisWindowEvent extends CisEvent {
 
-    protected WindowEvent windowevent;
+    protected BaseModel windowevent;
 
     public CisWindowEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
@@ -39,39 +39,9 @@ public class CisWindowEvent extends CisEvent {
         // save metric event attributes (i.e window event) - window_length, window_height, window_view
         windowevent = new WindowEvent(this.getMetricValueAttributes(), this.getGraph());
          
-        this.updateAssociations();
+        this.updateAssociations(windowevent);
         
         //Save data to Relational DB (Postgres)
         this.persistToPostgres("WindowEvent");
-    }
-
-    private void updateAssociations() {
-        
-        this.associateRawMetricEvent(windowevent);
-        this.associateTimeWindow();
-        this.updatePatterns();
-        this.associatePatternRawMetricEvent();
-        this.associateDomainRawMetricEvent();
-    }
-    
-    private void associateTimeWindow() {
-        
-     // ONE MIN Window
-        DURATION duration = DURATION.ONEMIN;
-        windowevent.addEdge(this.getEventTimeWindow(duration), "WindowEvent_" + duration.getTable());
-
-        // FIVE MIN Window
-        duration = DURATION.FIVEMIN;
-        windowevent.addEdge(this.getEventTimeWindow(duration), "WindowEvent_" + duration.getTable());
-
-        // ONE HOUR Window
-        duration = DURATION.ONEHOUR;
-        windowevent.addEdge(this.getEventTimeWindow(duration), "WindowEvent_" + duration.getTable());
-
-        // ONEDAY Window
-        duration = DURATION.ONEDAY;
-        windowevent.addEdge(this.getEventTimeWindow(duration), "WindowEvent_" + duration.getTable());
-
-        
     }
 }
