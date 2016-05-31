@@ -253,6 +253,14 @@ public abstract class CisEvent extends BaseModel {
     public String toString() {
         return new JSONObject(this.attributes).toString();
     }
+    
+    public void updateAssociations(BaseModel event) {
+        
+        this.associateRawMetricEvent(event);
+        this.updatePatterns();
+        this.associatePatternRawMetricEvent();
+        this.associateDomainRawMetricEvent();        
+    }
 
     /**
      * updates the association count of the pattern (Events occurred before 5

@@ -4,12 +4,12 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
+import com.metron.model.BaseModel;
 import com.metron.model.ConfigurationEvent;
-import com.metron.util.TimeWindowUtil.DURATION;
 
 public class CisConfigurationEvent extends CisEvent {
 
-    protected ConfigurationEvent configurationevent;
+    protected BaseModel configurationevent;
 
     public CisConfigurationEvent(JSONObject eventData, JSONObject metricData) {
         super(eventData,metricData);
@@ -25,39 +25,9 @@ public class CisConfigurationEvent extends CisEvent {
         // save metric event attributes (i.e Configuration event) - config_name
         configurationevent = new ConfigurationEvent(this.getMetricValueAttributes(), this.getGraph());
        
-        this.updateAssociations();
+        this.updateAssociations(configurationevent);
         
         //Save data to Relational DB (Postgres)
         this.persistToPostgres("ConfigurationEvent");
-    }
-
-    private void updateAssociations() {
-        
-        this.associateRawMetricEvent(configurationevent);
-        this.associateTimeWindow();
-        this.updatePatterns();
-        this.associatePatternRawMetricEvent();
-        this.associateDomainRawMetricEvent();
-    }
-
-    private void associateTimeWindow() {
-        
-     // ONE MIN Window
-        DURATION duration = DURATION.ONEMIN;
-        configurationevent.addEdge(this.getEventTimeWindow(duration), "ConfigurationEvent_" + duration.getTable());
-
-        // FIVE MIN Window
-        duration = DURATION.FIVEMIN;
-        configurationevent.addEdge(this.getEventTimeWindow(duration), "ConfigurationEvent_" + duration.getTable());
-
-        // ONE HOUR Window
-        duration = DURATION.ONEHOUR;
-        configurationevent.addEdge(this.getEventTimeWindow(duration), "ConfigurationEvent_" + duration.getTable());
-
-        // ONEDAY Window
-        duration = DURATION.ONEDAY;
-        configurationevent.addEdge(this.getEventTimeWindow(duration), "ConfigurationEvent_" + duration.getTable());
-
-        
     }
 }

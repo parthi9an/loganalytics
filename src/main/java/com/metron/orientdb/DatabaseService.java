@@ -29,7 +29,7 @@ public class DatabaseService {
         // By Default the Date Format is yyyy-MM-dd HH:mm:ss we have changed to yyyy-MM-dd HH:mm:ss.SSS
         graph.command(new OCommandSQL("ALTER DATABASE DATETIMEFORMAT yyyy-MM-dd HH:mm:ss.SSS")).execute();
         // Allow strictSql
-        graph.command(new OCommandSQL("ALTER DATABASE CUSTOM strictSql=false")).execute();        
+        graph.command(new OCommandSQL("ALTER DATABASE CUSTOM strictSql=false")).execute();
         OSchemaProxy schema = graph.getRawGraph().getMetadata().getSchema();
         
         OrientVertexType vType = null;
@@ -470,6 +470,7 @@ public class DatabaseService {
                 vType.createProperty("timestamp", OType.STRING);
                 vType.createIndex("FilterCriteria.uName", "NOTUNIQUE", "uName");
                 vType.createIndex("FilterCriteria.filtername", "NOTUNIQUE", "filtername");
+                vType.createIndex("FilterCriteria.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("Metric_Event")) {

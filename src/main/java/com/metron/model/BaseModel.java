@@ -9,6 +9,7 @@ import com.metron.AppConfig;
 import com.metron.orientdb.OrientDBGraphManager;
 import com.orientechnologies.orient.core.exception.OConcurrentModificationException;
 import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
+import com.orientechnologies.orient.server.distributed.ODistributedException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -67,6 +68,14 @@ public class BaseModel {
                 maxRetries--;
                 save();
             }
+        } catch (ODistributedException e) {
+            e.printStackTrace();
+            if (maxRetries > 0) {
+                System.out.println("ODistributedException: retry " + maxRetries);
+                this.vertex = baseGraph.getVertex(vertex.getId());
+                maxRetries--;
+                save();
+            }
         } catch(ORecordDuplicatedException e){
             System.out.println("ORecordDuplicatedException: delete vertex");
             vertex.remove();            
@@ -110,6 +119,17 @@ public class BaseModel {
                 maxRetries--;
                 addEdge(toVertex, label);
             }
+        } catch (ODistributedException e) {
+            e.printStackTrace();
+            if (maxRetries > 0) {
+                System.out.println("ODistributedException in " + label
+                        + " : Edge retry remains " + (maxRetries - 1));
+                //to avoid version mismatch problem: get the latest
+                this.vertex = baseGraph.getVertex(this.vertex.getId());
+                toVertex.vertex = baseGraph.getVertex(toVertex.vertex.getId());
+                maxRetries--;
+                addEdge(toVertex, label);
+            }
         }
 
     }
@@ -134,7 +154,15 @@ public class BaseModel {
                 addEdge(toVertex, label, props);
                 maxRetries--;
             }
-        }
+        } catch (ODistributedException e) {
+            e.printStackTrace();
+            if (maxRetries > 0) {
+                System.out.println("ODistributedException in " + label
+                        + " : Edge retry remains " + (maxRetries - 1));
+                maxRetries--;
+                addEdge(toVertex, label, props);
+            }
+        } 
     }
     
     /*public void addEdge(BaseModel toVertex, String label, String propKey, String propVal) {

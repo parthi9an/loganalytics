@@ -7,16 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.metron.AppConfig;
+import com.metron.model.BaseModel;
 import com.metron.model.ErrorEvent;
 import com.metron.model.ErrorPattern;
-import com.metron.util.TimeWindowUtil.DURATION;
 import com.metron.util.Utils;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 public class CisErrorEvent extends CisEvent {
 
-    protected ErrorEvent errorevent;
+    protected BaseModel errorevent;
     
     protected ErrorPattern errorpattern;
     
@@ -48,16 +48,15 @@ public class CisErrorEvent extends CisEvent {
         // save metric event attributes (i.e Action event) - error_type, error_message, error_trace
         errorevent = new ErrorEvent(this.getMetricValueAttributes(), this.getGraph());
         
-        this.updateAssociations();
+        this.updateAssociations(errorevent);
         
         //Save data to Relational DB (Postgres)
         this.persistToPostgres("ErrorEvent");
     }
 
-    private void updateAssociations() {
+    public void updateAssociations(BaseModel errorevent) {
         
         this.associateRawMetricEvent(errorevent);
-        this.associateTimeWindow();
         this.updatePatterns();
         this.updateErrorPatterns();
         this.associatePatternRawMetricEvent();
@@ -96,26 +95,6 @@ public class CisErrorEvent extends CisEvent {
                 
                 e.printStackTrace();
             }
-        
-    }
-
-    private void associateTimeWindow() {
-        
-     // ONE MIN Window
-        DURATION duration = DURATION.ONEMIN;
-        errorevent.addEdge(this.getEventTimeWindow(duration), "ErrorEvent_" + duration.getTable());
-
-        // FIVE MIN Window
-        duration = DURATION.FIVEMIN;
-        errorevent.addEdge(this.getEventTimeWindow(duration), "ErrorEvent_" + duration.getTable());
-
-        // ONE HOUR Window
-        duration = DURATION.ONEHOUR;
-        errorevent.addEdge(this.getEventTimeWindow(duration), "ErrorEvent_" + duration.getTable());
-
-        // ONEDAY Window
-        duration = DURATION.ONEDAY;
-        errorevent.addEdge(this.getEventTimeWindow(duration), "ErrorEvent_" + duration.getTable());
         
     }
     
