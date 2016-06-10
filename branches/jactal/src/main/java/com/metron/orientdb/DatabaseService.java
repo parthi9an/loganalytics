@@ -484,14 +484,20 @@ public class DatabaseService {
             
             if (!schema.existsClass("Session_Domain")) {
                 eType = graph.createEdgeType("Session_Domain");
+                eType.createProperty("timestamp", OType.STRING);
+                eType.createIndex("SessionDomain.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("Session_Pattern")) {
                 eType = graph.createEdgeType("Session_Pattern");
+                eType.createProperty("timestamp", OType.STRING);
+                eType.createIndex("SessionPattern.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("Session_ErrorPattern")) {
                 eType = graph.createEdgeType("Session_ErrorPattern");
+                eType.createProperty("timestamp", OType.STRING);
+                eType.createIndex("SessionErrorPattern.timestamp", "NOTUNIQUE", "timestamp");
             }
             
             if (!schema.existsClass("AccessToken")) {

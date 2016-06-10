@@ -138,6 +138,16 @@ public class BaseModel {
         if (toVertex.vertex == null) {
             return;
         }
+        if (label.equalsIgnoreCase("Session_Domain")){
+            Iterable<Edge> edges = this.vertex.getEdges(toVertex.vertex, Direction.OUT, label);
+            int size = 0;
+            for (Edge edge : edges) {
+                size++;
+            }
+            if (size > 0) {
+                return;
+            }
+        }
         try {
             // to avoid version mismatch problem: get the latest
             this.vertex = baseGraph.getVertex(this.vertex.getId());
