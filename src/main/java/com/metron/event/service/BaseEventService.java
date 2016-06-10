@@ -30,7 +30,14 @@ public class BaseEventService extends FilterService {
     
     //Return a json object which contains json array's with names & associated counts, suitable for pie chart reports
     public JSONObject getAssociatedCount(String sql) {
-        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        
+        String data = null;
+        if (this.getFilterProps("limit") != null) {
+            data = new com.metron.orientdb.OrientRest().doSql(sql,Integer.parseInt(this.getFilterProps("limit").toString()));
+        }else{
+            data = new com.metron.orientdb.OrientRest().doSql(sql);
+        }
+        //String data = new com.metron.orientdb.OrientRest().doSql(sql);
         JSONObject result = new JSONObject();
         JSONArray name = new JSONArray();
         JSONArray count = new JSONArray();
@@ -139,7 +146,14 @@ public class BaseEventService extends FilterService {
      * @return
      */
     public JSONArray getPattern(String sql) {
-        String data = new com.metron.orientdb.OrientRest().doSql(sql);
+        
+        String data = null;
+        if (this.getFilterProps("limit") != null) {
+            data = new com.metron.orientdb.OrientRest().doSql(sql,Integer.parseInt(this.getFilterProps("limit").toString()));
+        }else{
+            data = new com.metron.orientdb.OrientRest().doSql(sql);
+        }
+        //String data = new com.metron.orientdb.OrientRest().doSql(sql);
         JSONArray result = new JSONArray();
         CisEventUtil eventUtil = new CisEventUtil();
         try {
