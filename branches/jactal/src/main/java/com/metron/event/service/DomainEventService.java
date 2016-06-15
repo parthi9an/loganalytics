@@ -83,7 +83,7 @@ public class DomainEventService extends BaseEventService {
         subquery.append("select out.user_id as user_id,out.server_id as server_id,out.source as source,out.version as version, out.session_id as session_id from Metric_Event group by out"
                 + ((!subwhereClause.toString().equals("")) ? " Where " + subwhereClause.toString() : ""));
 
-        query.append("select user_id as name,count(*) as count from (").append(subquery.toString()).append(") group by user_id"
+        query.append("select user_id as name,count(*) as count from (").append(subquery.toString()).append(") group by user_id order by count desc"
                 + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
         
         result = this.getAssociatedCount(query.toString());
