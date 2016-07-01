@@ -211,6 +211,62 @@ public class BaseEventService extends FilterService {
         }    
         return result;
     }
+    
+    /**
+     * Retrieve all the events
+     * @param search 
+     * @return list of events along with event type, timestamp and event details
+     */
+    public JSONObject getAllEvents(String pageSize, String skip, String search) {
+        
+        StringBuffer query = new StringBuffer();
+
+        QueryWhereBuffer whereClause = this.edgeFilter();
+        
+        if(search != null && !search.isEmpty()){
+            whereClause.append("any() like '%" + search +"%' ");
+        }
+        
+        query.append("select * from Metric_Event order by timestamp desc "
+                + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+        
+        String data = null;
+        if (skip != null) {
+            query.append("skip "+ skip);
+        }
+        if (pageSize != null) {
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString(),Integer.parseInt(pageSize));
+        }else{
+            data = new com.metron.orientdb.OrientRest().doSql(query.toString());
+        }
+        
+        //Calculating total Number of Records - For server side pagination
+        Long count = getCount("select count(*) as count from Metric_Event "
+                + ((!whereClause.toString().equals("")) ? " Where " + whereClause.toString() : ""));
+        
+        //Constructing the Event Details
+        CisEventUtil eventUtil = new CisEventUtil();
+        JSONArray eventdata = new JSONArray();
+        JSONObject result = new JSONObject();
+        try {
+            JSONObject jsondata = new JSONObject(data.toString());
+            JSONArray resultArr = jsondata.getJSONArray("result");
+            for(int j = 0; j < resultArr.length(); j++){
+                JSONObject eventobject = new JSONObject();
+                eventobject.put("metric_type", resultArr.getJSONObject(j).getString("type"));
+                eventobject.put("metric_timestamp", resultArr.getJSONObject(j).getString("timestamp"));
+                //Retrieve Event details
+                JSONObject eventdetails = eventUtil.getdetails(resultArr.getJSONObject(j).getString("in"));
+                eventobject.put("event_details", eventdetails);
+                eventdata.put(eventobject);
+                result.put("eventdata", eventdata);
+                result.put("count",count);
+            }    
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }    
+        return result;
+    }
 
     /**
      * Constructs filter criteria for Metric_Event,Session_Pattern,Session_ErrorPattern,Session_Domain edge's
