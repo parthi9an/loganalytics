@@ -142,7 +142,29 @@ public class ToolUIController {
      */
     @RequestMapping(value = "/getAllEvent")
     public @ResponseBody
-    ResponseEntity<String> getAllEvent(HttpServletRequest request,
+    ResponseEntity<String> getAllEvent(HttpServletRequest request/*,
+            @RequestBody String filter*/){
+
+        BaseEventService service = new BaseEventService(request.getParameter("filter"));
+        String pageSize = request.getParameter("length") != null ? request.getParameter("length") : "";
+        String skip = request.getParameter("start") != null ? request.getParameter("start") : "";
+        String search = request.getParameter("search[value]");
+        
+        JSONObject eventresult = service.getAllEvents(pageSize,skip,search);
+        
+        //Sending necessary info along with data for server side pagination
+        JSONObject result = new JSONObject();
+        result.put("data", eventresult.has("eventdata") ? eventresult.get("eventdata"): new JSONArray());
+        result.put("draw", request.getParameter("draw"));
+        result.put("recordsTotal", eventresult.has("count") ? eventresult.get("count"): 0);
+        result.put("recordsFiltered", eventresult.has("count") ? eventresult.get("count"): 0);
+
+        return _formJSONSuccessResponse(result.toString());
+    }
+    
+    @RequestMapping(value = "/getAllEvents")
+    public @ResponseBody
+    ResponseEntity<String> getAllEvents(HttpServletRequest request,
             @RequestBody String filter){
 
         BaseEventService service = new BaseEventService(filter);

@@ -2,7 +2,6 @@ package com.metron.event.service;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
