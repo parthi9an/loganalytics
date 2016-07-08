@@ -161,17 +161,6 @@ public class ToolUIController {
 
         return _formJSONSuccessResponse(result.toString());
     }
-    
-    @RequestMapping(value = "/getAllEvents")
-    public @ResponseBody
-    ResponseEntity<String> getAllEvents(HttpServletRequest request,
-            @RequestBody String filter){
-
-        BaseEventService service = new BaseEventService(filter);
-        JSONArray result = service.getAllEvents();
-
-        return _formJSONSuccessResponse(result.toString());
-    }
    
     /*
      * Get action name list (i.e action_key)
