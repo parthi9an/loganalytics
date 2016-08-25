@@ -32,7 +32,7 @@ public class MathCalWei {
     assertEquals(driver.getTitle(), "Weight Calculator");
     driver.findElement(By.cssSelector("input[type=\"image\"]")).click();
     assertEquals(driver.getTitle(), "Weight Calculator");
-    assertEquals(driver.findElement(By.cssSelector("td.bigtext > font > b")).getText(), "0.45359238");
+    assertEquals(driver.findElement(By.cssSelector("td.bigtext > font > b")).getText(), "0.45359237");
     // ERROR: Caught exception [ERROR: Unsupported command [getTable | css=td > table.0.3 | ]]
   }
 
