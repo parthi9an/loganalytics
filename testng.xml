@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+  <test name="MathTest">
+    <classes>
+    
+      <class name="com.metron.test.MathTest"/>
+      <class name="com.metron.test.MathCalWei"/>
+     <!--  <class name="com.metron.test.SpringTest"/> -->
+    
+    </classes>
+  </test> <!-- MathTest -->
+</suite> <!-- Suite -->
